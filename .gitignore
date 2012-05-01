@@ -1,0 +1,12 @@
+*.project~
+*.classpath~
+*.project
+*.classpath
+*.settings
+<<<<<<< HEAD
+*.private
+=======
+*.private
+>>>>>>> 96600d1929838e5e765d5e12f72d64af681041c8
+
+
