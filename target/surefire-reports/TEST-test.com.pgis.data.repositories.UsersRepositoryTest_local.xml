@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite failures="0" time="0.529" errors="0" skipped="0" tests="2" name="test.com.pgis.data.repositories.UsersRepositoryTest_local">
+  <properties>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="env.SESSION_MANAGER" value="local/romario-R530-R730:@/tmp/.ICE-unix/1964,unix/romario-R530-R730:/tmp/.ICE-unix/1964"/>
+    <property name="localRepository" value="/home/romario/.m2/repository"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="os.name" value="Linux"/>
+    <property name="sun.boot.class.path" value="/usr/lib/jvm/jdk1.7.0_03/jre/lib/resources.jar:/usr/lib/jvm/jdk1.7.0_03/jre/lib/rt.jar:/usr/lib/jvm/jdk1.7.0_03/jre/lib/sunrsasign.jar:/usr/lib/jvm/jdk1.7.0_03/jre/lib/jsse.jar:/usr/lib/jvm/jdk1.7.0_03/jre/lib/jce.jar:/usr/lib/jvm/jdk1.7.0_03/jre/lib/charsets.jar:/usr/lib/jvm/jdk1.7.0_03/jre/classes"/>
+    <property name="env.PWD" value="/home/romario"/>
+    <property name="env.XDG_SESSION_COOKIE" value="936e06d846a0e9d42b3b46410000000b-1338818104.316516-494249498"/>
+    <property name="env.LANG" value="en_US.UTF-8"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.runtime.version" value="1.7.0_03-b04"/>
+    <property name="env.DEFAULTS_PATH" value="/usr/share/gconf/kde-plasma.default.path"/>
+    <property name="env.DISPLAY" value=":0"/>
+    <property name="user.name" value="romario"/>
+    <property name="maven.build.version" value="Apache Maven 3.0.4 (r1232337; 2012-01-17 11:44:56+0300)"/>
+    <property name="env.USER" value="romario"/>
+    <property name="env.SHELL" value="/bin/bash"/>
+    <property name="env.KDE_MULTIHEAD" value="false"/>
+    <property name="guice.disable.misplaced.annotation.check" value="true"/>
+    <property name="env.DESKTOP_SESSION" value="kde-plasma"/>
+    <property name="env.XDG_DATA_DIRS" value="/usr/share/kde-plasma:/usr/local/share/:/usr/share/"/>
+    <property name="env.NLSPATH" value="/usr/dt/lib/nls/msg/%L/%N.cat"/>
+    <property name="env.LC_ADDRESS" value="ru_UA.UTF-8"/>
+    <property name="env.PATH" value="/home/romario/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/apache-maven/bin:/usr/lib/jvm/jdk1.7.0_03/bin"/>
+    <property name="user.language" value="ru"/>
+    <property name="env.GS_LIB" value="/home/romario/.fonts"/>
+    <property name="env.LC_MONETARY" value="ru_UA.UTF-8"/>
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/jdk1.7.0_03/jre/lib/amd64"/>
+    <property name="classworlds.conf" value="/home/romario/dev/Files/premiumGIS/Software/Programms/Web/workspace/.metadata/.plugins/org.eclipse.m2e.core/launches/m2conf2886905998987069537.tmp"/>
+    <property name="env.QT_PLUGIN_PATH" value="/home/romario/.kde/lib/kde4/plugins/:/usr/lib/kde4/plugins/"/>
+    <property name="env.LC_CTYPE" value="ru_RU.UTF-8"/>
+    <property name="env.KDE_SESSION_UID" value="1000"/>
+    <property name="java.version" value="1.7.0_03"/>
+    <property name="env.KDE_FULL_SESSION" value="true"/>
+    <property name="user.timezone" value=""/>
+    <property name="env.DBUS_SESSION_BUS_ADDRESS" value="unix:abstract=/tmp/dbus-Qc2tjLDChb,guid=806be63a01cf240ca081b4c400000059"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="env.SSH_AGENT_PID" value="1747"/>
+    <property name="java.endorsed.dirs" value="/usr/lib/jvm/jdk1.7.0_03/jre/lib/endorsed"/>
+    <property name="logback.configuration" value="file:src/test/resources/logback.xml"/>
+    <property name="env.JDK_HOME" value="/usr/lib/jvm/jdk1.7.0_03"/>
+    <property name="sun.cpu.isalist" value=""/>
+    <property name="env.LC_PAPER" value="ru_UA.UTF-8"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="env.SHLVL" value="0"/>
+    <property name="file.separator" value="/"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="env.XCURSOR_THEME" value="DMZ-White"/>
+    <property name="java.class.version" value="51.0"/>
+    <property name="env.KDE_SESSION_VERSION" value="4"/>
+    <property name="user.country" value="RU"/>
+    <property name="securerandom.source" value="file:/dev/./urandom"/>
+    <property name="java.home" value="/usr/lib/jvm/jdk1.7.0_03/jre"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="env.LOGNAME" value="romario"/>
+    <property name="os.version" value="3.2.0-24-generic"/>
+    <property name="path.separator" value=":"/>
+    <property name="java.vm.version" value="22.1-b02"/>
+    <property name="env.LANGUAGE" value="ru_RU:en"/>
+    <property name="env.DM_CONTROL" value="/var/run/xdmctl"/>
+    <property name="env.LC_TELEPHONE" value="ru_UA.UTF-8"/>
+    <property name="env.JAVA_HOME" value="/usr/lib/jvm/jdk1.7.0_03"/>
+    <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"/>
+    <property name="env.WINDOWPATH" value="7"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
+    <property name="env.LIBGL_DRIVERS_PATH" value="/usr/lib/fglrx/dri:/usr/lib32/fglrx/dri"/>
+    <property name="env.LC_MEASUREMENT" value="ru_UA.UTF-8"/>
+    <property name="user.home" value="/home/romario"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="env.M2_HOME" value="/opt/apache-maven"/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="java.library.path" value="/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib"/>
+    <property name="env.LC_MESSAGES" value="ru_RU.UTF-8"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="maven.home" value="/opt/apache-maven"/>
+    <property name="java.class.path" value="/opt/apache-maven/boot/plexus-classworlds-2.4.jar"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -B -s /opt/apache-maven/conf/settings.xml install"/>
+    <property name="maven.version" value="3.0.4"/>
+    <property name="env.UBUNTU_MENUPROXY" value="libappmenu.so"/>
+    <property name="env.XFILESEARCHPATH" value="/usr/dt/app-defaults/%L/Dt"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="java.vm.specification.version" value="1.7"/>
+    <property name="env.XDM_MANAGED" value="method=classic"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="env.GTK_RC_FILES" value="/etc/gtk/gtkrc:/home/romario/.gtkrc:/home/romario/.kde/share/config/gtkrc"/>
+    <property name="env.HOME" value="/home/romario"/>
+    <property name="surefire.test.class.path" value="/home/romario/dev/Files/premiumGIS/Software/Programms/Web/workspace/busWeb.data/target/test-classes:/home/romario/dev/Files/premiumGIS/Software/Programms/Web/workspace/busWeb.data/bin:/home/romario/.m2/repository/junit/junit/4.7/junit-4.7.jar:/home/romario/.m2/repository/ch/qos/logback/logback-classic/1.0.2/logback-classic-1.0.2.jar:/home/romario/.m2/repository/ch/qos/logback/logback-core/1.0.2/logback-core-1.0.2.jar:/home/romario/.m2/repository/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar:/home/romario/.m2/repository/org/apache/tomcat/tomcat-jdbc/7.0.27/tomcat-jdbc-7.0.27.jar:/home/romario/.m2/repository/org/apache/tomcat/tomcat-juli/7.0.27/tomcat-juli-7.0.27.jar:/home/romario/.m2/repository/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4.jar:"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
+    <property name="env.MAVEN_OPTS" value="-Xms25m"/>
+    <property name="env.SSH_AUTH_SOCK" value="/tmp/ssh-jtWGDVPR1672/agent.1672"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.ext.dirs" value="/usr/lib/jvm/jdk1.7.0_03/jre/lib/ext:/usr/java/packages/lib/ext"/>
+    <property name="user.dir" value="/home/romario/dev/Files/premiumGIS/Software/Programms/Web/workspace/busWeb.data"/>
+    <property name="env.MANDATORY_PATH" value="/usr/share/gconf/kde-plasma.mandatory.path"/>
+    <property name="env.GTK_MODULES" value="canberra-gtk-module:canberra-gtk-module"/>
+    <property name="line.separator" value="
+"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="env.LC_NUMERIC" value="ru_UA.UTF-8"/>
+    <property name="env.GTK2_RC_FILES" value="/etc/gtk-2.0/gtkrc:/home/romario/.gtkrc-2.0:/home/romario/.gtkrc-2.0-kde4:/home/romario/.kde/share/config/gtkrc-2.0"/>
+    <property name="basedir" value="/home/romario/dev/Files/premiumGIS/Software/Programms/Web/workspace/busWeb.data"/>
+    <property name="env.M2" value="/opt/apache-maven/bin"/>
+    <property name="env.LC_TIME" value="ru_UA.UTF-8"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="env.LC_COLLATE" value="ru_RU.UTF-8"/>
+    <property name="env.LC_IDENTIFICATION" value="ru_UA.UTF-8"/>
+    <property name="env.GPG_AGENT_INFO" value="/tmp/gpg-d5b2o1/S.gpg-agent:1748:1"/>
+    <property name="java.specification.version" value="1.7"/>
+    <property name="env.XDG_CONFIG_DIRS" value="/etc/xdg/xdg-kde-plasma:/etc/xdg"/>
+    <property name="env.LC_NAME" value="ru_UA.UTF-8"/>
+  </properties>
+  <testcase time="0.271" classname="test.com.pgis.data.repositories.UsersRepositoryTest_local" name="test"/>
+  <testcase time="0.227" classname="test.com.pgis.data.repositories.UsersRepositoryTest_local" name="authenticateTest"/>
+</testsuite>
