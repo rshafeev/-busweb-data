@@ -6,7 +6,6 @@
 	<groupId>com.premiumgis</groupId>
 	<artifactId>busWeb.data</artifactId>
 	<version>0.0.1 </version>
-
 	<repositories>
 		<!-- Publish the versioned releases here -->
 		<repository>
@@ -15,63 +14,83 @@
 			<url>http://premiumgis.com:8080/nexus/content/repositories/thirdparty/</url>
 		</repository>
 	</repositories>
-	<distributionManagement>
-		<repository>
-
-		</repository>
-	</distributionManagement>
-
+<profiles>
+ <profile> 
+ 
+      <id>env-test</id> 
+      <activation> 
+        <property> 
+          <name>target-test</name> 
+          <value>test</value> 
+        </property> 
+      </activation> 
+     </profile> 
+</profiles>
 	<build>
-		<sourceDirectory>${basedir}/src</sourceDirectory>
+
+		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>
+		  ${basedir}/src/main/resources
+		</directory>
+			</resource>
+		</resources>
+		<testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
+
+		<testResources>
+			<testResource>
+				<directory>${basedir}/src/test/resources</directory>
+			</testResource>
+		</testResources>
 		<outputDirectory>${basedir}/bin</outputDirectory>
-		<directory>${basedir}/bin</directory>
+		<directory>${basedir}/target</directory>
 		<plugins>
+
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.1.2</version>
+
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.4.1</version>
 				<executions>
 					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
+						<id>default-clean</id>
+						<phase>compile</phase>
 						<goals>
-							<goal>jar</goal>
+							<goal>clean</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
-
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.6</version>
-				<executions>
-					<execution>
-						<phase> <!-- a lifecycle phase --> </phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-
-						<configuration>
-							<target>
-
-								<!-- Здесь можно расположить любые Ant задачи - то, что расположено 
-									между тэгами <target> и </target> в build.xml -->
-								<echo message="maven-antrun-plugin:run: hello world" />
-
-							</target>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+			
+	
 		</plugins>
 
 	</build>
 
 	<dependencies>
 		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.7</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>1.0.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.1-901-1.jdbc4</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat.jdbc</groupId>
@@ -85,5 +104,6 @@
 			<version>1.6.4</version>
 			<scope>compile</scope>
 		</dependency>
+
 	</dependencies>
 </project>
