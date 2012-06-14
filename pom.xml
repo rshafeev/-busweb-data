@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.premiumgis</groupId>
 	<artifactId>busWeb.data</artifactId>
-	<version>0.0.3master </version>
+	<version>0.0.2 </version>
 
 	<build>
 
