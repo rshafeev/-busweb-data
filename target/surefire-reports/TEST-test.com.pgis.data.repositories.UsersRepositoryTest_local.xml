@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.529" errors="0" skipped="0" tests="2" name="test.com.pgis.data.repositories.UsersRepositoryTest_local">
+<testsuite failures="0" time="0.421" errors="0" skipped="0" tests="2" name="test.com.pgis.data.repositories.UsersRepositoryTest_local">
   <properties>
     <property name="java.vendor" value="Oracle Corporation"/>
-    <property name="env.SESSION_MANAGER" value="local/romario-R530-R730:@/tmp/.ICE-unix/1964,unix/romario-R530-R730:/tmp/.ICE-unix/1964"/>
+    <property name="env.SESSION_MANAGER" value="local/romario-R530-R730:@/tmp/.ICE-unix/2251,unix/romario-R530-R730:/tmp/.ICE-unix/2251"/>
     <property name="localRepository" value="/home/romario/.m2/repository"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="os.name" value="Linux"/>
     <property name="sun.boot.class.path" value="/usr/lib/jvm/jdk1.7.0_03/jre/lib/resources.jar:/usr/lib/jvm/jdk1.7.0_03/jre/lib/rt.jar:/usr/lib/jvm/jdk1.7.0_03/jre/lib/sunrsasign.jar:/usr/lib/jvm/jdk1.7.0_03/jre/lib/jsse.jar:/usr/lib/jvm/jdk1.7.0_03/jre/lib/jce.jar:/usr/lib/jvm/jdk1.7.0_03/jre/lib/charsets.jar:/usr/lib/jvm/jdk1.7.0_03/jre/classes"/>
     <property name="env.PWD" value="/home/romario"/>
-    <property name="env.XDG_SESSION_COOKIE" value="936e06d846a0e9d42b3b46410000000b-1338818104.316516-494249498"/>
+    <property name="env.XDG_SESSION_COOKIE" value="936e06d846a0e9d42b3b46410000000b-1339505477.513276-910756265"/>
     <property name="env.LANG" value="en_US.UTF-8"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.runtime.version" value="1.7.0_03-b04"/>
@@ -30,16 +30,16 @@
     <property name="env.GS_LIB" value="/home/romario/.fonts"/>
     <property name="env.LC_MONETARY" value="ru_UA.UTF-8"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/jdk1.7.0_03/jre/lib/amd64"/>
-    <property name="classworlds.conf" value="/home/romario/dev/Files/premiumGIS/Software/Programms/Web/workspace/.metadata/.plugins/org.eclipse.m2e.core/launches/m2conf2886905998987069537.tmp"/>
+    <property name="classworlds.conf" value="/home/romario/dev/Files/premiumGIS/Software/Programms/Web/workspace/.metadata/.plugins/org.eclipse.m2e.core/launches/m2conf8406787073404665920.tmp"/>
     <property name="env.QT_PLUGIN_PATH" value="/home/romario/.kde/lib/kde4/plugins/:/usr/lib/kde4/plugins/"/>
     <property name="env.LC_CTYPE" value="ru_RU.UTF-8"/>
     <property name="env.KDE_SESSION_UID" value="1000"/>
     <property name="java.version" value="1.7.0_03"/>
     <property name="env.KDE_FULL_SESSION" value="true"/>
     <property name="user.timezone" value=""/>
-    <property name="env.DBUS_SESSION_BUS_ADDRESS" value="unix:abstract=/tmp/dbus-Qc2tjLDChb,guid=806be63a01cf240ca081b4c400000059"/>
+    <property name="env.DBUS_SESSION_BUS_ADDRESS" value="unix:abstract=/tmp/dbus-XU5TgUhGxp,guid=a8958829d972cce166c382e300000800"/>
     <property name="sun.arch.data.model" value="64"/>
-    <property name="env.SSH_AGENT_PID" value="1747"/>
+    <property name="env.SSH_AGENT_PID" value="1884"/>
     <property name="java.endorsed.dirs" value="/usr/lib/jvm/jdk1.7.0_03/jre/lib/endorsed"/>
     <property name="logback.configuration" value="file:src/test/resources/logback.xml"/>
     <property name="env.JDK_HOME" value="/usr/lib/jvm/jdk1.7.0_03"/>
@@ -96,7 +96,7 @@
     <property name="java.io.tmpdir" value="/tmp"/>
     <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
     <property name="env.MAVEN_OPTS" value="-Xms25m"/>
-    <property name="env.SSH_AUTH_SOCK" value="/tmp/ssh-jtWGDVPR1672/agent.1672"/>
+    <property name="env.SSH_AUTH_SOCK" value="/tmp/ssh-tUTsaVfY1807/agent.1807"/>
     <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.ext.dirs" value="/usr/lib/jvm/jdk1.7.0_03/jre/lib/ext:/usr/java/packages/lib/ext"/>
@@ -114,11 +114,11 @@
     <property name="file.encoding" value="UTF-8"/>
     <property name="env.LC_COLLATE" value="ru_RU.UTF-8"/>
     <property name="env.LC_IDENTIFICATION" value="ru_UA.UTF-8"/>
-    <property name="env.GPG_AGENT_INFO" value="/tmp/gpg-d5b2o1/S.gpg-agent:1748:1"/>
+    <property name="env.GPG_AGENT_INFO" value="/tmp/gpg-6L18YQ/S.gpg-agent:1885:1"/>
     <property name="java.specification.version" value="1.7"/>
     <property name="env.XDG_CONFIG_DIRS" value="/etc/xdg/xdg-kde-plasma:/etc/xdg"/>
     <property name="env.LC_NAME" value="ru_UA.UTF-8"/>
   </properties>
-  <testcase time="0.271" classname="test.com.pgis.data.repositories.UsersRepositoryTest_local" name="test"/>
-  <testcase time="0.227" classname="test.com.pgis.data.repositories.UsersRepositoryTest_local" name="authenticateTest"/>
+  <testcase time="0.404" classname="test.com.pgis.data.repositories.UsersRepositoryTest_local" name="authenticateTest"/>
+  <testcase time="0" classname="test.com.pgis.data.repositories.UsersRepositoryTest_local" name="test"/>
 </testsuite>
