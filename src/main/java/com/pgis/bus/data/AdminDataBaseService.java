@@ -28,9 +28,9 @@ public class AdminDataBaseService extends WebDataBaseService
 	}
 
 	@Override
-	public User getUser(int id){
+	public User getUser(int id)throws RepositoryException {
 		
-		return null;
+		return usersRepotitory.getUser(id);
 	}
 
 	@Override
