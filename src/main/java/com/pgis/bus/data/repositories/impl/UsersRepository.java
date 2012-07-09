@@ -1,4 +1,4 @@
-package com.pgis.bus.data.repositories;
+package com.pgis.bus.data.repositories.impl;
 
 
 import org.slf4j.Logger;
@@ -6,17 +6,20 @@ import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.Authenticate_enum;
 import com.pgis.bus.data.DBConnectionFactory;
-import com.pgis.bus.data.WebDataBaseService;
+import com.pgis.bus.data.impl.DataBaseService;
 import com.pgis.bus.data.orm.User;
+import com.pgis.bus.data.repositories.IUsersRepository;
+import com.pgis.bus.data.repositories.Repository;
+import com.pgis.bus.data.repositories.RepositoryException;
+import com.pgis.bus.data.repositories.RepositoryException.err_enum;
+
 import java.sql.*;
 
 
 
 public class UsersRepository extends Repository implements IUsersRepository {
 	private static final Logger log = LoggerFactory
-			.getLogger(WebDataBaseService.class); // 1. Объявляем переменную
-													// логгера
-
+			.getLogger(DataBaseService.class); 
 	@Override
 	public User getUser(int id) throws RepositoryException {
 		Connection conn = Repository.getConnection();

@@ -60,7 +60,7 @@
 					<excludes>
 					</excludes>
 					<includes>
-					  <!--<include>**/*Test_local.java</include> -->
+					    <include>**/*Test_local.java</include>
 						<include>**/*Test.java</include>
 					</includes>
 				</configuration>

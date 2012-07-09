@@ -1,8 +1,9 @@
+
 package test.com.pgis.data.repositories;
 
 import static org.junit.Assert.*;
 
-import javax.sql.DataSource;
+import java.util.ArrayList;
 
 import org.junit.After;
 import org.junit.Before;
@@ -10,12 +11,13 @@ import org.junit.Test;
 
 import test.com.pgis.data.repositories.TestDataSource;
 
-import com.pgis.bus.data.Authenticate_enum;
 import com.pgis.bus.data.DBConnectionFactory;
-import com.pgis.bus.data.repositories.impl.UsersRepository;
+import com.pgis.bus.data.orm.City;
+import com.pgis.bus.data.repositories.ICitiesRepository;
+import com.pgis.bus.data.repositories.impl.CitiesRepository;
 
 //import com.pgis.bus.data.repositories.UsersRepository;
-public class UsersRepositoryTest_local {
+public class CitiesRepositoryTest_local {
 
 	TestDataSource source = null;
 
@@ -30,19 +32,15 @@ public class UsersRepositoryTest_local {
 	public void destroy() {
 		if (source != null) {
 			source.close();
+			DBConnectionFactory.free();
 			source = null;
 		}
 	}
 
 	@Test
-	public void test() throws Exception {
-		assertFalse(false);
-	}
-
-	@Test
-	public void authenticateTest() throws Exception {
-		UsersRepository users = new UsersRepository();
-		Authenticate_enum result =  users.authenticate("admin","roma", "rar");
-		
+	public void getAllCitiesTest() throws Exception {
+		ICitiesRepository db = new CitiesRepository();
+		ArrayList<City> cities = db.getAllCities();
+		System.out.print(cities.size());
 	}
 }
