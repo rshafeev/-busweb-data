@@ -92,12 +92,12 @@
 			<version>9.1-901-1.jdbc4</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat.jdbc</groupId>
-			<artifactId>tomcat-jdbc</artifactId>
-			<version>1.7.0</version>
-			<scope>compile</scope>
-		</dependency>
+		  <dependency>
+                        <groupId>org.apache.tomcat</groupId>
+                        <artifactId>tomcat-jdbc</artifactId>
+                        <version>7.0.27</version>
+                        <scope>compile</scope>
+                </dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
