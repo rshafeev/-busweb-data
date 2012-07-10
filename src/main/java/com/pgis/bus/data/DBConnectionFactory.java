@@ -20,6 +20,10 @@ public class DBConnectionFactory {
 		DBConnectionFactory.source = source2;
 	}
 
+	/**
+	 * Инициализирует фабрику подключений к БД
+	 * @param dataSourceName - JNDI имя пула подключений (например: myPool/jdbc)
+	 */
 	public synchronized static void init(String dataSourceName) {
 		try {
 			DBConnectionFactory.dataSourceName = dataSourceName;
@@ -27,7 +31,6 @@ public class DBConnectionFactory {
 			Context ctx = new InitialContext();
 			Context envContext = (Context) ctx.lookup(prefix);
 			source = (javax.sql.DataSource ) envContext.lookup(dataSourceName);
-
 			log.debug("DB-pool created: ok");
 
 		} catch (NamingException e) {
@@ -35,7 +38,12 @@ public class DBConnectionFactory {
 			log.debug(e.toString(true));
 		}
 	}
-
+	/**
+	 * Извлечь подключение из пула
+	 * Обратите внимание! После окончания работы с подключением, нужно обязательно вызвать функцию 
+	 * DBConnectionFactory::closeConnection(c)
+	 * @return Connection 
+	 */
 	public synchronized static Connection getConnection() {
 
 		if (source == null) {
@@ -58,6 +66,10 @@ public class DBConnectionFactory {
 
 	}
 
+	/**
+	 * Положить подключение обратно в пул
+	 * @param c - объект подключения
+	 */
 	public static void closeConnection(Connection c) {
 		try {
 			if (c != null)
@@ -67,7 +79,10 @@ public class DBConnectionFactory {
 		}
 	}
 
-	public synchronized static void close() {
+	/**
+	 * Очистить фабрику
+	 */
+	public synchronized static void free() {
 		if (DBConnectionFactory.source != null) {
 			if (DBConnectionFactory.source instanceof org.apache.tomcat.jdbc.pool.DataSource)
 				((org.apache.tomcat.jdbc.pool.DataSource) DBConnectionFactory.source).close();

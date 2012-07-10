@@ -1,40 +1,48 @@
-package com.pgis.bus.data.repositories;
+package com.pgis.bus.data.repositories.impl;
 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.Authenticate_enum;
-import com.pgis.bus.data.WebDataBaseService;
+import com.pgis.bus.data.DBConnectionFactory;
+import com.pgis.bus.data.impl.DataBaseService;
 import com.pgis.bus.data.orm.User;
+import com.pgis.bus.data.repositories.IUsersRepository;
+import com.pgis.bus.data.repositories.Repository;
+import com.pgis.bus.data.repositories.RepositoryException;
+import com.pgis.bus.data.repositories.RepositoryException.err_enum;
+
 import java.sql.*;
 
 
 
 public class UsersRepository extends Repository implements IUsersRepository {
 	private static final Logger log = LoggerFactory
-			.getLogger(WebDataBaseService.class); // 1. Объявляем переменную
-													// логгера
-
+			.getLogger(DataBaseService.class); 
 	@Override
 	public User getUser(int id) throws RepositoryException {
 		Connection conn = Repository.getConnection();
 		User user = null;
 		try {
-			Statement sql = (Statement) conn.createStatement();
+			//Statement sql = (Statement) conn.createStatement();
 			String query = "select * from bus.users where id = ? ";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setInt(1, id);
 			ResultSet key = ps.executeQuery();
 			if (key.next()) {
 				user = new User();
-				user.name = key.getString("name");
+				user.name = key.getString("login");
 				user.role_id = key.getInt("role_id");
 			}
 		} catch (SQLException e) {
 			user = null;
 			log.error("can not read database", e);
 			throw new  RepositoryException(RepositoryException.err_enum.c_sql_err);
+		}		
+		finally
+		{
+			DBConnectionFactory.closeConnection(conn);
 		}
 		return user;
 	}
@@ -63,6 +71,10 @@ public class UsersRepository extends Repository implements IUsersRepository {
 		} catch (SQLException e) {
 			log.error("can not read database", e);
 			throw new  RepositoryException(RepositoryException.err_enum.c_sql_err);
+		}
+		finally
+		{
+			DBConnectionFactory.closeConnection(conn);
 		}
 		return Authenticate_enum.c_unknown;
 	}

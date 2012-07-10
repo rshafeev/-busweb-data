@@ -1,3 +1,11 @@
 [Dolphin]
 AdditionalInfo=Details_Size,Details_Date,CustomizedDetails
+<<<<<<< HEAD
 Timestamp=2012,7,10,22,24,46
+=======
+Timestamp=2012,6,22,15,53,41
+ViewMode=1
+
+[Settings]
+HiddenFilesShown=true
+>>>>>>> 8c88d0322a644fc1ead0cfa8bf7495c5ba44e042

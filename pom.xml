@@ -6,26 +6,7 @@
 	<groupId>com.premiumgis</groupId>
 	<artifactId>busWeb.data</artifactId>
 	<version>0.0.1 </version>
-	<repositories>
-		<!-- Publish the versioned releases here -->
-		<repository>
-			<id>pgis-nexus-server</id>
-			<name>pgis-nexus server</name>
-			<url>http://premiumgis.com:8080/nexus/content/repositories/thirdparty/</url>
-		</repository>
-	</repositories>
-<profiles>
- <profile> 
- 
-      <id>env-test</id> 
-      <activation> 
-        <property> 
-          <name>target-test</name> 
-          <value>test</value> 
-        </property> 
-      </activation> 
-     </profile> 
-</profiles>
+
 	<build>
 
 		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
@@ -48,21 +29,21 @@
 		<plugins>
 
 			<plugin>
-
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.4.1</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
 				<executions>
 					<execution>
-						<id>default-clean</id>
-						<phase>compile</phase>
+						<id>attach-sources</id>
+						<phase>verify</phase>
 						<goals>
-							<goal>clean</goal>
+							<goal>jar</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
 			
-	
+		
 		</plugins>
 
 	</build>
@@ -92,12 +73,21 @@
 			<version>9.1-901-1.jdbc4</version>
 			<scope>compile</scope>
 		</dependency>
+<<<<<<< HEAD
 		  <dependency>
                         <groupId>org.apache.tomcat</groupId>
                         <artifactId>tomcat-jdbc</artifactId>
                         <version>7.0.27</version>
                         <scope>compile</scope>
                 </dependency>
+=======
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jdbc</artifactId>
+			<version>7.0.27</version>
+			<scope>compile</scope>
+		</dependency>
+>>>>>>> 8c88d0322a644fc1ead0cfa8bf7495c5ba44e042
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -106,4 +96,5 @@
 		</dependency>
 
 	</dependencies>
+
 </project>

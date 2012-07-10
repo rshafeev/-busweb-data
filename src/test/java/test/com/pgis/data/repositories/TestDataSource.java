@@ -21,7 +21,7 @@ public class TestDataSource {
 	}
 	private void init()
 	{
-		source = createSource("jdbc:postgresql","localhost","transportDB","postgres","14R199009postgres");
+		source = createSource("jdbc:postgresql","localhost","bus.test","postgres","14R199009postgres");
 		
 	}
 	public TestDataSource()

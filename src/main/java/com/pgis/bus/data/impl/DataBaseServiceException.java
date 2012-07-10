@@ -1,6 +1,6 @@
-package com.pgis.bus.data;
+package com.pgis.bus.data.impl;
 
-public class WebDataBaseServiceException extends Exception {
+public class DataBaseServiceException extends Exception {
 	public enum err_enum {
 		c_connect_to_db_err(1);
 
@@ -23,7 +23,7 @@ public class WebDataBaseServiceException extends Exception {
 		}
 	}
 
-	WebDataBaseServiceException(err_enum err) {
+	DataBaseServiceException(err_enum err) {
 		super(err.getMessage());
 
 	}
