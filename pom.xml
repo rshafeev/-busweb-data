@@ -42,8 +42,8 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-		
+
+
 		</plugins>
 
 	</build>
@@ -73,21 +73,13 @@
 			<version>9.1-901-1.jdbc4</version>
 			<scope>compile</scope>
 		</dependency>
-<<<<<<< HEAD
-		  <dependency>
-                        <groupId>org.apache.tomcat</groupId>
-                        <artifactId>tomcat-jdbc</artifactId>
-                        <version>7.0.27</version>
-                        <scope>compile</scope>
-                </dependency>
-=======
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-jdbc</artifactId>
 			<version>7.0.27</version>
 			<scope>compile</scope>
 		</dependency>
->>>>>>> 8c88d0322a644fc1ead0cfa8bf7495c5ba44e042
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
