@@ -5,6 +5,7 @@ package com.pgis.bus.data.geo;
  * 
  */
 public class Location {
+	public String address;
 	public double lat;
 	public double lon;
 	
