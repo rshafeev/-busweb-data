@@ -3,9 +3,26 @@ package com.pgis.bus.data.orm;
 import java.util.HashMap;
 
 public class City {
-	public int id;
+	public Integer id;
 	public double lat;
 	public double lon;
+	public int scale;
 	public int name_key;
-	public HashMap<String,String> name; //key - language id, value - name
+	public HashMap<String,StringValue> name; //key - language id, value - name
+	
+	public City Clone(){
+		City city = new City();
+		Object name = this.name.clone();
+		if(name instanceof HashMap<?, ?>){
+			city.name = (HashMap<String, StringValue>)name;
+		}
+		else
+			return null;
+		city.id = this.id;
+		city.lat = this.lat;
+		city.lon = this.lon;
+		city.scale = this.scale;
+		city.name_key = this.name_key;
+		return city;
+	}
 }

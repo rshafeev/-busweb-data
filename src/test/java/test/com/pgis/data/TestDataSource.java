@@ -1,4 +1,4 @@
-package test.com.pgis.data.repositories;
+package test.com.pgis.data;
 
 import javax.sql.DataSource;
 import org.postgresql.ds.PGPoolingDataSource;
@@ -17,11 +17,12 @@ public class TestDataSource {
 		source.setPassword(password);
 		source.setMaxConnections(100);
 		source.setServerName(serverName);
+		
 		return source;
 	}
 	private void init()
 	{
-		source = createSource("jdbc:postgresql","localhost","bus.test","postgres","14R199009postgres");
+		source = createSource("jdbc:postgresql","localhost","bus.test","postgres","postgres");
 		
 	}
 	public TestDataSource()

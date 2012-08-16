@@ -9,7 +9,7 @@ import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.impl.DataBaseService;
 import com.pgis.bus.data.orm.User;
 import com.pgis.bus.data.repositories.IUsersRepository;
-import com.pgis.bus.data.repositories.Repository;
+import com.pgis.bus.data.repositories.IRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.RepositoryException.err_enum;
 
