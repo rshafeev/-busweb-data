@@ -41,8 +41,30 @@ public class AdminDataBaseService extends DataBaseService
 			
 		return usersRepotitory.authenticate(userRole, userName, userPassword);
 	}
-   
+	@Override
+	public City updateCity(City updateCity) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return citiesRepotitory.updateCity(updateCity);
+	}
 
+	@Override
+	public City insertCity(City newCity) throws RepositoryException {
+		// TODO Auto-generated method stub
+		return citiesRepotitory.insertCity(newCity);
+	}
+
+	@Override
+	public City getCityByName(String lang_id, String value)
+			throws RepositoryException {
+		
+		return citiesRepotitory.getCityByName(lang_id,value);
+	}
+
+	@Override
+	public void deleteCity(int city_id) throws RepositoryException {
+		this.citiesRepotitory.deleteCity(city_id);
+		
+	}
   	
 	
 }
