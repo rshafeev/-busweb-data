@@ -2,7 +2,6 @@ package test.com.pgis.data.repositories;
 
 import static org.junit.Assert.*;
 
-import javax.sql.DataSource;
 
 import org.junit.After;
 import org.junit.Before;

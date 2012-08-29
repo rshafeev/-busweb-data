@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.DBConnectionFactory;
-import com.pgis.bus.data.orm.Language;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.repositories.IStringValuesRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
@@ -24,13 +23,12 @@ public class StringValuesRepository extends Repository implements
 			.getLogger(StringValuesRepository.class);
 
 	public StringValuesRepository() {
-		connection = null;
-		isClosed = true;
-		isCommited = true;
+		super();
 	}
 
 	public StringValuesRepository(Connection c, boolean isClosed,
 			boolean isCommited) {
+		super();
 		this.connection = c;
 		this.isClosed = isClosed;
 		this.isCommited = isCommited;
@@ -164,7 +162,7 @@ public class StringValuesRepository extends Repository implements
 			Iterator<StringValue> i = values.iterator();
 			while (i.hasNext()) {
 				StringValue value = i.next();
-				// Если значение новое, то  key_id может быть пустым 
+				// Если значение новое, то key_id может быть пустым
 				value.key_id = string_key;
 				repository.insertStringValue(value);
 			}

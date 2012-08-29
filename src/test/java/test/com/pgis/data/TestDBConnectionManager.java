@@ -16,8 +16,7 @@ public class TestDBConnectionManager implements IDBConnectionManager {
 	private javax.sql.DataSource source = null;
 	private final Logger log = LoggerFactory
 			.getLogger(TestDBConnectionManager.class);
-	private String dataSourceName = "";
-
+	
 	public TestDBConnectionManager(javax.sql.DataSource source2) {
 		this.source = source2;
 		
@@ -31,7 +30,6 @@ public class TestDBConnectionManager implements IDBConnectionManager {
 	 */
 	public TestDBConnectionManager(String dataSourceName) {
 		try {
-			this.dataSourceName = dataSourceName;
 			String prefix = "java:/comp/env";
 			Context ctx = new InitialContext();
 			Context envContext = (Context) ctx.lookup(prefix);

@@ -7,18 +7,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map.Entry;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.DBConnectionFactory;
-import com.pgis.bus.data.impl.DataBaseService;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.StringValue;
-import com.pgis.bus.data.orm.User;
 import com.pgis.bus.data.repositories.ICitiesRepository;
-import com.pgis.bus.data.repositories.IRepository;
 import com.pgis.bus.data.repositories.IStringValuesRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
 
@@ -27,12 +24,11 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			.getLogger(CitiesRepository.class);
 
 	public CitiesRepository() {
-		connection = null;
-		isClosed = true;
-		isCommited = true;
+		super();
 	}
 
 	public CitiesRepository(Connection c, boolean isClosed, boolean isCommited) {
+		super();
 		this.connection = c;
 		this.isClosed = isClosed;
 		this.isCommited = isCommited;
@@ -114,7 +110,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		Connection c = this.connection;
 		if (c == null)
 			c = Repository.getConnection();
-
+		
 		try {
 			String query = "SELECT bus.cities.id as id,bus.cities.name_key as name_key,bus.cities.lat as lat,";
 			query += "bus.cities.lon as lon,bus.cities.scale as scale,bus.string_values.lang_id as lang_id,";
@@ -162,11 +158,13 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setDouble(1, city.lat);
 			ps.setDouble(2, city.lon);
+			
 			ps.setInt(3, city.scale);
 			ResultSet key = ps.executeQuery();
 
 			if (key.next()) {
 				responceCity = city.Clone();
+				
 				responceCity.id = key.getInt("id");
 				responceCity.name_key = key.getInt("name_key");
 			}

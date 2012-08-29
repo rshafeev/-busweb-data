@@ -1,11 +1,9 @@
 package com.pgis.bus.data;
 
-import java.sql.SQLException;
-
-import javax.naming.NamingException;
 
 import com.pgis.bus.data.impl.DataBaseServiceException;
 import com.pgis.bus.data.orm.City;
+import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.User;
 import com.pgis.bus.data.repositories.RepositoryException;
 
@@ -22,8 +20,15 @@ public interface IAdminDataBaseService extends IDataBaseService {
 
 	City insertCity(City newCity) throws RepositoryException;
 
-	City getCityByName(String lang_id, String value)throws RepositoryException;
-
+	
 	void deleteCity(int city_id)throws RepositoryException;
 
+	
+	Station insertStation(Station station) throws RepositoryException;
+
+	Station updateStation(Station station) throws RepositoryException;
+
+	void deleteStation(int station_id) throws RepositoryException;
+	
+	
 }

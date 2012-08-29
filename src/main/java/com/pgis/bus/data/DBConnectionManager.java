@@ -14,11 +14,11 @@ public class DBConnectionManager implements IDBConnectionManager {
 	private javax.sql.DataSource source = null;
 	private final Logger log = LoggerFactory
 			.getLogger(DBConnectionFactory.class);
-	private String dataSourceName = "";
+	private String dataSourceName;
 
 	public DBConnectionManager(javax.sql.DataSource source2) {
 		this.source = source2;
-		
+
 	}
 
 	/**
@@ -95,4 +95,9 @@ public class DBConnectionManager implements IDBConnectionManager {
 			log.debug("destroy DB-pool: ok");
 		}
 	}
+
+	public String getDataSourceName() {
+		return dataSourceName;
+	}
+
 }
