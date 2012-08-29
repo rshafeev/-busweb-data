@@ -9,9 +9,7 @@ import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.impl.DataBaseService;
 import com.pgis.bus.data.orm.User;
 import com.pgis.bus.data.repositories.IUsersRepository;
-import com.pgis.bus.data.repositories.IRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
-import com.pgis.bus.data.repositories.RepositoryException.err_enum;
 
 import java.sql.*;
 
@@ -58,7 +56,6 @@ public class UsersRepository extends Repository implements IUsersRepository {
 			String userPassword) throws RepositoryException {
 		Connection conn = Repository.getConnection();
 		try {
-			Statement sql = conn.createStatement();
 			String query = "SELECT bus.authenticate(?,?,?)";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1,  userRole);

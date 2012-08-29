@@ -12,12 +12,7 @@ public class City {
 	
 	public City Clone(){
 		City city = new City();
-		Object name = this.name.clone();
-		if(name instanceof HashMap<?, ?>){
-			city.name = (HashMap<String, StringValue>)name;
-		}
-		else
-			return null;
+		city.name = new HashMap<String, StringValue>(this.name);
 		city.id = this.id;
 		city.lat = this.lat;
 		city.lon = this.lon;

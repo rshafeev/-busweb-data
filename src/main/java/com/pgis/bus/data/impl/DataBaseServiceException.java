@@ -1,6 +1,9 @@
 package com.pgis.bus.data.impl;
 
 public class DataBaseServiceException extends Exception {
+
+	private static final long serialVersionUID = -7920183294246554527L;
+
 	public enum err_enum {
 		c_connect_to_db_err(1);
 

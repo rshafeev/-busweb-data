@@ -4,7 +4,6 @@ package test.com.pgis.data.repositories;
 import static org.junit.Assert.*;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -20,8 +19,8 @@ import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.repositories.ICitiesRepository;
 import com.pgis.bus.data.repositories.impl.CitiesRepository;
+import com.pgis.bus.data.repositories.impl.Repository;
 
-//import com.pgis.bus.data.repositories.UsersRepository;
 public class CitiesRepositoryTest_local {
 
 	@Before
@@ -45,12 +44,11 @@ public class CitiesRepositoryTest_local {
 	}
 	
 	
-	@SuppressWarnings("deprecation")
 	@Test
 	public void updateCityTest() throws Exception{
-		Connection c = DBConnectionFactory.getConnection();
-		ICitiesRepository db = new CitiesRepository(c,false,true);
-		City city = db.getCityByName("Kharkov", "c_en");
+		Connection c = Repository.getConnection();
+		ICitiesRepository db = new CitiesRepository(c,false,false);
+		City city = db.getCityByName("c_en", "Kharkov");
 		assertNotNull(city);
 		
 		city.lat = 55;
@@ -61,7 +59,7 @@ public class CitiesRepositoryTest_local {
 		city.lon = 57;
 		db.updateCity(city);
 		
-		City checkCity = db.getCityByName("Kharkov", "c_en");
+		City checkCity = db.getCityByName("c_en", "Kharkov");
 		assertNotNull(checkCity);
 		
 			
@@ -96,15 +94,15 @@ public class CitiesRepositoryTest_local {
 		newCity.name.put(en_value.lang_id, en_value);
 		
 		// test
-		Connection c = DBConnectionFactory.getConnection();
-		ICitiesRepository db = new CitiesRepository(c,false,true);
+		Connection c = Repository.getConnection();
+		ICitiesRepository db = new CitiesRepository(c,false,false);
 		City responceCity = db.insertCity(newCity);
 		assertNotNull(responceCity);
 		assertTrue(responceCity.id>0);
 		assertTrue(responceCity.name_key>0);
 		assertTrue(responceCity.name.size()>0);
 		
-		c.commit();
+		c.rollback();
 		DBConnectionFactory.closeConnection(c);
 	    
 	}

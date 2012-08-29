@@ -1,10 +1,8 @@
 package com.pgis.bus.data.repositories;
 
-import java.util.ArrayList;
 import java.util.Collection;
-
 import com.pgis.bus.data.orm.City;
-import com.pgis.bus.data.orm.Language;
+
 
 public interface ICitiesRepository extends IRepository {
 
@@ -27,7 +25,7 @@ public interface ICitiesRepository extends IRepository {
 			throws RepositoryException;
 
 	int deleteCity(int city_id) throws RepositoryException;
-
+	
 	City updateCity(City updateCity) throws RepositoryException;
 
 }

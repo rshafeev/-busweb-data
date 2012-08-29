@@ -19,12 +19,11 @@ public class MainRepository extends Repository implements IMainRepository {
 	private static final Logger log = LoggerFactory.getLogger(MainRepository.class);
 
 	public MainRepository() {
-		connection = null;
-		isClosed = true;
-		isCommited = true;
+		super();
 	}
 
 	public MainRepository(Connection c, boolean isClosed, boolean isCommited) {
+		super();
 		this.connection = c;
 		this.isClosed = isClosed;
 		this.isCommited = isCommited;
