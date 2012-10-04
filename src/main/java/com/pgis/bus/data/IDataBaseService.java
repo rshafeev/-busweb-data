@@ -2,6 +2,7 @@ package com.pgis.bus.data;
 
 import java.util.Collection;
 
+import com.pgis.bus.data.models.FindWaysOptions;
 import com.pgis.bus.data.orm.*;
 import com.pgis.bus.data.repositories.RepositoryException;
 
@@ -20,5 +21,6 @@ public interface IDataBaseService {
 
 	City getCityByName(String lang_id, String value)throws RepositoryException;
 
+	Collection<WayElem> getShortestWays(FindWaysOptions options) throws RepositoryException;
 
 }
