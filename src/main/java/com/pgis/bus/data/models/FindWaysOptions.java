@@ -1,9 +1,8 @@
 package com.pgis.bus.data.models;
 
-import java.sql.Array;
 import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 
 import org.postgis.Point;
 
@@ -17,38 +16,40 @@ import com.pgis.bus.data.orm.type.DayEnum;
  * @author romario
  */
 public class FindWaysOptions {
+
 	private int city_id;
 	private Point p1;
 	private Point p2;
 	private DayEnum day_id;
-	private Time time_start;
-	private Collection<RouteTypeDiscount> usage_routeTypes;
-
-	public Collection<RouteTypeDiscount> getUsage_routeTypes() {
-		return usage_routeTypes;
-	}
-    public String[] getTransportTypeArray(){
-    	ArrayList<String> arr = new ArrayList<String>();
-    	for(RouteTypeDiscount r : usage_routeTypes){
-    		arr.add(r.getRoute_type_id());
-    	}
-    	return arr.toArray(new String[arr.size()]);
-    }
-    public Double[] getDiscountArray(){
-    	ArrayList<Double> arr = new ArrayList<Double>();
-    	for(RouteTypeDiscount r : usage_routeTypes){
-    		arr.add(r.getDiscount());
-    	}
-    	return arr.toArray(new Double[arr.size()]);
-    }
-	public void setUsage_routeTypes(
-			Collection<RouteTypeDiscount> usage_routeTypes) {
-		this.usage_routeTypes = usage_routeTypes;
-	}
-
+	private int time_start_hours, time_start_minutes;
+	private RouteTypeDiscount usage_routeTypes[];
 	private AlgStrategyEnum alg_strategy;
 	private String lang_id;
 	private double maxDistance;
+
+	public RouteTypeDiscount[] getUsage_routeTypes() {
+		return usage_routeTypes;
+	}
+
+	public String[] getTransportTypeArray() {
+		ArrayList<String> arr = new ArrayList<String>();
+		for (RouteTypeDiscount r : usage_routeTypes) {
+			arr.add(r.getRoute_type_id());
+		}
+		return arr.toArray(new String[arr.size()]);
+	}
+
+	public Double[] getDiscountArray() {
+		ArrayList<Double> arr = new ArrayList<Double>();
+		for (RouteTypeDiscount r : usage_routeTypes) {
+			arr.add(r.getDiscount());
+		}
+		return arr.toArray(new Double[arr.size()]);
+	}
+
+	public void setUsage_routeTypes(RouteTypeDiscount[] usage_routeTypes) {
+		this.usage_routeTypes = usage_routeTypes;
+	}
 
 	public double getMaxDistance() {
 		return maxDistance;
@@ -92,11 +93,14 @@ public class FindWaysOptions {
 	}
 
 	public Time getTime_start() {
-		return time_start;
+		int milsecs = (this.time_start_hours * 60 * 60 + this.time_start_minutes * 60) * 1000;
+		return new Time(milsecs);
 	}
 
-	public void setTime_start(Time time_start) {
-		this.time_start = time_start;
+	public void setTime_start(int hours, int minutes) {
+		this.time_start_hours = hours;
+		this.time_start_minutes = minutes;
+
 	}
 
 	public AlgStrategyEnum getAlg_strategy() {
@@ -115,4 +119,14 @@ public class FindWaysOptions {
 		this.lang_id = lang_id;
 	}
 
+	@Override
+	public String toString() {
+		return "FindWaysOptions [city_id=" + city_id + ", p1=" + p1 + ", p2="
+				+ p2 + ", day_id=" + day_id + ", time_start_hours="
+				+ time_start_hours + ", time_start_minutes="
+				+ time_start_minutes + ", usage_routeTypes="
+				+ Arrays.toString(usage_routeTypes) + ", alg_strategy="
+				+ alg_strategy + ", lang_id=" + lang_id + ", maxDistance="
+				+ maxDistance + "]";
+	}
 }

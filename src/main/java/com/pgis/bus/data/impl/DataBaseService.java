@@ -3,22 +3,25 @@ package com.pgis.bus.data.impl;
 import java.sql.Connection;
 import java.util.Collection;
 
-
 import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.IDataBaseService;
 import com.pgis.bus.data.models.FindWaysOptions;
+import com.pgis.bus.data.models.RouteGeoData;
+import com.pgis.bus.data.models.RoutePart;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.Language;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.WayElem;
 import com.pgis.bus.data.repositories.ICitiesRepository;
 import com.pgis.bus.data.repositories.IMainRepository;
+import com.pgis.bus.data.repositories.IRoutesRepository;
 import com.pgis.bus.data.repositories.IStationsRepository;
 import com.pgis.bus.data.repositories.IUsersRepository;
 import com.pgis.bus.data.repositories.IWaysRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.impl.CitiesRepository;
 import com.pgis.bus.data.repositories.impl.MainRepository;
+import com.pgis.bus.data.repositories.impl.RoutesRepository;
 import com.pgis.bus.data.repositories.impl.StationsRepository;
 import com.pgis.bus.data.repositories.impl.UsersRepository;
 import com.pgis.bus.data.repositories.impl.WaysRepository;
@@ -29,13 +32,15 @@ public class DataBaseService implements IDataBaseService {
 	protected IMainRepository mainRepository;
 	protected IStationsRepository stationsRepository;
 	protected IWaysRepository waysRepository;
-	
+	protected IRoutesRepository routesRepository;
+
 	private void init() {
 		usersRepotitory = new UsersRepository();
 		citiesRepotitory = new CitiesRepository();
 		mainRepository = new MainRepository();
 		stationsRepository = new StationsRepository();
 		waysRepository = new WaysRepository();
+		routesRepository = new RoutesRepository();
 	}
 
 	protected Connection getConnection() throws DataBaseServiceException {
@@ -51,18 +56,17 @@ public class DataBaseService implements IDataBaseService {
 		init();
 	}
 
-
 	@Override
 	public Collection<City> getAllCities() throws RepositoryException {
 		return citiesRepotitory.getAllCities();
 	}
-	
+
 	@Override
 	public City getCityByName(String lang_id, String value)
 			throws RepositoryException {
 		return citiesRepotitory.getCityByName(lang_id, value);
 	}
-	
+
 	@Override
 	public Collection<Language> getAllLanguages() throws RepositoryException {
 		return mainRepository.getAllLanguages();
@@ -81,7 +85,8 @@ public class DataBaseService implements IDataBaseService {
 	@Override
 	public Collection<Station> getStationsByCityAndTransport(int city_id,
 			String transportType) throws RepositoryException {
-		return stationsRepository.getStationsByCityAndTransport(city_id, transportType);
+		return stationsRepository.getStationsByCityAndTransport(city_id,
+				transportType);
 	}
 
 	@Override
@@ -90,9 +95,10 @@ public class DataBaseService implements IDataBaseService {
 		return waysRepository.getShortestWays(options);
 	}
 
-
-
-
-
+	@Override
+	public Collection<RouteGeoData> getGeoDataByRoutePart(RoutePart routePart, String lang_id)
+			throws RepositoryException {
+		return routesRepository.getGeoDataByRoutePart(routePart,lang_id);
+	}
 
 }

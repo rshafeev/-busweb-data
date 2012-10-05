@@ -8,4 +8,5 @@ import com.pgis.bus.data.orm.WayElem;
 public interface IWaysRepository {
   
 	Collection<WayElem> getShortestWays(FindWaysOptions options) throws RepositoryException;
+	
 }

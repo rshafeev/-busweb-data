@@ -2,6 +2,7 @@ package com.pgis.bus.data.models;
 
 public class RouteTypeDiscount {
 	private String route_type_id;
+	private double discount;
 
 	public RouteTypeDiscount() {
 		super();
@@ -13,8 +14,6 @@ public class RouteTypeDiscount {
 		this.route_type_id = route_type_id;
 		this.discount = discount;
 	}
-
-	private double discount;
 
 	public String getRoute_type_id() {
 		return route_type_id;
