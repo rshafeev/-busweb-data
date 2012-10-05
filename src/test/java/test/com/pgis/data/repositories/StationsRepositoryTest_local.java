@@ -108,14 +108,15 @@ public class StationsRepositoryTest_local {
 		// get city
 		Connection c = Repository.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
-		City city = db.getCityByName("c_en", "Kharkov");
+		City city = db.getCityByName("c_ru", "Харьков");
 		assertNotNull(city);
 
 		// get station
 		IStationsRepository stationsRepository = new StationsRepository(c,
 				false, false);
 		Collection<Station> stations = stationsRepository
-				.getStationsByCityAndTransport(city.id, "c_bus");
+				.getStationsByCityAndTransport(city.id, "c_metro");
+		
 		Station station = stations.iterator().next();
 		
 		// update station

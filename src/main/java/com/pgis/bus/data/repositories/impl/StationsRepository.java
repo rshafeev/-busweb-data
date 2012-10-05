@@ -48,7 +48,8 @@ public class StationsRepository extends Repository implements
 		Collection<Station> stations = null;
 
 		try {
-			String query = "SELECT * FROM bus.stations JOIN bus.station_transports "
+			String query = "SELECT id,city_id,geometry(location) as location,name_key"
+		            +" FROM bus.stations JOIN bus.station_transports "
 					+ "ON bus.stations.id = bus.station_transports.station_id "
 					+ "WHERE city_id = ? AND transport_type_id=bus.transport_type_enum(?);";
 
