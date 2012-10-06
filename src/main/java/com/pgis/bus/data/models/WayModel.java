@@ -14,7 +14,12 @@ import com.pgis.bus.data.orm.WayElem;
 
 public class WayModel {
 	ArrayList<RouteModel> routes;
-
+	public String  getFullTime(){
+		String out="";
+		
+		
+		return out;
+	}
 	public WayModel(List<WayElem> elems) {
 		if (elems.size() == 0)
 			return;
