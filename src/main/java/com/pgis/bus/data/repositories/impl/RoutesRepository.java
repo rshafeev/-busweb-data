@@ -70,9 +70,9 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 							.getObject("station_location");
 
 				PGgeometry relationGeom = null;
-				if (key.getObject("relation_geom") != null)
+				if (key.getObject("relation_geom") != null) {
 					relationGeom = (PGgeometry) key.getObject("relation_geom");
-
+				}
 				RouteGeoData data = new RouteGeoData();
 				data.setIndex(index);
 				if (relationGeom != null)
