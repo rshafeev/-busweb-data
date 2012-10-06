@@ -2,7 +2,6 @@ package com.pgis.bus.data.models.route;
 
 import org.postgresql.util.PGInterval;
 
-import com.pgis.bus.data.orm.WayElem;
 
 public class TransportRouteModel extends RouteModel {
 	private int directRouteID;
@@ -92,10 +91,7 @@ public class TransportRouteModel extends RouteModel {
 	public void setStationFinish(String stationFinish) {
 		this.stationFinish = stationFinish;
 	}
-	
-	public String getRouteType() {
-		return routeType;
-	}
+
 
 	public void setRouteType(String routeType) {
 		this.routeType = routeType;

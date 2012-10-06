@@ -3,6 +3,8 @@ package com.pgis.bus.data;
 import java.util.Collection;
 
 import com.pgis.bus.data.models.FindWaysOptions;
+import com.pgis.bus.data.models.RouteGeoData;
+import com.pgis.bus.data.models.RoutePart;
 import com.pgis.bus.data.orm.*;
 import com.pgis.bus.data.repositories.RepositoryException;
 
@@ -19,8 +21,11 @@ public interface IDataBaseService {
 	Collection<Station> getStationsByCityAndTransport(int city_id,
 			String transportType) throws RepositoryException;
 
-	City getCityByName(String lang_id, String value)throws RepositoryException;
+	City getCityByName(String lang_id, String value) throws RepositoryException;
 
-	Collection<WayElem> getShortestWays(FindWaysOptions options) throws RepositoryException;
+	Collection<WayElem> getShortestWays(FindWaysOptions options)
+			throws RepositoryException;
 
+	Collection<RouteGeoData> getGeoDataByRoutePart(RoutePart routePart,
+			String lang_id) throws RepositoryException;
 }

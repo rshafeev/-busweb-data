@@ -14,7 +14,12 @@ import com.pgis.bus.data.orm.WayElem;
 
 public class WayModel {
 	ArrayList<RouteModel> routes;
-
+	public String  getFullTime(){
+		String out="";
+		
+		
+		return out;
+	}
 	public WayModel(List<WayElem> elems) {
 		if (elems.size() == 0)
 			return;
@@ -60,6 +65,51 @@ public class WayModel {
 		finishFootRoute.setDistance(finishElem.distance);
 		finishFootRoute.setMoveTime(finishElem.move_time);
 		routes.add(finishFootRoute);
+	}
+
+	public ArrayList<RouteModel> getRoutes() {
+		return routes;
+	}
+
+	public void setRoutes(ArrayList<RouteModel> routes) {
+		this.routes = routes;
+	}
+
+	public RoutePart[] createRoutePartArr() {
+		ArrayList<RoutePart> parts = new ArrayList<RoutePart>();
+		Iterator<RouteModel> i = routes.iterator();
+		while (i.hasNext()) {
+			RouteModel route = i.next();
+			if (route instanceof TransportRouteModel) {
+				TransportRouteModel transportRooute = (TransportRouteModel) route;
+				RoutePart part = new RoutePart();
+				part.setDirectRouteID(transportRooute.getDirectRouteID());
+				part.setIndexStart(transportRooute.getIndexA());
+				part.setIndexFinish(transportRooute.getIndexB());
+				parts.add(part);
+			}
+		}
+		return parts.toArray(new RoutePart[parts.size()]);
+
+	}
+
+	public String createRoutePartArrStr() {
+		RoutePart[] parts = createRoutePartArr();
+		String out = "";
+		out += "[";
+		for (int i = 0; i < parts.length; i++) {
+			out += "[";
+			out += Integer.toString(parts[i].getDirectRouteID()) + ",";
+			out += Integer.toString(parts[i].getIndexStart()) + ",";
+			out += Integer.toString(parts[i].getIndexFinish());
+			out += "]";
+			if (i != parts.length - 1) {
+				out += ",";
+			}
+		}
+		out += "]";
+		return out;
+
 	}
 
 	public String toString() {

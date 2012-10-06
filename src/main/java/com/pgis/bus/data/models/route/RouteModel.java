@@ -17,6 +17,10 @@ public abstract class RouteModel {
 
 	
 
+	public String getRouteType() {
+		return routeType;
+	}
+
 	/**
 	 * Расстояние
 	 */
