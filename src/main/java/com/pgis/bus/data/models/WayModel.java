@@ -20,6 +20,20 @@ public class WayModel {
 		
 		return out;
 	}
+	public double getCost(){
+		double cost=0;
+		
+		for (int i = 0; i < routes.size(); i++) {
+			RouteModel routeModel = routes.get(i);
+			if (routeModel instanceof TransportRouteModel) {
+				TransportRouteModel r = (TransportRouteModel) routeModel;
+				cost += r.getCost();
+			}
+		}
+        cost = (((int)cost*100))/100.0;		
+		return cost;
+	}
+	
 	public WayModel(List<WayElem> elems) {
 		if (elems.size() == 0)
 			return;
