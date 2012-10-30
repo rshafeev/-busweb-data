@@ -7,5 +7,6 @@ public enum DayEnum {
     c_Wednesday,
     c_Thursday,
     c_Friday,
-    c_Saturday
+    c_Saturday,
+    c_all
 }

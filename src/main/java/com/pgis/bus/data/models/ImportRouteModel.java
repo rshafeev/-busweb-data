@@ -25,17 +25,21 @@ public class ImportRouteModel {
 	/**
 	 * in secs
 	 */
-	private int interval;
+	private int intervalMin;
+	private int intervalMax;
+	
+
+
 
 	private double cost;
 
 	private StationModel directStations[];
 
-	private LineString directRelations[];
+	private GsonLineString directRelations[];
 
 	private StationModel reverseStations[];
 
-	private LineString reverseRelations[];
+	private GsonLineString reverseRelations[];
 
 	public String getNumber() {
 		return number;
@@ -61,13 +65,7 @@ public class ImportRouteModel {
 		this.timeFinish = timeFinish;
 	}
 
-	public int getInterval() {
-		return interval;
-	}
 
-	public void setInterval(int interval) {
-		this.interval = interval;
-	}
 
 	public double getCost() {
 		return cost;
@@ -87,11 +85,11 @@ public class ImportRouteModel {
 
 
 
-	public LineString[] getDirectRelations() {
+	public GsonLineString[] getDirectRelations() {
 		return directRelations;
 	}
 
-	public void setDirectRelations(LineString[] directRelations) {
+	public void setDirectRelations(GsonLineString[] directRelations) {
 		this.directRelations = directRelations;
 	}
 
@@ -103,11 +101,11 @@ public class ImportRouteModel {
 		this.reverseStations = reverseStations;
 	}
 
-	public LineString[] getReverseRelations() {
+	public GsonLineString[] getReverseRelations() {
 		return reverseRelations;
 	}
 
-	public void setReverseRelations(LineString[] reverseRelations) {
+	public void setReverseRelations(GsonLineString[] reverseRelations) {
 		this.reverseRelations = reverseRelations;
 	}
 
@@ -135,5 +133,19 @@ public class ImportRouteModel {
 		this.routeType = routeType;
 
 	}
+	public int getIntervalMin() {
+		return intervalMin;
+	}
 
+	public void setIntervalMin(int intervalMin) {
+		this.intervalMin = intervalMin;
+	}
+
+	public int getIntervalMax() {
+		return intervalMax;
+	}
+
+	public void setIntervalMax(int intervalMax) {
+		this.intervalMax = intervalMax;
+	}
 }

@@ -70,9 +70,9 @@ public class Station implements Cloneable {
 	}
 
 	public Station clone() {
-		Station obj;
+		
 		try {
-			obj = (Station) super.clone();
+			Station obj = (Station) super.clone();
 			obj.location = new Point(this.location.x, this.location.y);
 			obj.name_key = this.name_key;
 

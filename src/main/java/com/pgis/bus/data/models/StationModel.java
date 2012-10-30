@@ -1,6 +1,5 @@
 package com.pgis.bus.data.models;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -13,7 +12,7 @@ import com.pgis.bus.data.orm.StringValue;
 public class StationModel {
 	int id;
 	int city_id;
-	Point location;
+	GsonPoint location;
 	int name_key;
 	StringValue[] names;
 	StationTransport[] transports;
@@ -26,8 +25,7 @@ public class StationModel {
 		this.id = station.getId().intValue();
 		this.city_id = station.getCity_id();
 		this.name_key = station.getName_key();
-		this.location = new Point(station.getLocation().x,station.getLocation().y);
-		this.location.setSrid(station.getLocation().getSrid());
+		this.location = new GsonPoint(station.getLocation());
 		this.names = station.getName().values()
 				.toArray(new StringValue[station.getName().size()]);
 		this.transports = station.getTransports().toArray(
@@ -38,7 +36,7 @@ public class StationModel {
 		Station s = new Station();
 		s.setCity_id(this.city_id);
 		s.setId(this.id);
-		s.setLocation(this.location);
+		s.setLocation(new Point(this.location.lat,this.location.lon));
 		s.setName_key(this.name_key);
 		s.setTransports(Arrays.asList(this.transports));
 
@@ -68,11 +66,11 @@ public class StationModel {
 		this.city_id = city_id;
 	}
 
-	public Point getLocation() {
+	public GsonPoint getLocation() {
 		return location;
 	}
 
-	public void setLocation(Point location) {
+	public void setLocation(GsonPoint location) {
 		this.location = location;
 	}
 

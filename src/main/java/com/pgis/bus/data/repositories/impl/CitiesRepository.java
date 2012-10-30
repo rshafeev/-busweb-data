@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -54,6 +55,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 				city.lon = key.getDouble("lon");
 				city.name_key = key.getInt("name_key");
 				city.scale = key.getInt("scale");
+				city.isShow = key.getBoolean("is_show");
 				city.name = stringValuesRepository
 						.getStringValuesToHashMap(city.name_key);
 				cities.add(city);
@@ -89,6 +91,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 				city.lon = key.getDouble("lon");
 				city.name_key = key.getInt("name_key");
 				city.scale = key.getInt("scale");
+				city.isShow = key.getBoolean("is_show");
 				city.name = stringValuesRepository
 						.getStringValuesToHashMap(city.name_key);
 				return city;
@@ -110,9 +113,9 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		Connection c = this.connection;
 		if (c == null)
 			c = Repository.getConnection();
-		
+			
 		try {
-			String query = "SELECT bus.cities.id as id,bus.cities.name_key as name_key,bus.cities.lat as lat,";
+			String query = "SELECT bus.cities.id as id,bus.cities.name_key as name_key,bus.cities.lat as lat, bus.cities.is_show as is_show, ";
 			query += "bus.cities.lon as lon,bus.cities.scale as scale,bus.string_values.lang_id as lang_id,";
 			query += "bus.string_values.value as value FROM bus.cities JOIN bus.string_keys ON ";
 			query += "bus.cities.name_key = bus.string_keys.id JOIN bus.string_values ON ";
@@ -131,6 +134,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 				city.lon = key.getDouble("lon");
 				city.name_key = key.getInt("name_key");
 				city.scale = key.getInt("scale");
+				city.isShow = key.getBoolean("is_show");
 				city.name = stringValuesRepository
 						.getStringValuesToHashMap(city.name_key);
 				return city;
@@ -154,16 +158,16 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			c = Repository.getConnection();
 		try {
 			c.setAutoCommit(false);
-			String query = "INSERT INTO bus.cities (lat,lon,scale) VALUES(?,?,?) RETURNING  id,name_key";
+			String query = "INSERT INTO bus.cities (lat,lon,scale,is_show) VALUES(?,?,?,pg_catalog.bit(?)) RETURNING  id,name_key";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setDouble(1, city.lat);
 			ps.setDouble(2, city.lon);
-			
 			ps.setInt(3, city.scale);
+			ps.setString(4, Integer.toString(city.isShow? 1 : 0)); 
 			ResultSet key = ps.executeQuery();
 
 			if (key.next()) {
-				responceCity = city.Clone();
+				responceCity = city.clone();
 				
 				responceCity.id = key.getInt("id");
 				responceCity.name_key = key.getInt("name_key");
@@ -259,20 +263,20 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		try {
 
 			c.setAutoCommit(false);
-			String query = "UPDATE bus.cities SET lat=?, lon=? , scale=?, name_key=? where id=?";
+			String query = "UPDATE bus.cities SET lat=?, lon=? , scale=?, name_key=?,is_show=pg_catalog.bit(?) where id=?";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setDouble(1, updateCity.lat);
 			ps.setDouble(2, updateCity.lon);
 			ps.setInt(3, updateCity.scale);
 			ps.setInt(4, updateCity.name_key);
-			ps.setInt(5, updateCity.id);
-
+			ps.setString(5, Integer.toString(updateCity.isShow? 1 : 0)); 
+			ps.setInt(6, updateCity.id);
 			ps.execute();
 			IStringValuesRepository stringValuesRepository = new StringValuesRepository(
 					c, false, false);
 			stringValuesRepository.updateStringValues(updateCity.name_key,
 					updateCity.name.values());
-			City responceCity = updateCity.Clone();
+			City responceCity = updateCity.clone();
 			responceCity.name = stringValuesRepository
 					.getStringValuesToHashMap(updateCity.name_key);
 			if (this.isCommited)
