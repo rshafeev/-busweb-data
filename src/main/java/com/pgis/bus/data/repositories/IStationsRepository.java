@@ -26,4 +26,7 @@ public interface IStationsRepository extends IRepository {
 
 	void insertStationTransport(int station_id, StationTransport transport)
 			throws RepositoryException;
+
+	Station getStation(int station_id)
+			throws RepositoryException;
 }

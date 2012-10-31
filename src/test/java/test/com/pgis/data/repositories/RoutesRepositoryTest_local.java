@@ -144,7 +144,7 @@ public class RoutesRepositoryTest_local {
 
 		// set options
 		LoadRouteRelationOptions loadRouteRelationOptions = new LoadRouteRelationOptions();
-		loadRouteRelationOptions.setLoadStationsData(false);
+		loadRouteRelationOptions.setLoadStationsData(true);
 		
 		LoadDirectRouteOptions loadDirectRouteOptions = new LoadDirectRouteOptions();
 		loadDirectRouteOptions.setLoadScheduleData(true);

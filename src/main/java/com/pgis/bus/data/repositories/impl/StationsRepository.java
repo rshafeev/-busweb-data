@@ -49,7 +49,7 @@ public class StationsRepository extends Repository implements
 
 		try {
 			String query = "SELECT id,city_id,geometry(location) as location,name_key"
-		            +" FROM bus.stations JOIN bus.station_transports "
+					+ " FROM bus.stations JOIN bus.station_transports "
 					+ "ON bus.stations.id = bus.station_transports.station_id "
 					+ "WHERE city_id = ? AND transport_type_id=bus.transport_type_enum(?);";
 
@@ -380,6 +380,60 @@ public class StationsRepository extends Repository implements
 			if (this.isClosed)
 				DBConnectionFactory.closeConnection(c);
 		}
+	}
+
+	@Override
+	public Station getStation(int station_id) throws RepositoryException {
+		Connection c = this.connection;
+		if (c == null)
+			c = Repository.getConnection();
+		Station station = null;
+
+		try {
+			String query = "SELECT id,city_id,geometry(location) as location,name_key"
+					+ " FROM bus.stations WHERE id = ?;";
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setInt(1, station_id);
+			ResultSet key = ps.executeQuery();
+
+			if (key.next()) {
+				station = new Station();
+				station.setCity_id(key.getInt("city_id"));
+				int id = key.getInt("id");
+				station.setId(id);
+
+				// get location
+				PGgeometry g_location = (PGgeometry) key.getObject("location");
+				if (!(g_location.getGeometry() instanceof Point)) {
+					throw new SQLException(
+							"can not convert geo_location to org.pgis.Point");
+				}
+				station.setLocation((Point) g_location.getGeometry());
+
+				// get names
+				IStringValuesRepository stringValuesRepository = new StringValuesRepository();
+				int name_key = key.getInt("name_key");
+				HashMap<String, StringValue> name = stringValuesRepository
+						.getStringValuesToHashMap(name_key);
+				station.setName(name);
+				station.setName_key(name_key);
+
+				// get transport_types
+				Collection<StationTransport> transports = this
+						.getTransportTypesOfStation(station.getId());
+				station.setTransports(transports);
+
+			}
+		} catch (SQLException e) {
+			log.error("can not read database", e);
+			throw new RepositoryException(
+					RepositoryException.err_enum.c_sql_err);
+		} finally {
+			if (isClosed)
+				DBConnectionFactory.closeConnection(c);
+		}
+		return station;
+
 	}
 
 }

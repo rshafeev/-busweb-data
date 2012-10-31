@@ -30,10 +30,12 @@ import com.pgis.bus.data.orm.RouteRelation;
 import com.pgis.bus.data.orm.Schedule;
 import com.pgis.bus.data.orm.ScheduleGroup;
 import com.pgis.bus.data.orm.ScheduleGroupDay;
+import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.orm.Timetable;
 import com.pgis.bus.data.orm.type.DayEnum;
 import com.pgis.bus.data.repositories.IRoutesRepository;
+import com.pgis.bus.data.repositories.IStationsRepository;
 import com.pgis.bus.data.repositories.IStringValuesRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
 
@@ -160,8 +162,73 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 	private Collection<RouteRelation> getRouteRelations(int direct_route_id,
 			LoadRouteRelationOptions loadRouteRelationOptions)
 			throws RepositoryException {
-		if (loadRouteRelationOptions.isLoadStationsData())
-			return getRouteRelationsWithStationData(direct_route_id);
+		
+		Connection c = this.connection;
+		if (c == null)
+			c = Repository.getConnection();
+		Collection<RouteRelation> relations = null;
+
+		try {
+
+			String query = "SELECT id,station_a_id,station_b_id,position_index,distance,"
+					+ "ev_time, geometry(geom) as geom FROM "
+					+ "bus.route_relations WHERE direct_route_id = ? ;";
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setInt(1, direct_route_id);
+			ResultSet key = ps.executeQuery();
+			relations = new ArrayList<RouteRelation>();
+			while (key.next()) {
+				int id = key.getInt("id");
+				Integer station_a_id = key.getInt("station_a_id");
+				Integer station_b_id = key.getInt("station_b_id");
+				int position_index = key.getInt("position_index");
+				double distance = key.getDouble("distance");
+				PGInterval ev_time = (PGInterval) key.getObject("ev_time");
+
+				PGgeometry geom = null;
+				if (key.getObject("geom") != null) {
+					geom = (PGgeometry) key.getObject("geom");
+				}
+
+				RouteRelation relation = new RouteRelation();
+				relation.setId(id);
+				relation.setDirect_route_id(direct_route_id);
+				relation.setStation_a_id(station_a_id);
+				relation.setStation_b_id(station_b_id);
+				relation.setPosition_index(position_index);
+				relation.setDistance(distance);
+				relation.setEv_time(ev_time);
+				if (geom != null)
+					relation.setGeom(new GsonLineString(geom.getGeometry()));
+
+				relations.add(relation);
+			}
+			
+			if (loadRouteRelationOptions.isLoadStationsData()){
+				IStationsRepository stationsRepository = new StationsRepository();
+				for(RouteRelation relation : relations){
+					int station_id = relation.getStation_b_id();
+					Station stationB = stationsRepository.getStation(station_id);
+					relation.setStationB(stationB);
+				}
+			}
+				//return getRouteRelationsWithStationData(direct_route_id);
+		} catch (Exception e) {
+			log.error("db exception: ", e);
+			throw new RepositoryException(
+					RepositoryException.err_enum.c_sql_err);
+		} finally {
+			if (isClosed)
+				DBConnectionFactory.closeConnection(c);
+		}
+
+		return relations;
+	}
+
+	@Override
+	public Collection<RouteRelation> getRouteRelationsWithStationData(
+			int direct_route_id) throws RepositoryException {
+
 		Connection c = this.connection;
 		if (c == null)
 			c = Repository.getConnection();
@@ -212,13 +279,6 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		}
 
 		return relations;
-	}
-
-	@Override
-	public Collection<RouteRelation> getRouteRelationsWithStationData(
-			int direct_route_id) throws RepositoryException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
