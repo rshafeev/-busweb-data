@@ -2,6 +2,8 @@ package com.pgis.bus.data.models;
 
 import org.postgis.LineString;
 
+import com.pgis.bus.data.orm.Station;
+
 public class ImportRouteModel {
 
 	private int cityID;
@@ -33,11 +35,11 @@ public class ImportRouteModel {
 
 	private double cost;
 
-	private StationModel directStations[];
+	private Station directStations[];
 
 	private GsonLineString directRelations[];
 
-	private StationModel reverseStations[];
+	private Station reverseStations[];
 
 	private GsonLineString reverseRelations[];
 
@@ -75,11 +77,11 @@ public class ImportRouteModel {
 		this.cost = cost;
 	}
 
-	public StationModel[] getDirectStations() {
+	public Station[] getDirectStations() {
 		return directStations;
 	}
 
-	public void setDirectStations(StationModel[] directStations) {
+	public void setDirectStations(Station[] directStations) {
 		this.directStations = directStations;
 	}
 
@@ -93,11 +95,11 @@ public class ImportRouteModel {
 		this.directRelations = directRelations;
 	}
 
-	public StationModel[] getReverseStations() {
+	public Station[] getReverseStations() {
 		return reverseStations;
 	}
 
-	public void setReverseStations(StationModel[] reverseStations) {
+	public void setReverseStations(Station[] reverseStations) {
 		this.reverseStations = reverseStations;
 	}
 

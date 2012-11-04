@@ -2,6 +2,7 @@ package test.com.pgis.data.repositories;
 
 import static org.junit.Assert.*;
 
+import java.sql.Connection;
 import java.util.Collection;
 import java.util.Iterator;
 import org.junit.After;
@@ -20,6 +21,7 @@ import com.pgis.bus.data.orm.Route;
 import com.pgis.bus.data.repositories.ICitiesRepository;
 import com.pgis.bus.data.repositories.IRoutesRepository;
 import com.pgis.bus.data.repositories.impl.CitiesRepository;
+import com.pgis.bus.data.repositories.impl.Repository;
 import com.pgis.bus.data.repositories.impl.RoutesRepository;
 
 public class RoutesRepositoryTest_local {
@@ -79,7 +81,7 @@ public class RoutesRepositoryTest_local {
 		}
 
 	}
-	
+
 	@Test
 	public void getRoutesWithDirects_Test() throws Exception {
 
@@ -92,21 +94,21 @@ public class RoutesRepositoryTest_local {
 		LoadDirectRouteOptions loadDirectRouteOptions = new LoadDirectRouteOptions();
 		loadDirectRouteOptions.setLoadScheduleData(false);
 		loadDirectRouteOptions.setLoadRouteRelationOptions(null);
-		
+
 		LoadRouteOptions opts = new LoadRouteOptions();
 		opts.setLoadRouteNamesData(true);
 		opts.setDirectRouteOptions(loadDirectRouteOptions);
 
 		// get routes
 		IRoutesRepository repository = new RoutesRepository();
-		Collection<Route> routes = repository.getRoutes("c_route_metro", city.id,
-				opts);
+		Collection<Route> routes = repository.getRoutes("c_route_metro",
+				city.id, opts);
 		for (Route route : routes) {
 			System.out.println(route.toString());
 		}
 
 	}
-	
+
 	@Test
 	public void getRoutesWithSchedule_Test() throws Exception {
 		System.out.println("getRoutesWithSchedule_Test()...");
@@ -119,21 +121,21 @@ public class RoutesRepositoryTest_local {
 		LoadDirectRouteOptions loadDirectRouteOptions = new LoadDirectRouteOptions();
 		loadDirectRouteOptions.setLoadScheduleData(true);
 		loadDirectRouteOptions.setLoadRouteRelationOptions(null);
-		
+
 		LoadRouteOptions opts = new LoadRouteOptions();
 		opts.setLoadRouteNamesData(true);
 		opts.setDirectRouteOptions(loadDirectRouteOptions);
 
 		// get routes
 		IRoutesRepository repository = new RoutesRepository();
-		Collection<Route> routes = repository.getRoutes("c_route_metro", city.id,
-				opts);
+		Collection<Route> routes = repository.getRoutes("c_route_metro",
+				city.id, opts);
 		for (Route route : routes) {
 			System.out.println(route.toString());
 		}
 
 	}
-	
+
 	@Test
 	public void getRoutesWithAllData_Test() throws Exception {
 		System.out.println("getRoutesWithSchedule_Test()...");
@@ -145,22 +147,68 @@ public class RoutesRepositoryTest_local {
 		// set options
 		LoadRouteRelationOptions loadRouteRelationOptions = new LoadRouteRelationOptions();
 		loadRouteRelationOptions.setLoadStationsData(true);
-		
+
 		LoadDirectRouteOptions loadDirectRouteOptions = new LoadDirectRouteOptions();
 		loadDirectRouteOptions.setLoadScheduleData(true);
-		loadDirectRouteOptions.setLoadRouteRelationOptions(loadRouteRelationOptions);
-		
+		loadDirectRouteOptions
+				.setLoadRouteRelationOptions(loadRouteRelationOptions);
+
 		LoadRouteOptions opts = new LoadRouteOptions();
 		opts.setLoadRouteNamesData(true);
 		opts.setDirectRouteOptions(loadDirectRouteOptions);
 
 		// get routes
 		IRoutesRepository repository = new RoutesRepository();
-		Collection<Route> routes = repository.getRoutes("c_route_metro", city.id,
-				opts);
+		Collection<Route> routes = repository.getRoutes("c_route_metro",
+				city.id, opts);
 		for (Route route : routes) {
 			System.out.println(route.toString());
 		}
+
+	}
+
+	@Test
+	public void insertRoute_Test() throws Exception {
+		System.out.println("insertRoute_Test()...");
+		// set input data
+		Connection c = Repository.getConnection();
+		ICitiesRepository db = new CitiesRepository(c, false, false);
+		IRoutesRepository repository = new RoutesRepository(c, false, false);
+
+		City city = db.getCityByName("c_en", "Kharkov");
+		assertNotNull(city);
+
+		// set options
+		LoadRouteRelationOptions loadRouteRelationOptions = new LoadRouteRelationOptions();
+		loadRouteRelationOptions.setLoadStationsData(true);
+
+		LoadDirectRouteOptions loadDirectRouteOptions = new LoadDirectRouteOptions();
+		loadDirectRouteOptions.setLoadScheduleData(true);
+		loadDirectRouteOptions
+				.setLoadRouteRelationOptions(loadRouteRelationOptions);
+
+		LoadRouteOptions opts = new LoadRouteOptions();
+		opts.setLoadRouteNamesData(true);
+		opts.setDirectRouteOptions(loadDirectRouteOptions);
+		
+		// get routes
+		Collection<Route> routes = repository.getRoutes("c_route_bus", city.id,
+				opts);
+		Route newRoute = routes.iterator().next();
+		assertTrue(routes.size()>0);
+		newRoute.setNumber(newRoute.getNumber() + "_test");
+		// insert new route
+		repository.insertRoute(newRoute);
+		System.out.println("newRoute: " + newRoute.toString());
+		
+		
+		// get routes
+		Collection<Route> newRoutes = repository.getRoutes("c_route_bus",
+				city.id, opts);
+		assertTrue(newRoutes.size() - routes.size() == 1);
+		
+		c.rollback();
+		DBConnectionFactory.closeConnection(c);
 
 	}
 }

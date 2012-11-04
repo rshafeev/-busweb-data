@@ -1,5 +1,6 @@
 package com.pgis.bus.data.models;
 
+import org.postgis.LineString;
 import org.postgis.MultiLineString;
 import org.postgis.PGgeometry;
 import org.postgis.Point;
@@ -7,7 +8,7 @@ import org.postgis.Point;
 public class RouteGeoData {
 	private int index;
 	private String stationName;
-	private MultiLineString relationGeom;
+	private LineString relationGeom;
 	private Point stationLocation;
 
 	public int getIndex() {
@@ -44,11 +45,11 @@ public class RouteGeoData {
 		this.stationName = stationName;
 	}
 
-	public MultiLineString getRelationGeom() {
+	public LineString getRelationGeom() {
 		return relationGeom;
 	}
 
-	public void setRelationGeom(MultiLineString relationGeom) {
+	public void setRelationGeom(LineString relationGeom) {
 		this.relationGeom = relationGeom;
 	}
 

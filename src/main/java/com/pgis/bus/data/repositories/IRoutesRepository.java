@@ -38,7 +38,6 @@ public interface IRoutesRepository {
 	Collection<Timetable> getTimeTables(int schedule_group_id)
 			throws RepositoryException;
 
-	Collection<RouteRelation> getRouteRelationsWithStationData(
-			int direct_route_id) throws RepositoryException;
+	void insertRoute(Route route) throws RepositoryException;
 
 }

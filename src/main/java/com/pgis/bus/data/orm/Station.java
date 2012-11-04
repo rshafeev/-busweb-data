@@ -11,7 +11,7 @@ public class Station implements Cloneable {
 	private int city_id;
 	private Point location;
 	private int name_key;
-	private HashMap<String, StringValue> name; // key - language id, value -
+	private Collection<StringValue> names; // key - language id, value -
 	private Collection<StationTransport> transports;
 
 	public int getCity_id() {
@@ -61,16 +61,17 @@ public class Station implements Cloneable {
 		this.name_key = name_key;
 	}
 
-	public HashMap<String, StringValue> getName() {
-		return name;
+
+	public Collection<StringValue> getNames() {
+		return names;
 	}
 
-	public void setName(HashMap<String, StringValue> name) {
-		this.name = name;
+	public void setNames(Collection<StringValue> names) {
+		this.names = names;
 	}
 
 	public Station clone() {
-		
+
 		try {
 			Station obj = (Station) super.clone();
 			obj.location = new Point(this.location.x, this.location.y);
@@ -79,15 +80,15 @@ public class Station implements Cloneable {
 			if (this.id != null)
 				obj.id = new Integer(this.id);
 
-			if (this.name != null)
-				obj.name = new HashMap<String, StringValue>(this.name);
+			if (this.names != null)
+				obj.names = new ArrayList<StringValue>(this.names);
 
 			if (this.transports != null)
 				obj.transports = new ArrayList<StationTransport>(
 						this.transports);
-			if(obj.location!=null){
+			if (obj.location != null) {
 				obj.location.setSrid(this.location.getSrid());
-				
+
 			}
 			return obj;
 		} catch (CloneNotSupportedException e) {

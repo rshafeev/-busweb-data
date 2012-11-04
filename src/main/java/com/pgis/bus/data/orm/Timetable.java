@@ -4,6 +4,8 @@ import java.sql.Time;
 
 import org.postgresql.util.PGInterval;
 
+import com.pgis.bus.data.helpers.PGIntervalHelper;
+
 public class Timetable {
 	private int id;
 	private int schedule_group_id;
@@ -39,12 +41,27 @@ public class Timetable {
 		return time_B;
 	}
 
+	public Time getTimeAObj() {
+		Time t = new Time(this.time_A * 1000);
+		return t;
+	}
+
 	public void setTime_B(int time_B) {
 		this.time_B = time_B;
 	}
 
+	public Time getTimeBObj() {
+		Time t = new Time(this.time_B * 1000);
+		return t;
+	}
+
 	public int getFrequancy() {
 		return frequency;
+	}
+
+	public PGInterval getFrequancyObj() {
+
+		return PGIntervalHelper.fromSeconds(this.frequency);
 	}
 
 	public void setFrequancy(int frequancy) {
@@ -52,15 +69,16 @@ public class Timetable {
 	}
 
 	public void setTime_A(Time time_A) {
-		// TODO Auto-generated method stub
-		
+		this.time_A = (int) time_A.getTime() / 1000;
+
 	}
+
 	public void setTime_B(Time time_B) {
-		// TODO Auto-generated method stub
+		this.time_B = (int) time_B.getTime() / 1000;
 	}
 
 	public void setFrequancy(PGInterval frequency) {
-		// TODO Auto-generated method stub
-		
+		this.frequency = PGIntervalHelper.toSeconds(frequency);
+
 	}
 }

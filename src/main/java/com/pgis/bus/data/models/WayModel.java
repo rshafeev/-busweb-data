@@ -14,15 +14,16 @@ import com.pgis.bus.data.orm.WayElem;
 
 public class WayModel {
 	ArrayList<RouteModel> routes;
-	public String  getFullTime(){
-		String out="";
-		
-		
+
+	public String getFullTime() {
+		String out = "";
+
 		return out;
 	}
-	public double getCost(){
-		double cost=0;
-		
+
+	public double getCost() {
+		double cost = 0;
+
 		for (int i = 0; i < routes.size(); i++) {
 			RouteModel routeModel = routes.get(i);
 			if (routeModel instanceof TransportRouteModel) {
@@ -30,11 +31,10 @@ public class WayModel {
 				cost += r.getCost();
 			}
 		}
-        cost = (((int)cost*100))/100.0;		
+		cost = (((int) cost * 100)) / 100.0;
 		return cost;
 	}
-	
-	
+
 	public WayModel(List<WayElem> elems) {
 		if (elems.size() == 0)
 			return;
@@ -139,21 +139,32 @@ public class WayModel {
 		}
 		return out;
 	}
-	
 
-	
-	public double getTime()
-	{
+	public double getTime() {
 		double time = 0;
 		for (int i = 0; i < routes.size(); i++) {
 			RouteModel routeModel = routes.get(i);
 			if (routeModel instanceof TransportRouteModel) {
-			TransportRouteModel r = (TransportRouteModel) routeModel;
-			time += r.getInterval().getMinutes();
+				TransportRouteModel r = (TransportRouteModel) routeModel;
+				time += r.getInterval().getMinutes();
 			}
-			}
-		time = (((int)time*100))/100.0;
+		}
+		time = (((int) time * 100)) / 100.0;
 		return time;
-		
+
+	}
+
+	public ArrayList<String> getRoutesType() {
+		ArrayList<String> arr = new ArrayList<String>();
+		for (int i = 0; i < routes.size(); i++) {
+			RouteModel routeModel = routes.get(i);
+			if (routeModel instanceof TransportRouteModel) {
+				TransportRouteModel r = (TransportRouteModel) routeModel;
+				arr.add(r.getRouteType());
+			}
+		}
+
+		return arr;
+
 	}
 }

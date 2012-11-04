@@ -22,4 +22,6 @@ public interface IStringValuesRepository extends IRepository {
 	int insertStringValue(StringValue value) throws RepositoryException;
 
 	void deleteStringValues(int string_key) throws RepositoryException;
+
+	Collection<StringValue> getStringValues(int name_key)throws RepositoryException;
 }

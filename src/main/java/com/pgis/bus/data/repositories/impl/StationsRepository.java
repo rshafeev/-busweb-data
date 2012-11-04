@@ -76,9 +76,9 @@ public class StationsRepository extends Repository implements
 				// get names
 				IStringValuesRepository stringValuesRepository = new StringValuesRepository();
 				int name_key = key.getInt("name_key");
-				HashMap<String, StringValue> name = stringValuesRepository
-						.getStringValuesToHashMap(name_key);
-				station.setName(name);
+				Collection<StringValue> name = stringValuesRepository
+						.getStringValues(name_key);
+				station.setNames(name);
 				station.setName_key(name_key);
 
 				// get transport_types
@@ -126,11 +126,9 @@ public class StationsRepository extends Repository implements
 				// insert name values
 				IStringValuesRepository stringValuesRepository = new StringValuesRepository(
 						c, false, false);
-				if (responceStation.getName() != null) {
-					Iterator<StringValue> i = responceStation.getName()
-							.values().iterator();
-					while (i.hasNext()) {
-						StringValue s = i.next();
+				if (responceStation.getNames() != null) {
+
+					for (StringValue s : responceStation.getNames()) {
 						s.key_id = responceStation.getName_key();
 						s.id = stringValuesRepository.insertStringValue(s);
 					}
@@ -188,7 +186,7 @@ public class StationsRepository extends Repository implements
 			IStringValuesRepository stringValuesRepository = new StringValuesRepository(
 					c, false, false);
 			stringValuesRepository.updateStringValues(station.getName_key(),
-					station.getName().values());
+					station.getNames());
 
 			// insert transport_typesByStation
 
@@ -413,9 +411,9 @@ public class StationsRepository extends Repository implements
 				// get names
 				IStringValuesRepository stringValuesRepository = new StringValuesRepository();
 				int name_key = key.getInt("name_key");
-				HashMap<String, StringValue> name = stringValuesRepository
-						.getStringValuesToHashMap(name_key);
-				station.setName(name);
+				Collection<StringValue> name = stringValuesRepository
+						.getStringValues(name_key);
+				station.setNames(name);
 				station.setName_key(name_key);
 
 				// get transport_types

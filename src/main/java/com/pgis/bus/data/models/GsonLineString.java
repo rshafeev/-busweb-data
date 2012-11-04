@@ -1,6 +1,7 @@
 package com.pgis.bus.data.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.postgis.Geometry;
 import org.postgis.LineString;
@@ -40,7 +41,7 @@ public class GsonLineString {
 		this.points = fromLineString(lineString);
 	}
 
-	LineString toLineString() {
+	public LineString toLineString() {
 		ArrayList<Point> points = new ArrayList<Point>();
 		for (GsonPoint p : this.points) {
 			points.add(p.toPoint());
@@ -61,4 +62,18 @@ public class GsonLineString {
 		}
 		return points[points.length - 1];
 	}
+
+	public GsonPoint[] getPoints() {
+		return points;
+	}
+
+	public void setPoints(GsonPoint[] points) {
+		this.points = points;
+	}
+
+	@Override
+	public String toString() {
+		return "GsonLineString [points=" + Arrays.toString(points) + "]";
+	}
+	
 }

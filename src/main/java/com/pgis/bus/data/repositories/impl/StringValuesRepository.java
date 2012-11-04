@@ -34,6 +34,7 @@ public class StringValuesRepository extends Repository implements
 		this.isCommited = isCommited;
 	}
 
+	@Override
 	public Collection<StringValue> getStringValues(int string_key)
 			throws RepositoryException {
 		ArrayList<StringValue> values = null;
@@ -70,6 +71,7 @@ public class StringValuesRepository extends Repository implements
 		return values;
 	}
 
+	@Override
 	public HashMap<String, StringValue> getStringValuesToHashMap(int string_key)
 			throws RepositoryException {
 
@@ -84,6 +86,7 @@ public class StringValuesRepository extends Repository implements
 		return map;
 	}
 
+	@Override
 	public void deleteStringValues(int string_key) throws RepositoryException {
 
 		Connection c = this.connection;
@@ -114,6 +117,7 @@ public class StringValuesRepository extends Repository implements
 
 	}
 
+	@Override
 	public int insertStringValue(StringValue value) throws RepositoryException {
 		Connection c = this.connection;
 		if (c == null)
@@ -149,6 +153,7 @@ public class StringValuesRepository extends Repository implements
 
 	}
 
+	@Override
 	public void updateStringValues(int string_key,
 			Collection<StringValue> values) throws RepositoryException {
 		Connection c = this.connection;

@@ -1,6 +1,6 @@
 package com.pgis.bus.data.orm;
 
-import java.util.HashMap;
+import java.util.Collection;
 
 public class Route {
 
@@ -10,10 +10,9 @@ public class Route {
 	private String route_type_id;
 	private String number;
 	private int name_key;
-	
-	private HashMap<String, StringValue> name; // key - language id, value -
-	private DirectRoute directRouteWay;
 
+	private Collection<StringValue> name; // key - language id, value -
+	private DirectRoute directRouteWay;
 
 	private DirectRoute reverseRouteWay;
 
@@ -23,6 +22,12 @@ public class Route {
 
 	public void setId(int id) {
 		this.id = id;
+		if (directRouteWay != null) {
+			directRouteWay.setRoute_id(id);
+		}
+		if (reverseRouteWay != null) {
+			reverseRouteWay.setRoute_id(id);
+		}
 	}
 
 	public int getName_key() {
@@ -31,6 +36,12 @@ public class Route {
 
 	public void setName_key(int name_key) {
 		this.name_key = name_key;
+		if(this.name!=null){
+			for(StringValue s : this.name){
+				s.key_id = this.name_key;
+			}
+			
+		}
 	}
 
 	public int getCity_id() {
@@ -65,11 +76,11 @@ public class Route {
 		this.number = number;
 	}
 
-	public HashMap<String, StringValue> getName() {
+	public Collection<StringValue> getName() {
 		return name;
 	}
 
-	public void setName(HashMap<String, StringValue> name) {
+	public void setName(Collection<StringValue> name) {
 		this.name = name;
 	}
 

@@ -1,7 +1,10 @@
 package com.pgis.bus.data.impl;
 
+import java.util.Collection;
+
 import com.pgis.bus.data.Authenticate_enum;
 import com.pgis.bus.data.IAdminDataBaseService;
+import com.pgis.bus.data.helpers.LoadRouteOptions;
 import com.pgis.bus.data.orm.*;
 import com.pgis.bus.data.repositories.RepositoryException;
 
@@ -58,6 +61,18 @@ public class AdminDataBaseService extends DataBaseService implements
 	public void deleteStation(int station_id) throws RepositoryException {
 		this.stationsRepository.deleteStation(station_id);
 
+	}
+
+	@Override
+	public Collection<Route> getRoutes(String route_type_id, int city_id,
+			LoadRouteOptions opts) throws RepositoryException {
+		return routesRepository.getRoutes(route_type_id, city_id, opts);
+	}
+
+	@Override
+	public Route getRoute(Integer routeID, LoadRouteOptions opts)
+			throws RepositoryException {
+		return routesRepository.getRoute(routeID, opts);
 	}
 
 }

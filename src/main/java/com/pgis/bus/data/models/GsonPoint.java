@@ -4,22 +4,27 @@ import org.postgis.Point;
 
 public class GsonPoint {
 
-	public double lat;
-	public double lon;
+	public double x;
+	public double y;
 	
 	public GsonPoint(){
 		
 	}
 	public GsonPoint(GsonPoint copy){
-		lat = copy.lat;
-		lon = copy.lon;
+		x = copy.x;
+		y = copy.y;
 	}
 	public GsonPoint(Point p){
-		lat = p.x;
-		lon = p.y;
+		x = p.x;
+		y = p.y;
 	}
 	
 	public Point toPoint(){
-		return new Point(lat,lon);
+		return new Point(x,y);
+	}
+	
+	@Override
+	public String toString() {
+		return "GsonPoint [x=" + x + ", y=" + y + "]";
 	}
 }

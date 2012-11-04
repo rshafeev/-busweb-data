@@ -14,6 +14,16 @@ public class ScheduleGroup {
 
 	public void setId(int id) {
 		this.id = id;
+		if (days != null) {
+			for (ScheduleGroupDay day : days) {
+				day.setSchedule_group_id(id);
+			}
+		}
+		if (timetables != null) {
+			for (Timetable t : timetables) {
+				t.setSchedule_group_id(id);
+			}
+		}
 	}
 
 	public int getSchedule_id() {
