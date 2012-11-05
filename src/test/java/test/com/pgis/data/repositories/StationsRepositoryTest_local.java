@@ -78,6 +78,33 @@ public class StationsRepositoryTest_local {
 	}
 
 	@Test
+	public void getAllStationsInBoxTest() throws Exception {
+		System.out.println("getAllStationsInBoxTest()");
+		// get city
+		Connection c = Repository.getConnection();
+		ICitiesRepository db = new CitiesRepository(c, false, false);
+		City city = db.getCityByName("c_en", "Kharkov");
+		assertNotNull(city);
+
+		// get stations
+		IStationsRepository stationsRepository = new StationsRepository(c,
+				false, false);
+		Collection<Station> stations = stationsRepository
+				.getStationsByBox(city.id, new Point(49,35), new Point(51,37));
+		for (Station s : stations) {
+			for (StationTransport t : s.getTransports()) {
+				System.out.println("Station transport : " + t.transport_type_id);
+			}
+			System.out.println("Station id : " + s.getLocation().x);
+			System.out.println("Station id : " + s.getLocation().y);
+		}
+
+		c.rollback();
+		DBConnectionFactory.closeConnection(c);
+
+	}
+	
+	@Test
 	public void insertStationTest() throws Exception {
 		// get city
 		Connection c = Repository.getConnection();

@@ -3,6 +3,8 @@ package com.pgis.bus.data.impl;
 import java.sql.Connection;
 import java.util.Collection;
 
+import org.postgis.Point;
+
 import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.IDataBaseService;
 import com.pgis.bus.data.models.FindWaysOptions;
@@ -96,9 +98,15 @@ public class DataBaseService implements IDataBaseService {
 	}
 
 	@Override
-	public Collection<RouteGeoData> getGeoDataByRoutePart(RoutePart routePart, String lang_id)
+	public Collection<RouteGeoData> getGeoDataByRoutePart(RoutePart routePart,
+			String lang_id) throws RepositoryException {
+		return routesRepository.getGeoDataByRoutePart(routePart, lang_id);
+	}
+
+	@Override
+	public Collection<Station> getStationsByBox(int city_id, Point p1, Point p2)
 			throws RepositoryException {
-		return routesRepository.getGeoDataByRoutePart(routePart,lang_id);
+		return stationsRepository.getStationsByBox(city_id, p1, p2);
 	}
 
 }

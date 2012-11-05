@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.postgis.PGbox2d;
+import org.postgis.PGbox3d;
 import org.postgis.PGgeometry;
 import org.postgis.Point;
 import org.slf4j.Logger;
@@ -432,6 +434,67 @@ public class StationsRepository extends Repository implements
 		}
 		return station;
 
+	}
+
+	@Override
+	public Collection<Station> getStationsByBox(int city_id, Point p1, Point p2)
+			throws RepositoryException {
+		Connection c = this.connection;
+		if (c == null)
+			c = Repository.getConnection();
+		Collection<Station> stations = null;
+		PGbox3d box= new org.postgis.PGbox3d(p1,p2);
+		
+		try {
+			String query = "SELECT id,city_id,geometry(location) as location,name_key"
+					+ " FROM bus.stations "
+					+ "WHERE city_id = ? AND geometry(location) && ?";
+
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setInt(1, city_id);
+			ps.setObject(2, box);
+			ResultSet key = ps.executeQuery();
+			stations = new ArrayList<Station>();
+
+			while (key.next()) {
+				Station station = new Station();
+				station.setCity_id(city_id);
+				int id = key.getInt("id");
+				station.setId(id);
+
+				// get location
+				PGgeometry g_location = (PGgeometry) key.getObject("location");
+				if (!(g_location.getGeometry() instanceof Point)) {
+					throw new SQLException(
+							"can not convert geo_location to org.pgis.Point");
+				}
+				station.setLocation((Point) g_location.getGeometry());
+
+				// get names
+				IStringValuesRepository stringValuesRepository = new StringValuesRepository();
+				int name_key = key.getInt("name_key");
+				Collection<StringValue> name = stringValuesRepository
+						.getStringValues(name_key);
+				station.setNames(name);
+				station.setName_key(name_key);
+
+				// get transport_types
+				Collection<StationTransport> transports = this
+						.getTransportTypesOfStation(station.getId());
+				station.setTransports(transports);
+
+				stations.add(station);
+			}
+		} catch (SQLException e) {
+			stations = null;
+			log.error("can not read database", e);
+			throw new RepositoryException(
+					RepositoryException.err_enum.c_sql_err);
+		} finally {
+			if (isClosed)
+				DBConnectionFactory.closeConnection(c);
+		}
+		return stations;
 	}
 
 }
