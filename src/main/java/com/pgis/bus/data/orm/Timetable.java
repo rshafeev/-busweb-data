@@ -1,16 +1,26 @@
 package com.pgis.bus.data.orm;
 
 import java.sql.Time;
-
 import org.postgresql.util.PGInterval;
-
-import com.pgis.bus.data.helpers.PGIntervalHelper;
+import com.pgis.bus.data.helpers.DateTimeHelper;
 
 public class Timetable {
 	private int id;
 	private int schedule_group_id;
+
+	/**
+	 * Стартовое время, сек
+	 */
 	private int time_A;
+
+	/**
+	 * Конечное время, сек
+	 */
 	private int time_B;
+
+	/**
+	 * Интервал между выездами передвижных средств, сек
+	 */
 	private int frequency;
 
 	public int getId() {
@@ -42,8 +52,7 @@ public class Timetable {
 	}
 
 	public Time getTimeAObj() {
-		Time t = new Time(this.time_A * 1000);
-		return t;
+		return DateTimeHelper.getTimeFromSeconds(this.time_A);
 	}
 
 	public void setTime_B(int time_B) {
@@ -51,8 +60,8 @@ public class Timetable {
 	}
 
 	public Time getTimeBObj() {
-		Time t = new Time(this.time_B * 1000);
-		return t;
+		
+		return DateTimeHelper.getTimeFromSeconds(this.time_B);
 	}
 
 	public int getFrequancy() {
@@ -61,7 +70,7 @@ public class Timetable {
 
 	public PGInterval getFrequancyObj() {
 
-		return PGIntervalHelper.fromSeconds(this.frequency);
+		return DateTimeHelper.getIntervalFromSeconds(this.frequency);
 	}
 
 	public void setFrequancy(int frequancy) {
@@ -69,16 +78,15 @@ public class Timetable {
 	}
 
 	public void setTime_A(Time time_A) {
-		this.time_A = (int) time_A.getTime() / 1000;
-
+		this.time_A = DateTimeHelper.toSeconds(time_A);
 	}
 
 	public void setTime_B(Time time_B) {
-		this.time_B = (int) time_B.getTime() / 1000;
+		this.time_B = DateTimeHelper.toSeconds(time_B);
 	}
 
 	public void setFrequancy(PGInterval frequency) {
-		this.frequency = PGIntervalHelper.toSeconds(frequency);
+		this.frequency = DateTimeHelper.toSeconds(frequency);
 
 	}
 }

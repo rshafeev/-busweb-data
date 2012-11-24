@@ -54,6 +54,8 @@ public class RouteRelation {
 	}
 
 	public void setStationB(Station stationB) {
+		if (stationB != null)
+			this.station_b_id = stationB.getId();
 		this.stationB = stationB;
 	}
 
@@ -97,6 +99,5 @@ public class RouteRelation {
 				+ position_index + ", distance=" + distance + ", ev_time="
 				+ ev_time + ", geom=" + geom + ", stationB=" + stationB + "]";
 	}
-
 
 }

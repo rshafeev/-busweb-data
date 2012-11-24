@@ -14,6 +14,11 @@ public class Schedule {
 
 	public void setId(int id) {
 		this.id = id;
+		if (scheduleGroups == null)
+			return;
+		for (ScheduleGroup g : scheduleGroups) {
+			g.setSchedule_id(id);
+		}
 	}
 
 	public int getDirect_route_id() {

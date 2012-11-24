@@ -5,7 +5,8 @@ public class RepositoryException extends Exception {
 	private static final long serialVersionUID = -7853309755220159118L;
 
 	public enum err_enum {
-		c_connection_invalid, c_sql_err,c_transaction_err,c_rollback_err;
+		c_connection_invalid, c_sql_err,c_transaction_err,c_rollback_err,c_route_data,
+		c_route_already_exist;
 
 		public String getMessage() {
 			switch (this) {

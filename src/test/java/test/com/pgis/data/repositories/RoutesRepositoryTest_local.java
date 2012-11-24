@@ -8,12 +8,19 @@ import java.util.Iterator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import test.com.pgis.data.FileManager;
 import test.com.pgis.data.TestDBConnectionManager;
 import test.com.pgis.data.TestDataSource;
+
+import com.google.gson.Gson;
 import com.pgis.bus.data.DBConnectionFactory;
+import com.pgis.bus.data.IAdminDataBaseService;
 import com.pgis.bus.data.helpers.LoadDirectRouteOptions;
 import com.pgis.bus.data.helpers.LoadRouteOptions;
 import com.pgis.bus.data.helpers.LoadRouteRelationOptions;
+import com.pgis.bus.data.helpers.UpdateRouteOptions;
+import com.pgis.bus.data.impl.AdminDataBaseService;
 import com.pgis.bus.data.models.RouteGeoData;
 import com.pgis.bus.data.models.RoutePart;
 import com.pgis.bus.data.orm.City;
@@ -25,6 +32,8 @@ import com.pgis.bus.data.repositories.impl.Repository;
 import com.pgis.bus.data.repositories.impl.RoutesRepository;
 
 public class RoutesRepositoryTest_local {
+
+	
 
 	@Before
 	public void init() {
@@ -42,6 +51,8 @@ public class RoutesRepositoryTest_local {
 
 	@Test
 	public void getGeoDataByRoutePart_Test() throws Exception {
+		System.out.println("getGeoDataByRoutePart_Test()...");
+
 		IRoutesRepository repository = new RoutesRepository();
 		RoutePart routePart = new RoutePart();
 		routePart.setDirectRouteID(3);
@@ -61,7 +72,7 @@ public class RoutesRepositoryTest_local {
 
 	@Test
 	public void getRoutes_Test() throws Exception {
-
+		System.out.println("getRoutes_Test()...");
 		// set input data
 		ICitiesRepository db = new CitiesRepository();
 		City city = db.getCityByName("c_en", "Kharkov");
@@ -84,7 +95,7 @@ public class RoutesRepositoryTest_local {
 
 	@Test
 	public void getRoutesWithDirects_Test() throws Exception {
-
+		System.out.println("getRoutesWithDirects_Test()...");
 		// set input data
 		ICitiesRepository db = new CitiesRepository();
 		City city = db.getCityByName("c_en", "Kharkov");
@@ -190,23 +201,140 @@ public class RoutesRepositoryTest_local {
 		LoadRouteOptions opts = new LoadRouteOptions();
 		opts.setLoadRouteNamesData(true);
 		opts.setDirectRouteOptions(loadDirectRouteOptions);
-		
+
 		// get routes
 		Collection<Route> routes = repository.getRoutes("c_route_bus", city.id,
 				opts);
 		Route newRoute = routes.iterator().next();
-		assertTrue(routes.size()>0);
+		assertTrue(routes.size() > 0);
 		newRoute.setNumber(newRoute.getNumber() + "_test");
 		// insert new route
 		repository.insertRoute(newRoute);
 		System.out.println("newRoute: " + newRoute.toString());
-		
-		
+
 		// get routes
 		Collection<Route> newRoutes = repository.getRoutes("c_route_bus",
 				city.id, opts);
 		assertTrue(newRoutes.size() - routes.size() == 1);
-		
+
+		c.rollback();
+		DBConnectionFactory.closeConnection(c);
+
+	}
+
+	@Test
+	public void insertRoute_Test1() throws Exception {
+		System.out.println("insertRoute_Test1()");
+		String data = FileManager
+				.getFileData(FileManager.getTestResourcePath() + "route2.dat");
+		System.out.println(data);
+
+		Route newRoute = (new Gson()).fromJson(data, Route.class);
+
+		Connection c = Repository.getConnection();
+		IRoutesRepository repository = new RoutesRepository(c, false, false);
+		repository.insertRoute(newRoute);
+
+		c.rollback();
+		DBConnectionFactory.closeConnection(c);
+	}
+
+	@Test
+	public void insertRouteWithoutReverseWay_Test() throws Exception {
+		System.out.println("insertRouteWithoutReverseWay_Test()");
+		String data = FileManager
+				.getFileData(FileManager.getTestResourcePath() + "route3.dat");
+		System.out.println(data);
+
+		Route newRoute = (new Gson()).fromJson(data, Route.class);
+
+		Connection c = Repository.getConnection();
+		IRoutesRepository repository = new RoutesRepository(c, false, false);
+		repository.insertRoute(newRoute);
+
+		c.rollback();
+		DBConnectionFactory.closeConnection(c);
+	}
+	
+	@Test
+	public void removeRoute_Test() throws Exception {
+		System.out.println("removeRoute_Test()...");
+		// set input data
+		Connection c = Repository.getConnection();
+		ICitiesRepository db = new CitiesRepository(c, false, false);
+		IRoutesRepository repository = new RoutesRepository(c, false, false);
+
+		City city = db.getCityByName("c_en", "Kharkov");
+		assertNotNull(city);
+
+		// set options
+		LoadRouteRelationOptions loadRouteRelationOptions = new LoadRouteRelationOptions();
+		loadRouteRelationOptions.setLoadStationsData(true);
+
+		LoadDirectRouteOptions loadDirectRouteOptions = new LoadDirectRouteOptions();
+		loadDirectRouteOptions.setLoadScheduleData(true);
+		loadDirectRouteOptions
+				.setLoadRouteRelationOptions(loadRouteRelationOptions);
+
+		LoadRouteOptions opts = new LoadRouteOptions();
+		opts.setLoadRouteNamesData(true);
+		opts.setDirectRouteOptions(loadDirectRouteOptions);
+
+		// get routes
+		Collection<Route> routes = repository.getRoutes("c_route_bus", city.id,
+				opts);
+		Route removeRoute = routes.iterator().next();
+		assertTrue(routes.size() > 0);
+		// insert new route
+		repository.removeRoute(removeRoute.getId());
+		System.out.println("removeRoute: " + removeRoute.toString());
+
+		// get routes
+		Collection<Route> newRoutes = repository.getRoutes("c_route_bus",
+				city.id, opts);
+		assertTrue(routes.size() - newRoutes.size() == 1);
+
+		c.rollback();
+		DBConnectionFactory.closeConnection(c);
+
+	}
+
+	@Test
+	public void updateRoute_Test() throws Exception {
+		System.out.println("updateRoute_Test()...");
+		// set input data
+		Connection c = Repository.getConnection();
+		ICitiesRepository db = new CitiesRepository(c, false, false);
+		IRoutesRepository repository = new RoutesRepository(c, false, false);
+
+		City city = db.getCityByName("c_en", "Kharkov");
+		assertNotNull(city);
+
+		// set options
+		LoadRouteRelationOptions loadRouteRelationOptions = new LoadRouteRelationOptions();
+		loadRouteRelationOptions.setLoadStationsData(true);
+
+		LoadDirectRouteOptions loadDirectRouteOptions = new LoadDirectRouteOptions();
+		loadDirectRouteOptions.setLoadScheduleData(true);
+		loadDirectRouteOptions
+				.setLoadRouteRelationOptions(loadRouteRelationOptions);
+
+		LoadRouteOptions opts = new LoadRouteOptions();
+		opts.setLoadRouteNamesData(true);
+		opts.setDirectRouteOptions(loadDirectRouteOptions);
+
+		// get routes
+		Collection<Route> routes = repository.getRoutes("c_route_bus", city.id,
+				opts);
+		assertTrue(routes.size() > 0);
+		Route updateRoute = routes.iterator().next();
+		UpdateRouteOptions updateRouteOpts = new UpdateRouteOptions();
+		updateRouteOpts.setUpdateMainInfo(false);
+		updateRouteOpts.setUpdateRouteRelations(false);
+		updateRouteOpts.setUpdateSchedule(true);
+		repository.updateRoute(updateRoute, updateRouteOpts);
+		System.out.println("updateRoute: " + updateRoute.toString());
+
 		c.rollback();
 		DBConnectionFactory.closeConnection(c);
 

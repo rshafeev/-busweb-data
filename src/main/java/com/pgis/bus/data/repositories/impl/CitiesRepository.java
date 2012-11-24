@@ -156,7 +156,6 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		if (c == null)
 			c = Repository.getConnection();
 		try {
-			c.setAutoCommit(false);
 			String query = "INSERT INTO bus.cities (lat,lon,scale,is_show) VALUES(?,?,?,pg_catalog.bit(?)) RETURNING  id,name_key";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setDouble(1, city.lat);
@@ -230,7 +229,6 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		if (c == null)
 			c = Repository.getConnection();
 		try {
-			c.setAutoCommit(false);
 			String query = "DELETE FROM bus.cities WHERE id=?;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, city_id);
@@ -260,8 +258,6 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		if (c == null)
 			c = Repository.getConnection();
 		try {
-
-			c.setAutoCommit(false);
 			String query = "UPDATE bus.cities SET lat=?, lon=? , scale=?, name_key=?,is_show=pg_catalog.bit(?) where id=?";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setDouble(1, updateCity.lat);

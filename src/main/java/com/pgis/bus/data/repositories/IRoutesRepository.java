@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.pgis.bus.data.helpers.LoadDirectRouteOptions;
 import com.pgis.bus.data.helpers.LoadRouteOptions;
+import com.pgis.bus.data.helpers.UpdateRouteOptions;
 import com.pgis.bus.data.models.RouteGeoData;
 import com.pgis.bus.data.models.RoutePart;
 import com.pgis.bus.data.orm.DirectRoute;
@@ -39,5 +40,11 @@ public interface IRoutesRepository {
 			throws RepositoryException;
 
 	void insertRoute(Route route) throws RepositoryException;
+
+	void removeRoute(int routeID) throws RepositoryException;
+
+	void updateRoute(Route updateRoute, UpdateRouteOptions opts)
+			throws RepositoryException;
+	
 
 }

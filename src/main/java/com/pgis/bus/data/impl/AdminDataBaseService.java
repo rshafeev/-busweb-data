@@ -5,6 +5,7 @@ import java.util.Collection;
 import com.pgis.bus.data.Authenticate_enum;
 import com.pgis.bus.data.IAdminDataBaseService;
 import com.pgis.bus.data.helpers.LoadRouteOptions;
+import com.pgis.bus.data.helpers.UpdateRouteOptions;
 import com.pgis.bus.data.orm.*;
 import com.pgis.bus.data.repositories.RepositoryException;
 
@@ -73,6 +74,23 @@ public class AdminDataBaseService extends DataBaseService implements
 	public Route getRoute(Integer routeID, LoadRouteOptions opts)
 			throws RepositoryException {
 		return routesRepository.getRoute(routeID, opts);
+	}
+
+	@Override
+	public void insertRoute(Route newRoute) throws RepositoryException {
+		routesRepository.insertRoute(newRoute);
+	}
+
+	@Override
+	public void removeRoute(int routeID) throws RepositoryException {
+		routesRepository.removeRoute(routeID);
+		
+	}
+
+	@Override
+	public void updateRoute(Route updateRoute, UpdateRouteOptions opts)
+			throws RepositoryException {
+		routesRepository.updateRoute(updateRoute,opts);
 	}
 
 }

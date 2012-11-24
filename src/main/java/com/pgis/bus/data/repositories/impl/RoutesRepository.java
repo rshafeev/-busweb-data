@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -21,6 +22,7 @@ import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.helpers.LoadDirectRouteOptions;
 import com.pgis.bus.data.helpers.LoadRouteOptions;
 import com.pgis.bus.data.helpers.LoadRouteRelationOptions;
+import com.pgis.bus.data.helpers.UpdateRouteOptions;
 import com.pgis.bus.data.models.GsonLineString;
 import com.pgis.bus.data.models.RouteGeoData;
 import com.pgis.bus.data.models.RoutePart;
@@ -275,8 +277,10 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			timeTables = new ArrayList<Timetable>();
 			while (key.next()) {
 				int id = key.getInt("id");
-				Time time_A = key.getTime("time_A");
-				Time time_B = key.getTime("time_A");
+
+				Time time_A = (Time) key.getObject("time_A");
+				Object o = key.getObject("time_A");
+				Time time_B = (Time) key.getObject("time_B");
 				PGInterval frequency = (PGInterval) key.getObject("frequency");
 
 				Timetable timetable = new Timetable();
@@ -285,7 +289,6 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 				timetable.setTime_A(time_A);
 				timetable.setTime_B(time_B);
 				timetable.setFrequancy(frequency);
-
 				timeTables.add(timetable);
 			}
 		} catch (Exception e) {
@@ -539,6 +542,11 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 	}
 
+	private void updateSchedule(Schedule s, Connection c) throws Exception {
+		this.removeSchedule(s.getId(), c);
+		this.insertSchedule(s, c);
+	}
+
 	private void insertScheduleGroupDay(ScheduleGroupDay d, Connection c)
 			throws Exception {
 		String query = "INSERT INTO bus.schedule_group_days (schedule_group_id,day_id) "
@@ -598,6 +606,14 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		}
 	}
 
+	private void removeSchedule(int scheduleID, Connection c) throws Exception {
+		String query = "DELETE FROM bus.schedule WHERE id = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setInt(1, scheduleID);
+		ps.execute();
+
+	}
+
 	private void insertDirectRoute(DirectRoute directRoute, Connection c)
 			throws Exception {
 
@@ -606,6 +622,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		PreparedStatement ps = c.prepareStatement(query);
 
 		ps.setInt(1, directRoute.getRoute_id());
+		directRoute.updateIDs();
 		ps.setString(2, Integer.toString(directRoute.isDirect() ? 1 : 0));
 		ResultSet key = ps.executeQuery();
 		if (key.next()) {
@@ -626,12 +643,13 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		String query = "SELECT * from bus.insert_route_relation(?,?,?,?,?); ";
 		PreparedStatement ps = c.prepareStatement(query);
 
+		// System.out.println
 		ps.setInt(1, r.getDirect_route_id());
 		ps.setInt(2, r.getStation_a_id());
 		ps.setInt(3, r.getStation_b_id());
 		ps.setInt(4, r.getPosition_index());
 		PGgeometry geom = null;
-		if(r.getGeom()!=null){
+		if (r.getGeom() != null) {
 			geom = new PGgeometry(r.getGeom().toLineString());
 		}
 		ps.setObject(5, geom);
@@ -647,11 +665,49 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 	@Override
 	public void insertRoute(Route route) throws RepositoryException {
+
 		Connection c = this.connection;
 		if (c == null)
 			c = Repository.getConnection();
 
 		try {
+			// validate
+			if (route.getDirectRouteWay() == null) {
+				throw new RepositoryException(
+						RepositoryException.err_enum.c_route_data);
+
+			}
+			// insert stations
+			IStationsRepository stationsRepository = new StationsRepository(c,
+					false, false);
+			for (RouteRelation r : route.getDirectRouteWay()
+					.getRoute_relations()) {
+				Station s = r.getStationB();
+				int id = s.getId();
+				if (id < 0) {
+					s = stationsRepository.insertStation(s);
+					r.setStation_b_id(s.getId());
+					r.setStationB(s);
+
+					for (RouteRelation rr : route.getDirectRouteWay()
+							.getRoute_relations()) {
+						if (rr.getStationB().getId() == id)
+							rr.setStationB(s);
+					}
+					if (route.getReverseRouteWay() != null) {
+						for (RouteRelation rr : route.getReverseRouteWay()
+								.getRoute_relations()) {
+							if (rr.getStationB().getId() == id)
+								rr.setStationB(s);
+						}
+					}
+				}
+
+			}
+			if (route.getReverseRouteWay() == null) {
+				route.setReverseRouteWay(DirectRoute
+						.createReverseByDirect(route.getDirectRouteWay()));
+			}
 			String query = "INSERT INTO bus.routes (city_id,number,cost,route_type_id) "
 					+ "VALUES(?,?,?,bus.route_type_enum(?)) RETURNING id,name_key; ";
 			PreparedStatement ps = c.prepareStatement(query);
@@ -687,6 +743,69 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			}
 		} finally {
 			if (isClosed)
+				DBConnectionFactory.closeConnection(c);
+		}
+	}
+
+	@Override
+	public void removeRoute(int routeID) throws RepositoryException {
+		Connection c = this.connection;
+		if (c == null)
+			c = Repository.getConnection();
+		try {
+			String query = "DELETE FROM bus.routes WHERE id=?;";
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setInt(1, routeID);
+			ps.execute();
+			if (this.isCommited)
+				c.commit();
+		} catch (SQLException e) {
+			try {
+				log.error("removeRoute() exception: ", e);
+				c.rollback();
+				throw new RepositoryException(
+						RepositoryException.err_enum.c_transaction_err);
+			} catch (SQLException sqx) {
+				throw new RepositoryException(
+						RepositoryException.err_enum.c_rollback_err);
+			}
+		} finally {
+			if (this.isClosed)
+				DBConnectionFactory.closeConnection(c);
+		}
+	}
+
+	@Override
+	public void updateRoute(Route updateRoute, UpdateRouteOptions opts)
+			throws RepositoryException {
+
+		Connection c = this.connection;
+		if (c == null)
+			c = Repository.getConnection();
+
+		try {
+			if (opts.isUpdateSchedule()) {
+				Schedule s1 = updateRoute.getDirectRouteWay().getSchedule();
+				s1.setDirect_route_id(updateRoute.getDirectRouteWay().getId());
+				updateSchedule(s1, c);
+				Schedule s2 = updateRoute.getDirectRouteWay().getSchedule();
+				s2.setDirect_route_id(updateRoute.getDirectRouteWay().getId());
+				updateSchedule(s2, c);
+			}
+			if (this.isCommited)
+				c.commit();
+		} catch (Exception e) {
+			try {
+				log.error("updateRoute() exception: ", e);
+				c.rollback();
+				throw new RepositoryException(
+						RepositoryException.err_enum.c_transaction_err);
+			} catch (Exception sqx) {
+				throw new RepositoryException(
+						RepositoryException.err_enum.c_rollback_err);
+			}
+		} finally {
+			if (this.isClosed)
 				DBConnectionFactory.closeConnection(c);
 		}
 	}

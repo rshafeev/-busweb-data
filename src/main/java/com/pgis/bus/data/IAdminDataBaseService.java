@@ -3,6 +3,7 @@ package com.pgis.bus.data;
 import java.util.Collection;
 
 import com.pgis.bus.data.helpers.LoadRouteOptions;
+import com.pgis.bus.data.helpers.UpdateRouteOptions;
 import com.pgis.bus.data.impl.DataBaseServiceException;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.Route;
@@ -37,4 +38,7 @@ public interface IAdminDataBaseService extends IDataBaseService {
 	Route getRoute(Integer routeID, LoadRouteOptions opts)
 			throws RepositoryException;
 
+	void insertRoute(Route newRoute) throws RepositoryException;
+	void removeRoute(int routeID) throws RepositoryException;
+	void updateRoute(Route updateRoute, UpdateRouteOptions opts) throws RepositoryException;
 }
