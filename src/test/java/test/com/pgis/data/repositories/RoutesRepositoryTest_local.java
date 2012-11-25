@@ -178,53 +178,10 @@ public class RoutesRepositoryTest_local {
 
 	}
 
+
 	@Test
 	public void insertRoute_Test() throws Exception {
-		System.out.println("insertRoute_Test()...");
-		// set input data
-		Connection c = Repository.getConnection();
-		ICitiesRepository db = new CitiesRepository(c, false, false);
-		IRoutesRepository repository = new RoutesRepository(c, false, false);
-
-		City city = db.getCityByName("c_en", "Kharkov");
-		assertNotNull(city);
-
-		// set options
-		LoadRouteRelationOptions loadRouteRelationOptions = new LoadRouteRelationOptions();
-		loadRouteRelationOptions.setLoadStationsData(true);
-
-		LoadDirectRouteOptions loadDirectRouteOptions = new LoadDirectRouteOptions();
-		loadDirectRouteOptions.setLoadScheduleData(true);
-		loadDirectRouteOptions
-				.setLoadRouteRelationOptions(loadRouteRelationOptions);
-
-		LoadRouteOptions opts = new LoadRouteOptions();
-		opts.setLoadRouteNamesData(true);
-		opts.setDirectRouteOptions(loadDirectRouteOptions);
-
-		// get routes
-		Collection<Route> routes = repository.getRoutes("c_route_bus", city.id,
-				opts);
-		Route newRoute = routes.iterator().next();
-		assertTrue(routes.size() > 0);
-		newRoute.setNumber(newRoute.getNumber() + "_test");
-		// insert new route
-		repository.insertRoute(newRoute);
-		System.out.println("newRoute: " + newRoute.toString());
-
-		// get routes
-		Collection<Route> newRoutes = repository.getRoutes("c_route_bus",
-				city.id, opts);
-		assertTrue(newRoutes.size() - routes.size() == 1);
-
-		c.rollback();
-		DBConnectionFactory.closeConnection(c);
-
-	}
-
-	@Test
-	public void insertRoute_Test1() throws Exception {
-		System.out.println("insertRoute_Test1()");
+		System.out.println("insertRoute_Test()");
 		String data = FileManager
 				.getFileData(FileManager.getTestResourcePath() + "route2.dat");
 		System.out.println(data);
@@ -329,8 +286,8 @@ public class RoutesRepositoryTest_local {
 		assertTrue(routes.size() > 0);
 		Route updateRoute = routes.iterator().next();
 		UpdateRouteOptions updateRouteOpts = new UpdateRouteOptions();
-		updateRouteOpts.setUpdateMainInfo(false);
-		updateRouteOpts.setUpdateRouteRelations(false);
+		updateRouteOpts.setUpdateMainInfo(true);
+		updateRouteOpts.setUpdateRouteRelations(true);
 		updateRouteOpts.setUpdateSchedule(true);
 		repository.updateRoute(updateRoute, updateRouteOpts);
 		System.out.println("updateRoute: " + updateRoute.toString());
