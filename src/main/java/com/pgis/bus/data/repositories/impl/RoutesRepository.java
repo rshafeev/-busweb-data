@@ -175,7 +175,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 			String query = "SELECT id,station_a_id,station_b_id,position_index,distance,"
 					+ "ev_time, geometry(geom) as geom FROM "
-					+ "bus.route_relations WHERE direct_route_id = ? ;";
+					+ "bus.route_relations WHERE direct_route_id = ? ORDER BY position_index;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, direct_route_id);
 			ResultSet key = ps.executeQuery();
