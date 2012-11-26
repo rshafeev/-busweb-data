@@ -39,6 +39,9 @@ public interface IAdminDataBaseService extends IDataBaseService {
 			throws RepositoryException;
 
 	void insertRoute(Route newRoute) throws RepositoryException;
+
 	void removeRoute(int routeID) throws RepositoryException;
-	void updateRoute(Route updateRoute, UpdateRouteOptions opts) throws RepositoryException;
+
+	void updateRoute(Route updateRoute, UpdateRouteOptions opts)
+			throws RepositoryException;
 }

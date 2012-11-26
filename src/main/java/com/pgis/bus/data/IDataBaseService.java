@@ -20,8 +20,8 @@ public interface IDataBaseService {
 
 	Collection<Language> getAllLanguages() throws RepositoryException;
 
-	Collection<Station> getStationsByCityAndTransport(int city_id,
-			String transportType) throws RepositoryException;
+	Collection<Station> getStationsByCity(int city_id)
+			throws RepositoryException;
 
 	Collection<Station> getStationsByBox(int city_id, Point p1, Point p2)
 			throws RepositoryException;

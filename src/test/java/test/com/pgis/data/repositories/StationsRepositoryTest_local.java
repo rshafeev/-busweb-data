@@ -3,9 +3,7 @@ package test.com.pgis.data.repositories;
 import static org.junit.Assert.*;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 
 import org.junit.After;
@@ -19,7 +17,6 @@ import test.com.pgis.data.TestDataSource;
 import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.Station;
-import com.pgis.bus.data.orm.StationTransport;
 
 import com.pgis.bus.data.repositories.ICitiesRepository;
 import com.pgis.bus.data.repositories.IStationsRepository;
@@ -61,13 +58,8 @@ public class StationsRepositoryTest_local {
 		IStationsRepository stationsRepository = new StationsRepository(c,
 				false, false);
 		Collection<Station> stations = stationsRepository
-				.getStationsByCityAndTransport(city.id, "c_bus");
+				.getStationsByCity(city.id);
 		for (Station s : stations) {
-			Iterator<StationTransport> i = s.getTransports().iterator();
-			while (i.hasNext()) {
-				StationTransport value = i.next();
-				System.out.println("Station transport : " + value.transport_type_id);
-			}
 			System.out.println("Station id : " + s.getLocation().x);
 			System.out.println("Station id : " + s.getLocation().y);
 		}
@@ -92,9 +84,6 @@ public class StationsRepositoryTest_local {
 		Collection<Station> stations = stationsRepository
 				.getStationsByBox(city.id, new Point(49,35), new Point(51,37));
 		for (Station s : stations) {
-			for (StationTransport t : s.getTransports()) {
-				System.out.println("Station transport : " + t.transport_type_id);
-			}
 			System.out.println("Station id : " + s.getLocation().x);
 			System.out.println("Station id : " + s.getLocation().y);
 		}
@@ -113,14 +102,11 @@ public class StationsRepositoryTest_local {
 		assertNotNull(city);
 
 		// insert station
-		ArrayList<StationTransport> transports = new ArrayList<StationTransport>();
-		transports.add(new StationTransport("c_bus"));
 		
 		Station newStation = new Station();
 		newStation.setCity_id(city.id);
 		newStation.setLocation(new Point(50, 40));
 		newStation.getLocation().setSrid(4326);
-		newStation.setTransports(transports);
 		
 		IStationsRepository stationsRepository = new StationsRepository(c,
 				false, false);
@@ -142,7 +128,7 @@ public class StationsRepositoryTest_local {
 		IStationsRepository stationsRepository = new StationsRepository(c,
 				false, false);
 		Collection<Station> stations = stationsRepository
-				.getStationsByCityAndTransport(city.id, "c_metro");
+				.getStationsByCity(city.id);
 		
 		Station station = stations.iterator().next();
 		

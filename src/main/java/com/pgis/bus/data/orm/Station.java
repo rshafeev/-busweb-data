@@ -12,7 +12,6 @@ public class Station implements Cloneable {
 	private Point location;
 	private int name_key;
 	private Collection<StringValue> names; // key - language id, value -
-	private Collection<StationTransport> transports;
 
 	public int getCity_id() {
 		return city_id;
@@ -22,13 +21,6 @@ public class Station implements Cloneable {
 		this.city_id = city_id;
 	}
 
-	public Collection<StationTransport> getTransports() {
-		return transports;
-	}
-
-	public void setTransports(Collection<StationTransport> transports) {
-		this.transports = transports;
-	}
 
 	public Point getLocation() {
 		return location;
@@ -83,9 +75,6 @@ public class Station implements Cloneable {
 			if (this.names != null)
 				obj.names = new ArrayList<StringValue>(this.names);
 
-			if (this.transports != null)
-				obj.transports = new ArrayList<StationTransport>(
-						this.transports);
 			if (obj.location != null) {
 				obj.location.setSrid(this.location.getSrid());
 

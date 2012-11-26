@@ -85,10 +85,8 @@ public class DataBaseService implements IDataBaseService {
 	}
 
 	@Override
-	public Collection<Station> getStationsByCityAndTransport(int city_id,
-			String transportType) throws RepositoryException {
-		return stationsRepository.getStationsByCityAndTransport(city_id,
-				transportType);
+	public Collection<Station> getStationsByCity(int city_id) throws RepositoryException {
+		return stationsRepository.getStationsByCity(city_id);
 	}
 
 	@Override
