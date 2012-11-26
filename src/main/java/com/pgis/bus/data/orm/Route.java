@@ -36,11 +36,11 @@ public class Route {
 
 	public void setName_key(int name_key) {
 		this.name_key = name_key;
-		if(this.name!=null){
-			for(StringValue s : this.name){
+		if (this.name != null) {
+			for (StringValue s : this.name) {
 				s.key_id = this.name_key;
 			}
-			
+
 		}
 	}
 
@@ -107,5 +107,13 @@ public class Route {
 				+ ", name_key=" + name_key + ", name=" + name
 				+ ", directRouteWay=" + directRouteWay + ", reverseRouteWay="
 				+ reverseRouteWay + "]";
+	}
+
+	public void updateIDs() {
+		if (this.directRouteWay != null)
+			this.directRouteWay.updateIDs();
+		if (this.reverseRouteWay != null)
+			this.reverseRouteWay.updateIDs();
+
 	}
 }

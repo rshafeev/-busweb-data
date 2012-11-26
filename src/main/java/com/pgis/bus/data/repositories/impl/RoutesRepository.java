@@ -730,7 +730,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		Connection c = this.connection;
 		if (c == null)
 			c = Repository.getConnection();
-
+		
 		try {
 			// validate
 			if (route.getDirectRouteWay() == null) {
@@ -739,7 +739,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 			}
 			this.insertStationsForRoute(route, c);
-
+			route.updateIDs();
 			String query = "INSERT INTO bus.routes (city_id,number,cost,route_type_id) "
 					+ "VALUES(?,?,?,bus.route_type_enum(?)) RETURNING id,name_key; ";
 			PreparedStatement ps = c.prepareStatement(query);
@@ -821,7 +821,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			c = Repository.getConnection();
 
 		try {
-
+			
 			if (opts.isUpdateMainInfo()) {
 				String query = "UPDATE bus.routes SET city_id = ?,number = ?, cost = ?, "
 						+ "route_type_id = bus.route_type_enum(?) WHERE id = ? ;";
@@ -840,6 +840,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 			}
 			if (opts.isUpdateSchedule()) {
+				updateRoute.updateIDs();
 				if (updateRoute.getDirectRouteWay() != null
 						&& updateRoute.getDirectRouteWay().getSchedule() != null) {
 					Schedule s1 = updateRoute.getDirectRouteWay().getSchedule();
@@ -868,6 +869,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 				updateRoute.getReverseRouteWay().setId(
 						updateRoute.getReverseRouteWay().getId());
 
+				
 				for (RouteRelation r : updateRoute.getDirectRouteWay()
 						.getRoute_relations()) {
 					System.out.println(r.toString());
