@@ -3,7 +3,6 @@ package com.pgis.bus.data.repositories.impl;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +22,24 @@ public class Repository implements IRepository {
 		isCommited = true;
 	}
 
-	public static Connection getConnection() throws RepositoryException {
+	protected void rollback(Connection c) throws RepositoryException {
+		try {
+			if (c!=null && !c.isClosed())
+				c.rollback();
+			throw new RepositoryException(
+					RepositoryException.err_enum.c_transaction_err);
+		} catch (SQLException sqx) {
+		}
+	}
+
+	protected void commit(Connection c) throws SQLException {
+		if (c!=null && this.isCommited)
+			c.commit();
+	}
+
+	protected Connection getConnection() throws RepositoryException {
+		if (connection != null)
+			return connection;
 		Connection conn = DBConnectionFactory.getConnection();
 		try {
 			if (conn == null) {
@@ -38,5 +54,10 @@ public class Repository implements IRepository {
 		}
 
 		return conn;
+	}
+
+	protected void closeConnection(Connection c) {
+		if (isClosed && c!=null)
+			DBConnectionFactory.closeConnection(c);
 	}
 }

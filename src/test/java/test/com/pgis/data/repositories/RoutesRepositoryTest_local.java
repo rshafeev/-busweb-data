@@ -188,9 +188,9 @@ public class RoutesRepositoryTest_local {
 
 		Route newRoute = (new Gson()).fromJson(data, Route.class);
 
-		Connection c = Repository.getConnection();
+		Connection c = DBConnectionFactory.getConnection();
 		IRoutesRepository repository = new RoutesRepository(c, false, false);
-		repository.insertRoute(newRoute);
+		//repository.insertRoute(newRoute);
 
 		c.rollback();
 		DBConnectionFactory.closeConnection(c);
@@ -205,9 +205,9 @@ public class RoutesRepositoryTest_local {
 
 		Route newRoute = (new Gson()).fromJson(data, Route.class);
 
-		Connection c = Repository.getConnection();
+		Connection c = DBConnectionFactory.getConnection();
 		IRoutesRepository repository = new RoutesRepository(c, false, false);
-		repository.insertRoute(newRoute);
+		//repository.insertRoute(newRoute);
 
 		c.rollback();
 		DBConnectionFactory.closeConnection(c);
@@ -217,7 +217,7 @@ public class RoutesRepositoryTest_local {
 	public void removeRoute_Test() throws Exception {
 		System.out.println("removeRoute_Test()...");
 		// set input data
-		Connection c = Repository.getConnection();
+		Connection c = DBConnectionFactory.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
 		IRoutesRepository repository = new RoutesRepository(c, false, false);
 
@@ -260,7 +260,7 @@ public class RoutesRepositoryTest_local {
 	public void updateRoute_Test() throws Exception {
 		System.out.println("updateRoute_Test()...");
 		// set input data
-		Connection c = Repository.getConnection();
+		Connection c = DBConnectionFactory.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
 		IRoutesRepository repository = new RoutesRepository(c, false, false);
 

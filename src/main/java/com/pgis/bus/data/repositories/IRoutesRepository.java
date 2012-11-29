@@ -9,7 +9,6 @@ import com.pgis.bus.data.models.RouteGeoData;
 import com.pgis.bus.data.models.RoutePart;
 import com.pgis.bus.data.orm.DirectRoute;
 import com.pgis.bus.data.orm.Route;
-import com.pgis.bus.data.orm.RouteRelation;
 import com.pgis.bus.data.orm.Schedule;
 import com.pgis.bus.data.orm.ScheduleGroup;
 import com.pgis.bus.data.orm.ScheduleGroupDay;

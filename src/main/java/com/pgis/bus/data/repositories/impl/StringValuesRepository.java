@@ -11,8 +11,6 @@ import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.repositories.IStringValuesRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
@@ -39,9 +37,7 @@ public class StringValuesRepository extends Repository implements
 			throws RepositoryException {
 		ArrayList<StringValue> values = null;
 
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 
 		try {
 			// Statement sql = (Statement) conn.createStatement();
@@ -64,8 +60,7 @@ public class StringValuesRepository extends Repository implements
 			throw new RepositoryException(
 					RepositoryException.err_enum.c_sql_err);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 
 		return values;
@@ -77,11 +72,8 @@ public class StringValuesRepository extends Repository implements
 
 		HashMap<String, StringValue> map = new HashMap<String, StringValue>();
 		Collection<StringValue> arr = getStringValues(string_key);
-		Iterator<StringValue> i = arr.iterator();
-		while (i.hasNext()) {
-			StringValue value = i.next();
-			map.put(value.lang_id, value);
-
+		for (StringValue s : arr) {
+			map.put(s.lang_id, s);
 		}
 		return map;
 	}
@@ -89,39 +81,27 @@ public class StringValuesRepository extends Repository implements
 	@Override
 	public void deleteStringValues(int string_key) throws RepositoryException {
 
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		try {
 			// Statement sql = (Statement) conn.createStatement();
 			String query = "DELETE FROM bus.string_values WHERE key_id = ? ";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, string_key);
 			ps.execute();
-			if (isCommited)
-				c.commit();
+			super.commit(c);
 		} catch (SQLException e) {
-			try {
-				log.error("deleteStringValues() exception: ", e);
-				c.rollback();
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_transaction_err);
-			} catch (SQLException sqx) {
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_rollback_err);
-			}
+			super.rollback(c);
+			log.error("deleteStringValues() exception: ", e);
 		} finally {
-			if (this.isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 
 	}
 
 	@Override
 	public int insertStringValue(StringValue value) throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
+		int id = -1;
 		try {
 			String query = "INSERT INTO bus.string_values (key_id,lang_id,value) VALUES(?,lang_enum(?),?) RETURNING id;";
 			PreparedStatement ps = c.prepareStatement(query);
@@ -129,36 +109,24 @@ public class StringValuesRepository extends Repository implements
 			ps.setString(2, value.lang_id);
 			ps.setString(3, value.value);
 			ResultSet key = ps.executeQuery();
-			int id = -1;
+
 			if (key.next()) {
 				id = key.getInt(1);
 			}
-			if (isCommited)
-				c.commit();
-			return id;
+			super.commit(c);
 		} catch (SQLException e) {
-			try {
-				log.error("insertStringValue() exception: ", e);
-				c.rollback();
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_transaction_err);
-			} catch (SQLException sqx) {
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_rollback_err);
-			}
+			super.rollback(c);
+			log.error("insertStringValue() exception: ", e);
 		} finally {
-			if (this.isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
-
+		return id;
 	}
 
 	@Override
 	public void updateStringValues(int string_key,
 			Collection<StringValue> values) throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 
 		try {
 			StringValuesRepository repository = new StringValuesRepository(c,
@@ -171,22 +139,13 @@ public class StringValuesRepository extends Repository implements
 				value.key_id = string_key;
 				repository.insertStringValue(value);
 			}
-			if (isCommited)
-				c.commit();
+			super.commit(c);
 
 		} catch (SQLException | RepositoryException e) {
-			try {
-				log.error("updateStringValues() exception: ", e);
-				c.rollback();
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_transaction_err);
-			} catch (SQLException sqx) {
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_rollback_err);
-			}
+			super.rollback(c);
+			log.error("updateStringValues() exception: ", e);
 		} finally {
-			if (this.isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 
 	}

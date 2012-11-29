@@ -58,6 +58,7 @@ public class TestDBConnectionManager implements IDBConnectionManager {
 		do {
 			try {
 				Connection c = this.source.getConnection();
+				c.setAutoCommit(false);
 				if (c != null)
 					return c;
 

@@ -45,7 +45,8 @@ public class CitiesRepositoryTest_local {
 
 	@Test
 	public void updateCityTest() throws Exception {
-		Connection c = Repository.getConnection();
+		Connection c =  DBConnectionFactory.getConnection();
+		
 		ICitiesRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_en", "Kharkov");
 		assertNotNull(city);
@@ -78,6 +79,7 @@ public class CitiesRepositoryTest_local {
 		newCity.lat = 6;
 		newCity.lon = 5;
 		newCity.scale = 4;
+		newCity.key = "moscow";
 		newCity.name = new HashMap<String, StringValue>();
 
 		StringValue ru_value = new StringValue();
@@ -92,7 +94,7 @@ public class CitiesRepositoryTest_local {
 		newCity.name.put(en_value.lang_id, en_value);
 
 		// test
-		Connection c = Repository.getConnection();
+		Connection c = DBConnectionFactory.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
 		City responceCity = db.insertCity(newCity);
 		assertNotNull(responceCity);
@@ -108,7 +110,7 @@ public class CitiesRepositoryTest_local {
 	@Test
 	public void getCityByName() throws Exception {
 		// test
-		Connection c = Repository.getConnection();
+		Connection c = DBConnectionFactory.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
 		City responceCity = db.getCityByName("c_en","Kharkov");
 		assertNotNull(responceCity);

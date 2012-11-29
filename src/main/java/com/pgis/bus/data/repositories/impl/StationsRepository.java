@@ -11,8 +11,6 @@ import org.postgis.PGgeometry;
 import org.postgis.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.repositories.IStationsRepository;
@@ -39,9 +37,7 @@ public class StationsRepository extends Repository implements
 	@Override
 	public Collection<Station> getStationsByCity(int city_id)
 			throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		Collection<Station> stations = null;
 
 		try {
@@ -83,8 +79,7 @@ public class StationsRepository extends Repository implements
 			throw new RepositoryException(
 					RepositoryException.err_enum.c_sql_err);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 		return stations;
 
@@ -92,9 +87,7 @@ public class StationsRepository extends Repository implements
 
 	@Override
 	public Station insertStation(Station station) throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		Station responceStation = station.clone();
 
 		try {
@@ -122,22 +115,13 @@ public class StationsRepository extends Repository implements
 						s.id = stringValuesRepository.insertStringValue(s);
 					}
 				}
-				if (this.isCommited)
-					c.commit();
+				super.commit(c);
 			}
 		} catch (SQLException e) {
-			try {
-				log.error("insertStation() exception: ", e);
-				c.rollback();
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_transaction_err);
-			} catch (SQLException sqx) {
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_rollback_err);
-			}
+			log.error("insertStation() exception: ", e);
+			super.rollback(c);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 		return responceStation;
 
@@ -145,9 +129,7 @@ public class StationsRepository extends Repository implements
 
 	@Override
 	public Station updateStation(Station station) throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		Station responceStation = station.clone();
 
 		try {
@@ -165,31 +147,20 @@ public class StationsRepository extends Repository implements
 			stringValuesRepository.updateStringValues(station.getName_key(),
 					station.getNames());
 
-			if (this.isCommited)
-				c.commit();
+			super.commit(c);
 
 		} catch (SQLException e) {
-			try {
-				log.error("updateStation() exception: ", e);
-				c.rollback();
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_transaction_err);
-			} catch (SQLException sqx) {
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_rollback_err);
-			}
+			log.error("updateStation() exception: ", e);
+			super.rollback(c);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 		return responceStation;
 	}
 
 	@Override
 	public void deleteStation(int station_id) throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		try {
 			String query = "DELETE FROM bus.stations WHERE id = ? ";
 			PreparedStatement ps = c.prepareStatement(query);
@@ -198,27 +169,17 @@ public class StationsRepository extends Repository implements
 			if (isCommited)
 				c.commit();
 		} catch (SQLException e) {
-			try {
-				log.error("deleteStation() exception: ", e);
-				c.rollback();
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_transaction_err);
-			} catch (SQLException sqx) {
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_rollback_err);
-			}
+			log.error("deleteStation() exception: ", e);
+			super.rollback(c);
 		} finally {
-			if (this.isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 
 	}
 
 	@Override
 	public Station getStation(int station_id) throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		Station station = null;
 
 		try {
@@ -256,8 +217,7 @@ public class StationsRepository extends Repository implements
 			throw new RepositoryException(
 					RepositoryException.err_enum.c_sql_err);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 		return station;
 
@@ -266,9 +226,7 @@ public class StationsRepository extends Repository implements
 	@Override
 	public Collection<Station> getStationsByBox(int city_id, Point p1, Point p2)
 			throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		Collection<Station> stations = null;
 		PGbox3d box = new org.postgis.PGbox3d(p1, p2);
 
@@ -313,8 +271,7 @@ public class StationsRepository extends Repository implements
 			throw new RepositoryException(
 					RepositoryException.err_enum.c_sql_err);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 		return stations;
 	}

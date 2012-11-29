@@ -6,6 +6,7 @@ import com.pgis.bus.data.helpers.LoadRouteOptions;
 import com.pgis.bus.data.helpers.UpdateRouteOptions;
 import com.pgis.bus.data.impl.DataBaseServiceException;
 import com.pgis.bus.data.orm.City;
+import com.pgis.bus.data.orm.ImportObject;
 import com.pgis.bus.data.orm.Route;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.User;
@@ -44,4 +45,6 @@ public interface IAdminDataBaseService extends IDataBaseService {
 
 	void updateRoute(Route updateRoute, UpdateRouteOptions opts)
 			throws RepositoryException;
+
+	void insertImportObject(ImportObject importObject)throws RepositoryException;
 }

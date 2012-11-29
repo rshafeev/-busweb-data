@@ -32,9 +32,7 @@ public class MainRepository extends Repository implements IMainRepository {
 	
 	public Collection<Language> getAllLanguages() throws RepositoryException {
 		Collection<Language> langs = null;
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		try {
 			// Statement sql = (Statement) conn.createStatement();
 			String query = "select * from bus.languages";

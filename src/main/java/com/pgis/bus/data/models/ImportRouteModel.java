@@ -1,11 +1,10 @@
 package com.pgis.bus.data.models;
 
-import org.postgis.LineString;
-
 import com.pgis.bus.data.orm.Station;
 
 public class ImportRouteModel {
-
+	
+	
 	private int cityID;
 
 	private int routeID;

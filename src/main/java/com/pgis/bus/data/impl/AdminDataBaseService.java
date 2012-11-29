@@ -7,13 +7,17 @@ import com.pgis.bus.data.IAdminDataBaseService;
 import com.pgis.bus.data.helpers.LoadRouteOptions;
 import com.pgis.bus.data.helpers.UpdateRouteOptions;
 import com.pgis.bus.data.orm.*;
+import com.pgis.bus.data.repositories.IimportRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
+import com.pgis.bus.data.repositories.impl.ImportRepository;
 
 public class AdminDataBaseService extends DataBaseService implements
 		IAdminDataBaseService {
 
+	IimportRepository importRepository = null;
 	public AdminDataBaseService() {
 		super();
+		importRepository = new ImportRepository();
 	}
 
 	@Override
@@ -91,6 +95,12 @@ public class AdminDataBaseService extends DataBaseService implements
 	public void updateRoute(Route updateRoute, UpdateRouteOptions opts)
 			throws RepositoryException {
 		routesRepository.updateRoute(updateRoute,opts);
+	}
+
+	@Override
+	public void insertImportObject(ImportObject importObject)
+			throws RepositoryException {
+		importRepository.insertObject(importObject);	
 	}
 
 }

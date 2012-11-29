@@ -8,17 +8,12 @@ import java.sql.Time;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.postgis.Geometry;
 import org.postgis.LineString;
-import org.postgis.MultiLineString;
 import org.postgis.PGgeometry;
 import org.postgis.Point;
 import org.postgresql.util.PGInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.helpers.LoadDirectRouteOptions;
 import com.pgis.bus.data.helpers.LoadRouteOptions;
 import com.pgis.bus.data.helpers.LoadRouteRelationOptions;
@@ -59,9 +54,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 	@Override
 	public Collection<RouteGeoData> getGeoDataByRoutePart(RoutePart routePart,
 			String lang_id) throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		Collection<RouteGeoData> relations = null;
 
 		try {
@@ -113,8 +106,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			throw new RepositoryException(
 					RepositoryException.err_enum.c_sql_err);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 		return relations;
 	}
@@ -122,9 +114,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 	@Override
 	public DirectRoute getDirectRoute(int route_id, boolean directType,
 			LoadDirectRouteOptions opts) throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		DirectRoute directRoute = null;
 
 		try {
@@ -147,8 +137,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			throw new RepositoryException(
 					RepositoryException.err_enum.c_sql_err);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 		if (directRoute == null)
 			return directRoute;
@@ -166,9 +155,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			LoadRouteRelationOptions loadRouteRelationOptions)
 			throws RepositoryException {
 
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		Collection<RouteRelation> relations = null;
 
 		try {
@@ -223,8 +210,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			throw new RepositoryException(
 					RepositoryException.err_enum.c_sql_err);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 
 		return relations;
@@ -232,9 +218,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 	@Override
 	public Schedule getSchedule(int direct_route_id) throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		Schedule schedule = null;
 
 		try {
@@ -255,8 +239,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			throw new RepositoryException(
 					RepositoryException.err_enum.c_sql_err);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 
 		return schedule;
@@ -265,9 +248,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 	@Override
 	public Collection<Timetable> getTimeTables(int schedule_group_id)
 			throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		Collection<Timetable> timeTables = null;
 
 		try {
@@ -280,7 +261,6 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 				int id = key.getInt("id");
 
 				Time time_A = (Time) key.getObject("time_A");
-				Object o = key.getObject("time_A");
 				Time time_B = (Time) key.getObject("time_B");
 				PGInterval frequency = (PGInterval) key.getObject("frequency");
 
@@ -297,8 +277,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			throw new RepositoryException(
 					RepositoryException.err_enum.c_sql_err);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 
 		return timeTables;
@@ -307,9 +286,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 	@Override
 	public Collection<ScheduleGroupDay> getScheduleGroupDays(
 			int schedule_group_id) throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		Collection<ScheduleGroupDay> days = null;
 
 		try {
@@ -333,8 +310,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			throw new RepositoryException(
 					RepositoryException.err_enum.c_sql_err);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 
 		return days;
@@ -343,9 +319,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 	@Override
 	public Collection<ScheduleGroup> getScheduleGroups(int schedule_id)
 			throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		Collection<ScheduleGroup> groups = null;
 
 		try {
@@ -369,8 +343,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			throw new RepositoryException(
 					RepositoryException.err_enum.c_sql_err);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 
 		return groups;
@@ -380,9 +353,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 	public Collection<Route> getRoutes(String routeTypeID, int city_id,
 			LoadRouteOptions opts) throws RepositoryException {
 
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		Collection<Route> routes = null;
 
 		try {
@@ -415,9 +386,9 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			throw new RepositoryException(
 					RepositoryException.err_enum.c_sql_err);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
+		
 		try {
 			IStringValuesRepository stringValuesRepository = null;
 
@@ -454,9 +425,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 	@Override
 	public Route getRoute(int route_id, LoadRouteOptions opts)
 			throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		Route route = null;
 
 		try {
@@ -488,9 +457,9 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			throw new RepositoryException(
 					RepositoryException.err_enum.c_sql_err);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
+		
 		try {
 			IStringValuesRepository stringValuesRepository = null;
 
@@ -726,11 +695,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 	@Override
 	public void insertRoute(Route route) throws RepositoryException {
-
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
-		
+		Connection c = super.getConnection();
 		try {
 			// validate
 			if (route.getDirectRouteWay() == null) {
@@ -766,60 +731,36 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			for (StringValue v : route.getName()) {
 				stringValuesRepository.insertStringValue(v);
 			}
-			if (this.isCommited)
-				c.commit();
+			super.commit(c);
 		} catch (Exception e) {
-			try {
-				log.error("insertRoute() exception: ", e);
-				c.rollback();
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_transaction_err);
-			} catch (SQLException sqx) {
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_rollback_err);
-			}
+			log.error("insertRoute() exception: ", e);
+			super.rollback(c);
 		} finally {
-			if (isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 	}
 
 	@Override
 	public void removeRoute(int routeID) throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c  = super.getConnection();
 		try {
 			String query = "DELETE FROM bus.routes WHERE id=?;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, routeID);
 			ps.execute();
-			if (this.isCommited)
-				c.commit();
+			super.commit(c);
 		} catch (SQLException e) {
-			try {
-				log.error("removeRoute() exception: ", e);
-				c.rollback();
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_transaction_err);
-			} catch (SQLException sqx) {
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_rollback_err);
-			}
+			log.error("removeRoute() exception: ", e);
+			super.rollback(c);
 		} finally {
-			if (this.isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 	}
 
 	@Override
 	public void updateRoute(Route updateRoute, UpdateRouteOptions opts)
 			throws RepositoryException {
-
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
-
+		Connection c = super.getConnection();
 		try {
 			
 			if (opts.isUpdateMainInfo()) {
@@ -881,21 +822,12 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 					insertRouteRelation(r, c);
 				}
 			}
-			if (this.isCommited)
-				c.commit();
+			super.commit(c);
 		} catch (Exception e) {
-			try {
-				log.error("updateRoute() exception: ", e);
-				c.rollback();
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_transaction_err);
-			} catch (Exception sqx) {
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_rollback_err);
-			}
+			log.error("updateRoute() exception: ", e);
+			super.rollback(c);
 		} finally {
-			if (this.isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 	}
 

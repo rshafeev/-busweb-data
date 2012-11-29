@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 public class City implements Cloneable {
 	public Integer id;
+	public String key;
 	public double lat;
 	public double lon;
 	public int scale;
@@ -22,6 +23,7 @@ public class City implements Cloneable {
 			city.scale = this.scale;
 			city.name_key = this.name_key;
 			city.isShow = this.isShow;
+			city.key = this.key;
 			return city;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();

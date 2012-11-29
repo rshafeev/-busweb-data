@@ -1,8 +1,6 @@
 package com.pgis.bus.data.models;
 
 import org.postgis.LineString;
-import org.postgis.MultiLineString;
-import org.postgis.PGgeometry;
 import org.postgis.Point;
 
 public class RouteGeoData {

@@ -85,7 +85,8 @@ public class DataBaseService implements IDataBaseService {
 	}
 
 	@Override
-	public Collection<Station> getStationsByCity(int city_id) throws RepositoryException {
+	public Collection<Station> getStationsByCity(int city_id)
+			throws RepositoryException {
 		return stationsRepository.getStationsByCity(city_id);
 	}
 
@@ -105,6 +106,12 @@ public class DataBaseService implements IDataBaseService {
 	public Collection<Station> getStationsByBox(int city_id, Point p1, Point p2)
 			throws RepositoryException {
 		return stationsRepository.getStationsByBox(city_id, p1, p2);
+	}
+
+	@Override
+	public City getCityByKey(String key) throws RepositoryException {
+
+		return citiesRepotitory.getCityByKey(key);
 	}
 
 }

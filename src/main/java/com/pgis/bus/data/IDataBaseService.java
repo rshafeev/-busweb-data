@@ -33,4 +33,7 @@ public interface IDataBaseService {
 
 	Collection<RouteGeoData> getGeoDataByRoutePart(RoutePart routePart,
 			String lang_id) throws RepositoryException;
+
+	City getCityByKey(String key) throws RepositoryException;
+
 }

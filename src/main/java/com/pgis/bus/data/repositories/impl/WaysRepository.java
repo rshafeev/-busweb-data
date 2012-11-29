@@ -12,7 +12,6 @@ import org.postgresql.util.PGInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.models.FindWaysOptions;
 import com.pgis.bus.data.orm.WayElem;
 import com.pgis.bus.data.repositories.IWaysRepository;
@@ -36,11 +35,8 @@ public class WaysRepository extends Repository implements IWaysRepository {
 	@Override
 	public Collection<WayElem> getShortestWays(FindWaysOptions options)
 			throws RepositoryException {
-		Connection c = this.connection;
-		if (c == null)
-			c = Repository.getConnection();
+		Connection c = super.getConnection();
 		Collection<WayElem> ways = null;
-
 		try {
 			String query = "select  * from  bus.shortest_ways(" + "?," /* city_id */
 					+ " geography(?)," /* p1 */
@@ -84,21 +80,12 @@ public class WaysRepository extends Repository implements IWaysRepository {
 				wayElem.distance = key.getDouble("distance");
 				ways.add(wayElem);
 			}
-			if (isCommited)
-				c.commit();
+			super.commit(c);
 		} catch (SQLException e) {
-			try {
-				log.error("deleteStringValues() exception: ", e);
-				c.rollback();
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_transaction_err);
-			} catch (SQLException sqx) {
-				throw new RepositoryException(
-						RepositoryException.err_enum.c_rollback_err);
-			}
+			super.rollback(c);
+			log.error("can not read database", e);
 		} finally {
-			if (this.isClosed)
-				DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 
 		return ways;

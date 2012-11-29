@@ -49,7 +49,7 @@ public class StationsRepositoryTest_local {
 	@Test
 	public void getAllStationsTest() throws Exception {
 		// get city
-		Connection c = Repository.getConnection();
+		Connection c = DBConnectionFactory.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_en", "Kharkov");
 		assertNotNull(city);
@@ -73,7 +73,7 @@ public class StationsRepositoryTest_local {
 	public void getAllStationsInBoxTest() throws Exception {
 		System.out.println("getAllStationsInBoxTest()");
 		// get city
-		Connection c = Repository.getConnection();
+		Connection c = DBConnectionFactory.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_en", "Kharkov");
 		assertNotNull(city);
@@ -96,7 +96,7 @@ public class StationsRepositoryTest_local {
 	@Test
 	public void insertStationTest() throws Exception {
 		// get city
-		Connection c = Repository.getConnection();
+		Connection c = DBConnectionFactory.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_en", "Kharkov");
 		assertNotNull(city);
@@ -119,7 +119,7 @@ public class StationsRepositoryTest_local {
 	@Test
 	public void updateStationTest() throws Exception {
 		// get city
-		Connection c = Repository.getConnection();
+		Connection c = DBConnectionFactory.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_ru", "Харьков");
 		assertNotNull(city);

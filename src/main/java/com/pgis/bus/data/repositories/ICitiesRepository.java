@@ -28,4 +28,6 @@ public interface ICitiesRepository extends IRepository {
 	
 	City updateCity(City updateCity) throws RepositoryException;
 
+	City getCityByKey(String key) throws RepositoryException;
+
 }
