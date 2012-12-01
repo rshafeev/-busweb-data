@@ -16,11 +16,13 @@ import test.com.pgis.data.TestDataSource;
 import com.google.gson.Gson;
 import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.IAdminDataBaseService;
+import com.pgis.bus.data.IDataBaseService;
 import com.pgis.bus.data.helpers.LoadDirectRouteOptions;
 import com.pgis.bus.data.helpers.LoadRouteOptions;
 import com.pgis.bus.data.helpers.LoadRouteRelationOptions;
 import com.pgis.bus.data.helpers.UpdateRouteOptions;
 import com.pgis.bus.data.impl.AdminDataBaseService;
+import com.pgis.bus.data.impl.DataBaseService;
 import com.pgis.bus.data.models.RouteGeoData;
 import com.pgis.bus.data.models.RoutePart;
 import com.pgis.bus.data.orm.City;
@@ -32,8 +34,6 @@ import com.pgis.bus.data.repositories.impl.Repository;
 import com.pgis.bus.data.repositories.impl.RoutesRepository;
 
 public class RoutesRepositoryTest_local {
-
-	
 
 	@Before
 	public void init() {
@@ -87,6 +87,27 @@ public class RoutesRepositoryTest_local {
 		IRoutesRepository repository = new RoutesRepository();
 		Collection<Route> routes = repository.getRoutes("c_route_bus", city.id,
 				opts);
+		for (Route route : routes) {
+			System.out.println(route.toString());
+		}
+
+	}
+
+	@Test
+	public void getRoutes_Test2() throws Exception {
+		System.out.println("getRoutes2_Test()...");
+		// set input data
+		ICitiesRepository cityReps = new CitiesRepository();
+		City city = cityReps.getCityByName("c_en", "Kharkov");
+		assertNotNull(city);
+
+		String route_type = "c_route_metro";
+		String lang_id = "c_ru";
+
+		// get routes
+		IDataBaseService db = new DataBaseService();
+		Collection<Route> routes = db.getRoutes(route_type, city.id,
+				lang_id);
 		for (Route route : routes) {
 			System.out.println(route.toString());
 		}
@@ -178,19 +199,18 @@ public class RoutesRepositoryTest_local {
 
 	}
 
-
 	@Test
 	public void insertRoute_Test() throws Exception {
 		System.out.println("insertRoute_Test()");
-		String data = FileManager
-				.getFileData(FileManager.getTestResourcePath() + "route2.dat");
+		String data = FileManager.getFileData(FileManager.getTestResourcePath()
+				+ "route2.dat");
 		System.out.println(data);
 
 		Route newRoute = (new Gson()).fromJson(data, Route.class);
 
 		Connection c = DBConnectionFactory.getConnection();
 		IRoutesRepository repository = new RoutesRepository(c, false, false);
-		//repository.insertRoute(newRoute);
+		// repository.insertRoute(newRoute);
 
 		c.rollback();
 		DBConnectionFactory.closeConnection(c);
@@ -199,20 +219,20 @@ public class RoutesRepositoryTest_local {
 	@Test
 	public void insertRouteWithoutReverseWay_Test() throws Exception {
 		System.out.println("insertRouteWithoutReverseWay_Test()");
-		String data = FileManager
-				.getFileData(FileManager.getTestResourcePath() + "route3.dat");
+		String data = FileManager.getFileData(FileManager.getTestResourcePath()
+				+ "route3.dat");
 		System.out.println(data);
 
 		Route newRoute = (new Gson()).fromJson(data, Route.class);
 
 		Connection c = DBConnectionFactory.getConnection();
 		IRoutesRepository repository = new RoutesRepository(c, false, false);
-		//repository.insertRoute(newRoute);
+		// repository.insertRoute(newRoute);
 
 		c.rollback();
 		DBConnectionFactory.closeConnection(c);
 	}
-	
+
 	@Test
 	public void removeRoute_Test() throws Exception {
 		System.out.println("removeRoute_Test()...");

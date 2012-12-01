@@ -19,6 +19,9 @@ public interface IRoutesRepository {
 			String lang_id) throws RepositoryException;
 
 	Collection<Route> getRoutes(String routeTypeID, int city_id,
+			String lang_id) throws RepositoryException;
+
+	Collection<Route> getRoutes(String routeTypeID, int city_id,
 			LoadRouteOptions opts) throws RepositoryException;
 
 	Route getRoute(int route_id, LoadRouteOptions opts)
@@ -44,6 +47,5 @@ public interface IRoutesRepository {
 
 	void updateRoute(Route updateRoute, UpdateRouteOptions opts)
 			throws RepositoryException;
-	
 
 }

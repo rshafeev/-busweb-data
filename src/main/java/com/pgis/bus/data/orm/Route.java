@@ -3,7 +3,6 @@ package com.pgis.bus.data.orm;
 import java.util.Collection;
 
 public class Route {
-
 	private int id;
 	private int city_id;
 	private double cost;
@@ -13,8 +12,10 @@ public class Route {
 
 	private Collection<StringValue> name; // key - language id, value -
 	private DirectRoute directRouteWay;
-
 	private DirectRoute reverseRouteWay;
+
+	// Упрощенная информация о расписании для маршрута
+	private Timetable simpleTimeTable;
 
 	public int getId() {
 		return id;
@@ -114,6 +115,19 @@ public class Route {
 			this.directRouteWay.updateIDs();
 		if (this.reverseRouteWay != null)
 			this.reverseRouteWay.updateIDs();
+
+	}
+
+	public String getFullName(String lang_id) {
+		String fullName = this.number;
+		if (this.name != null) {
+			for (StringValue v : this.name) {
+				if (v.equals(lang_id)) {
+					fullName += v.value;
+				}
+			}
+		}
+		return fullName;
 
 	}
 }

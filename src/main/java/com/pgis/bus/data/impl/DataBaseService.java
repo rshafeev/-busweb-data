@@ -12,6 +12,7 @@ import com.pgis.bus.data.models.RouteGeoData;
 import com.pgis.bus.data.models.RoutePart;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.Language;
+import com.pgis.bus.data.orm.Route;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.WayElem;
 import com.pgis.bus.data.repositories.ICitiesRepository;
@@ -114,4 +115,10 @@ public class DataBaseService implements IDataBaseService {
 		return citiesRepotitory.getCityByKey(key);
 	}
 
+	@Override
+	public Collection<Route> getRoutes(String routeTypeID, int city_id,
+			String lang_id) throws RepositoryException {
+		return routesRepository.getRoutes(routeTypeID, city_id, lang_id);
+	}
+	
 }

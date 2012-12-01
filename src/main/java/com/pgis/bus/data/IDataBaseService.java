@@ -16,6 +16,9 @@ public interface IDataBaseService {
 
 	Station getStationByName(String name, Language lang);
 
+	Collection<Route> getRoutes(String routeTypeID, int city_id, String lang_id)
+			throws RepositoryException;
+
 	Collection<City> getAllCities() throws RepositoryException;
 
 	Collection<Language> getAllLanguages() throws RepositoryException;

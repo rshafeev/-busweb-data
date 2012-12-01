@@ -1,5 +1,6 @@
 package com.pgis.bus.data.repositories.impl;
 
+import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -388,7 +389,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		} finally {
 			super.closeConnection(c);
 		}
-		
+
 		try {
 			IStringValuesRepository stringValuesRepository = null;
 
@@ -459,7 +460,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		} finally {
 			super.closeConnection(c);
 		}
-		
+
 		try {
 			IStringValuesRepository stringValuesRepository = null;
 
@@ -742,7 +743,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 	@Override
 	public void removeRoute(int routeID) throws RepositoryException {
-		Connection c  = super.getConnection();
+		Connection c = super.getConnection();
 		try {
 			String query = "DELETE FROM bus.routes WHERE id=?;";
 			PreparedStatement ps = c.prepareStatement(query);
@@ -762,7 +763,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			throws RepositoryException {
 		Connection c = super.getConnection();
 		try {
-			
+
 			if (opts.isUpdateMainInfo()) {
 				String query = "UPDATE bus.routes SET city_id = ?,number = ?, cost = ?, "
 						+ "route_type_id = bus.route_type_enum(?) WHERE id = ? ;";
@@ -810,7 +811,6 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 				updateRoute.getReverseRouteWay().setId(
 						updateRoute.getReverseRouteWay().getId());
 
-				
 				for (RouteRelation r : updateRoute.getDirectRouteWay()
 						.getRoute_relations()) {
 					System.out.println(r.toString());
@@ -829,6 +829,50 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		} finally {
 			super.closeConnection(c);
 		}
+	}
+
+	@Override
+	public Collection<Route> getRoutes(String routeTypeID, int city_id,
+			String lang_id) throws RepositoryException {
+		Connection c = super.getConnection();
+		Collection<Route> routes = null;
+
+		try {
+			String query = "select bus.routes.id,number,cost,value as name from bus.routes " +
+					"  JOIN bus.string_values ON bus.string_values.key_id = bus.routes.name_key" +
+					"  WHERE city_id = ? AND route_type_id = bus.route_type_enum(?)" +
+					"  AND lang_id = lang_enum(?);";
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setInt(1, city_id);
+			ps.setString(2, routeTypeID);
+			ps.setString(3, lang_id);
+			ResultSet key = ps.executeQuery();
+			routes = new ArrayList<Route>();
+			while (key.next()) {
+				int id = key.getInt("id");
+				String number = key.getString("number");
+				String name = key.getString("name");
+				double cost = key.getDouble("cost");
+				ArrayList<StringValue> arr = new ArrayList<StringValue>(1);
+				arr.add(new StringValue(lang_id,name));
+				Route route = new Route();
+				route.setId(id);
+				route.setCost(cost);
+				route.setNumber(number);
+				route.setCity_id(city_id);
+				route.setRoute_type_id(routeTypeID);
+				routes.add(route);
+			}
+		} catch (Exception e) {
+			routes = null;
+			log.error("can not read database", e);
+			throw new RepositoryException(
+					RepositoryException.err_enum.c_sql_err);
+		} finally {
+			super.closeConnection(c);
+		}
+
+		return routes;
 	}
 
 }
