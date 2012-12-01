@@ -109,6 +109,7 @@ public class RoutesRepositoryTest_local {
 		Collection<Route> routes = db.getRoutes(route_type, city.id,
 				lang_id);
 		for (Route route : routes) {
+			
 			System.out.println(route.toString());
 		}
 

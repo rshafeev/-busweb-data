@@ -13,6 +13,8 @@ public interface ICitiesRepository extends IRepository {
 	City getCityByName(String lang_name, String name)
 			throws RepositoryException;
 
+	Collection<String> getTransportTypesForCity(int cityID) throws RepositoryException;
+	
 	/**
 	 * 
 	 * @param city

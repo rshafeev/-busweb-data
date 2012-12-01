@@ -269,4 +269,31 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		return responceCity;
 	}
 
+	@Override
+	public Collection<String> getTransportTypesForCity(int cityID)
+			throws RepositoryException {
+		Connection c = super.getConnection();
+		Collection<String> types = new ArrayList<String>();
+		try {
+			String query = "SELECT r.route_type_id from ( "
+					+ "SELECT DISTINCT route_type_id FROM bus.routes where city_id = ?) as r "
+					+ "JOIN bus.route_types ON bus.route_types.id = r.route_type_id "
+					+ "WHERE visible = BIT '1';";
+
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setInt(1, cityID);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				types.add(rs.getString(1));
+			}
+		} catch (SQLException e) {
+			log.error("can not read database", e);
+			throw new RepositoryException(
+					RepositoryException.err_enum.c_sql_err);
+		} finally {
+			super.closeConnection(c);
+		}
+		return null;
+	}
+
 }

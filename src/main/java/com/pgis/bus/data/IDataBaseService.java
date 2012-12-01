@@ -16,6 +16,9 @@ public interface IDataBaseService {
 
 	Station getStationByName(String name, Language lang);
 
+	Collection<String> getTransportTypesForCity(int cityID)
+			throws RepositoryException;
+
 	Collection<Route> getRoutes(String routeTypeID, int city_id, String lang_id)
 			throws RepositoryException;
 

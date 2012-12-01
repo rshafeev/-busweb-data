@@ -120,5 +120,11 @@ public class DataBaseService implements IDataBaseService {
 			String lang_id) throws RepositoryException {
 		return routesRepository.getRoutes(routeTypeID, city_id, lang_id);
 	}
-	
+
+	@Override
+	public Collection<String> getTransportTypesForCity(int cityID)
+			throws RepositoryException {
+		return this.citiesRepotitory.getTransportTypesForCity(cityID);
+	}
+
 }
