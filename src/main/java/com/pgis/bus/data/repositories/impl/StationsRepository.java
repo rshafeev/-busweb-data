@@ -76,8 +76,7 @@ public class StationsRepository extends Repository implements
 		} catch (SQLException e) {
 			stations = null;
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -120,6 +119,7 @@ public class StationsRepository extends Repository implements
 		} catch (SQLException e) {
 			log.error("insertStation() exception: ", e);
 			super.rollback(c);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -152,6 +152,7 @@ public class StationsRepository extends Repository implements
 		} catch (SQLException e) {
 			log.error("updateStation() exception: ", e);
 			super.rollback(c);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -171,6 +172,7 @@ public class StationsRepository extends Repository implements
 		} catch (SQLException e) {
 			log.error("deleteStation() exception: ", e);
 			super.rollback(c);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -214,8 +216,7 @@ public class StationsRepository extends Repository implements
 			}
 		} catch (SQLException e) {
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -268,12 +269,44 @@ public class StationsRepository extends Repository implements
 		} catch (SQLException e) {
 			stations = null;
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
 		return stations;
+	}
+
+	@Override
+	public Station getStation(StringValue name, Point location)
+			throws RepositoryException {
+		Connection c = super.getConnection();
+		Station station = null;
+		if(name==null || location == null)
+			return null;
+		try {
+			String query = "SELECT bus.stations.id as id FROM bus.stations "
+					+ "JOIN bus.string_values ON bus.string_values.key_id = bus.stations.name_key "
+					+ "WHERE st_distance(bus.stations.location,geography(?)) < 10 AND "
+					+ " lang_id = lang_enum(?) AND value = ?;";
+
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setObject(1, new PGgeometry(location));
+			ps.setString(2, name.lang_id);
+			ps.setString(3, name.value);
+			ResultSet key = ps.executeQuery();
+
+			if (key.next()) {
+				int station_id = key.getInt("id");
+				station = getStation(station_id);
+			}
+		} catch (SQLException e) {
+			station = null;
+			log.error("can not read database", e);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} finally {
+			super.closeConnection(c);
+		}
+		return station;
 	}
 
 }

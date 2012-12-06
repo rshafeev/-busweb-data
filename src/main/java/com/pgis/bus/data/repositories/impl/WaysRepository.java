@@ -84,6 +84,7 @@ public class WaysRepository extends Repository implements IWaysRepository {
 		} catch (SQLException e) {
 			super.rollback(c);
 			log.error("can not read database", e);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}

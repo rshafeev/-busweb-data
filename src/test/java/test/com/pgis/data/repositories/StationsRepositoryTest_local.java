@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import java.sql.Connection;
 import java.util.Collection;
 
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +22,6 @@ import com.pgis.bus.data.repositories.IStationsRepository;
 import com.pgis.bus.data.repositories.impl.CitiesRepository;
 import com.pgis.bus.data.repositories.impl.Repository;
 import com.pgis.bus.data.repositories.impl.StationsRepository;
-
 
 //import com.pgis.bus.data.repositories.UsersRepository;
 public class StationsRepositoryTest_local {
@@ -81,8 +79,8 @@ public class StationsRepositoryTest_local {
 		// get stations
 		IStationsRepository stationsRepository = new StationsRepository(c,
 				false, false);
-		Collection<Station> stations = stationsRepository
-				.getStationsByBox(city.id, new Point(49,35), new Point(51,37));
+		Collection<Station> stations = stationsRepository.getStationsByBox(
+				city.id, new Point(49, 35), new Point(51, 37));
 		for (Station s : stations) {
 			System.out.println("Station id : " + s.getLocation().x);
 			System.out.println("Station id : " + s.getLocation().y);
@@ -92,7 +90,7 @@ public class StationsRepositoryTest_local {
 		DBConnectionFactory.closeConnection(c);
 
 	}
-	
+
 	@Test
 	public void insertStationTest() throws Exception {
 		// get city
@@ -102,12 +100,12 @@ public class StationsRepositoryTest_local {
 		assertNotNull(city);
 
 		// insert station
-		
+
 		Station newStation = new Station();
 		newStation.setCity_id(city.id);
 		newStation.setLocation(new Point(50, 40));
 		newStation.getLocation().setSrid(4326);
-		
+
 		IStationsRepository stationsRepository = new StationsRepository(c,
 				false, false);
 		newStation = stationsRepository.insertStation(newStation);
@@ -116,6 +114,7 @@ public class StationsRepositoryTest_local {
 		DBConnectionFactory.closeConnection(c);
 
 	}
+
 	@Test
 	public void updateStationTest() throws Exception {
 		// get city
@@ -129,20 +128,47 @@ public class StationsRepositoryTest_local {
 				false, false);
 		Collection<Station> stations = stationsRepository
 				.getStationsByCity(city.id);
-		
+
 		Station station = stations.iterator().next();
-		
+
 		// update station
-		Station updateStation  = station.clone();
+		Station updateStation = station.clone();
 		updateStation = stationsRepository.updateStation(updateStation);
 		System.out.println("update station:");
 		System.out.println(updateStation.getCity_id());
-		
+
 		c.rollback();
 		DBConnectionFactory.closeConnection(c);
 
 	}
-	
 
+	@Test
+	public void getStationByLocationTest() throws Exception {
+		System.out.println("getStationByLocationTest()...");
+		// get city
+		Connection c = DBConnectionFactory.getConnection();
+		ICitiesRepository db = new CitiesRepository(c, false, false);
+		City city = db.getCityByName("c_ru", "Харьков");
+		assertNotNull(city);
+
+		// get station
+		IStationsRepository stationsRepository = new StationsRepository(c,
+				false, false);
+		Collection<Station> stations = stationsRepository
+				.getStationsByCity(city.id);
+		assertTrue(stations.size() > 0);
+		Station station = stations.iterator().next();
+
+		// find station
+		Station findStation = stationsRepository.getStation(station.getNames()
+				.iterator().next(), station.getLocation());
+		assertNotNull(findStation);
+		System.out.println("findStation" + findStation.toString());
+		
+		// clear 
+		c.rollback();
+		DBConnectionFactory.closeConnection(c);
+
+	}
 
 }

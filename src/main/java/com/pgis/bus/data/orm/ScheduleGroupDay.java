@@ -8,6 +8,14 @@ public class ScheduleGroupDay {
 	private int schedule_group_id;
 	private DayEnum day_id;
 
+	public ScheduleGroupDay(){
+		
+	}
+	public ScheduleGroupDay(DayEnum day){
+		this.day_id = day;
+		this.schedule_group_id = -1;
+		this.id = -1;
+	}
 	public int getId() {
 		return id;
 	}

@@ -43,8 +43,7 @@ public class UsersRepository extends Repository implements IUsersRepository {
 		} catch (SQLException e) {
 			user = null;
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -73,8 +72,7 @@ public class UsersRepository extends Repository implements IUsersRepository {
 			}
 		} catch (SQLException e) {
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(conn);
 		}

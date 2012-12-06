@@ -122,9 +122,9 @@ public class DataBaseService implements IDataBaseService {
 	}
 
 	@Override
-	public Collection<String> getTransportTypesForCity(int cityID)
+	public Collection<String> getRouteTypesForCity(int cityID)
 			throws RepositoryException {
-		return this.citiesRepotitory.getTransportTypesForCity(cityID);
+		return this.citiesRepotitory.getRouteTypesForCity(cityID);
 	}
 
 }

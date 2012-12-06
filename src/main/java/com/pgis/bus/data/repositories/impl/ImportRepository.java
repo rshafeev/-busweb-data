@@ -3,13 +3,18 @@ package com.pgis.bus.data.repositories.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
 import com.pgis.bus.data.helpers.LoadImportObjectOptions;
 import com.pgis.bus.data.models.ImportRouteModel;
 import com.pgis.bus.data.orm.ImportObject;
+import com.pgis.bus.data.orm.Station;
+import com.pgis.bus.data.repositories.IStationsRepository;
 import com.pgis.bus.data.repositories.IimportRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
 
@@ -60,6 +65,7 @@ public class ImportRepository extends Repository implements IimportRepository {
 		} catch (Exception e) {
 			log.error("insertObject() exception: ", e);
 			super.rollback(c);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -68,21 +74,127 @@ public class ImportRepository extends Repository implements IimportRepository {
 	@Override
 	public ImportRouteModel getRouteModelForObj(int objID)
 			throws RepositoryException {
-		// TODO Auto-generated method stub
+		try {
+			ImportObject obj = getObject(objID);
+			if (obj == null)
+				return null;
+			ImportRouteModel routeModel = (new Gson()).fromJson(obj.obj,
+					ImportRouteModel.class);
+			routeModel.setCityID(obj.city_id);
+			routeModel.setNumber(obj.route_number);
+			routeModel.setRouteType(obj.route_type);
+			routeModel.init();
+			IStationsRepository stations = new StationsRepository();
+
+			int ind = -1;
+			for (int i = 0; i < routeModel.getDirectStations().length; i++) {
+				Station rowStation = routeModel.getDirectStations()[i];
+				Station findStation = stations.getStation(
+						rowStation.getNameByLanguage("c_ru"),
+						rowStation.getLocation());
+				if (findStation != null) {
+					routeModel.getDirectStations()[i].copyFrom(findStation);
+				} else {
+					routeModel.getDirectStations()[i].setId(ind);
+					ind--;
+				}
+			}
+
+			for (int i = 0; i < routeModel.getReverseStations().length; i++) {
+				Station rowStation = routeModel.getReverseStations()[i];
+				Station findStation = stations.getStation(
+						rowStation.getNameByLanguage("c_ru"),
+						rowStation.getLocation());
+				if (findStation != null) {
+					routeModel.getReverseStations()[i].copyFrom(findStation);
+				} else {
+					rowStation.setId(ind);
+					ind--;
+				}
+			}
+			return routeModel;
+		} catch (Exception e) {
+			log.error("insertObject() exception: ", e);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} finally {
+
+		}
 		return null;
 	}
 
 	@Override
 	public void removeObject(int ID) throws RepositoryException {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public Collection<ImportObject> getObjects(int cityID, String routeType,
 			LoadImportObjectOptions opts) throws RepositoryException {
-		// TODO Auto-generated method stub
-		return null;
+		Connection c = super.getConnection();
+		Collection<ImportObject> objects = new ArrayList<ImportObject>();
+		try {
+			String query = null;
+			if (opts.isLoadData() == true) {
+				query = "SELECT id,route_number,obj FROM bus.import_objects WHERE "
+						+ "city_id = ? AND route_type = bus.route_type_enum(?);";
+			} else {
+				query = "SELECT id,route_number FROM bus.import_objects WHERE "
+						+ "city_id = ? AND route_type = bus.route_type_enum(?)";
+			}
+
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setInt(1, cityID);
+			ps.setString(2, routeType);
+			ResultSet key = ps.executeQuery();
+
+			while (key.next()) {
+				ImportObject obj = new ImportObject();
+				obj.id = key.getInt("id");
+				obj.route_number = key.getString("route_number");
+				if (opts.isLoadData() == true) {
+					obj.obj = key.getString("obj");
+				}
+				obj.city_id = cityID;
+				obj.route_type = routeType;
+
+				objects.add(obj);
+			}
+		} catch (Exception e) {
+			log.error("getObject() exception: ", e);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} finally {
+			super.closeConnection(c);
+		}
+		return objects;
+	}
+
+	@Override
+	public ImportObject getObject(int objID) throws RepositoryException {
+		Connection c = super.getConnection();
+		ImportObject obj = null;
+		try {
+			String query = "SELECT * FROM bus.import_objects WHERE id = ?";
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setInt(1, objID);
+			ResultSet key = ps.executeQuery();
+
+			if (key.next()) {
+				obj = new ImportObject();
+				obj.id = objID;
+				obj.obj = key.getString("obj");
+				obj.city_id = key.getInt("city_id");
+				obj.route_number = key.getString("route_number");
+				obj.route_type = key.getString("route_type");
+			}
+			super.commit(c);
+		} catch (Exception e) {
+			log.error("getObject() exception: ", e);
+			super.rollback(c);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} finally {
+			super.closeConnection(c);
+		}
+		return obj;
 	}
 
 	@Override
@@ -107,11 +219,12 @@ public class ImportRepository extends Repository implements IimportRepository {
 				obj.city_id = cityID;
 				obj.route_number = number;
 				obj.route_type = routeType;
-			} 
+			}
 			super.commit(c);
 		} catch (Exception e) {
 			log.error("getObject() exception: ", e);
 			super.rollback(c);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -134,6 +247,7 @@ public class ImportRepository extends Repository implements IimportRepository {
 		} catch (Exception e) {
 			log.error("updateObject() exception: ", e);
 			super.rollback(c);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}

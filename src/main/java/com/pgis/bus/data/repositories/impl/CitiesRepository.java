@@ -60,8 +60,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		} catch (SQLException e) {
 			cities = null;
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -92,8 +91,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			}
 		} catch (SQLException e) {
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -126,8 +124,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			}
 		} catch (SQLException e) {
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -167,8 +164,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			}
 		} catch (SQLException e) {
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -207,6 +203,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		} catch (SQLException e) {
 			log.error("updateCity() exception: ", e);
 			super.rollback(c);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -231,6 +228,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		} catch (SQLException e) {
 			log.error("deleteCity() exception: ", e);
 			super.rollback(c);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -263,6 +261,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		} catch (SQLException e) {
 			log.error("updateCity() exception: ", e);
 			super.rollback(c);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -270,7 +269,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 	}
 
 	@Override
-	public Collection<String> getTransportTypesForCity(int cityID)
+	public Collection<String> getRouteTypesForCity(int cityID)
 			throws RepositoryException {
 		Connection c = super.getConnection();
 		Collection<String> types = new ArrayList<String>();
@@ -288,12 +287,11 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			}
 		} catch (SQLException e) {
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
-		return null;
+		return types;
 	}
 
 }

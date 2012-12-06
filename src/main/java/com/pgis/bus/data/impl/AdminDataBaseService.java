@@ -4,8 +4,10 @@ import java.util.Collection;
 
 import com.pgis.bus.data.Authenticate_enum;
 import com.pgis.bus.data.IAdminDataBaseService;
+import com.pgis.bus.data.helpers.LoadImportObjectOptions;
 import com.pgis.bus.data.helpers.LoadRouteOptions;
 import com.pgis.bus.data.helpers.UpdateRouteOptions;
+import com.pgis.bus.data.models.ImportRouteModel;
 import com.pgis.bus.data.orm.*;
 import com.pgis.bus.data.repositories.IimportRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
@@ -15,6 +17,7 @@ public class AdminDataBaseService extends DataBaseService implements
 		IAdminDataBaseService {
 
 	IimportRepository importRepository = null;
+
 	public AdminDataBaseService() {
 		super();
 		importRepository = new ImportRepository();
@@ -88,19 +91,51 @@ public class AdminDataBaseService extends DataBaseService implements
 	@Override
 	public void removeRoute(int routeID) throws RepositoryException {
 		routesRepository.removeRoute(routeID);
-		
+
 	}
 
 	@Override
 	public void updateRoute(Route updateRoute, UpdateRouteOptions opts)
 			throws RepositoryException {
-		routesRepository.updateRoute(updateRoute,opts);
+		routesRepository.updateRoute(updateRoute, opts);
 	}
 
 	@Override
 	public void insertImportObject(ImportObject importObject)
 			throws RepositoryException {
-		importRepository.insertObject(importObject);	
+		importRepository.insertObject(importObject);
 	}
+
+	@Override
+	public ImportObject getImportObject(int cityID, String routeType,
+			String number) throws RepositoryException {
+		return importRepository.getObject(cityID, routeType, number);
+	}
+
+	@Override
+	public void updateObjectByID(ImportObject importObject)
+			throws RepositoryException {
+		importRepository.updateObjectByID(importObject);
+	}
+
+	@Override
+	public ImportRouteModel getRouteModelForObj(int objID)
+			throws RepositoryException {
+		return importRepository.getRouteModelForObj(objID);
+	}
+
+	@Override
+	public void removeImportObject(int ID) throws RepositoryException {
+		importRepository.removeObject(ID);
+	}
+
+	@Override
+	public Collection<ImportObject> getImportObjects(int cityID,
+			String routeType, LoadImportObjectOptions opts)
+			throws RepositoryException {
+		return importRepository.getObjects(cityID, routeType, opts);
+	}
+
+
 
 }

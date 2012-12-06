@@ -10,7 +10,9 @@ public interface IimportRepository {
 
 	ImportObject getObject(int cityID, String routeType, String number)
 			throws RepositoryException;
+
 	void updateObjectByID(ImportObject importObject) throws RepositoryException;
+
 	void insertObject(ImportObject importObject) throws RepositoryException;
 
 	ImportRouteModel getRouteModelForObj(int objID) throws RepositoryException;
@@ -19,5 +21,7 @@ public interface IimportRepository {
 
 	Collection<ImportObject> getObjects(int cityID, String routeType,
 			LoadImportObjectOptions opts) throws RepositoryException;
+
+	ImportObject getObject(int objID) throws RepositoryException;
 
 }

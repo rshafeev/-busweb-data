@@ -20,7 +20,6 @@ public class Station implements Cloneable {
 		this.city_id = city_id;
 	}
 
-
 	public Point getLocation() {
 		return location;
 	}
@@ -52,7 +51,6 @@ public class Station implements Cloneable {
 		this.name_key = name_key;
 	}
 
-
 	public Collection<StringValue> getNames() {
 		return names;
 	}
@@ -65,22 +63,43 @@ public class Station implements Cloneable {
 
 		try {
 			Station obj = (Station) super.clone();
-			obj.location = new Point(this.location.x, this.location.y);
-			obj.name_key = this.name_key;
-
-			if (this.id != null)
-				obj.id = new Integer(this.id);
-
-			if (this.names != null)
-				obj.names = new ArrayList<StringValue>(this.names);
-
-			if (obj.location != null) {
-				obj.location.setSrid(this.location.getSrid());
-
-			}
+			obj.copyFrom(this);
 			return obj;
 		} catch (CloneNotSupportedException e) {
 			return null;
+		}
+
+	}
+
+	public StringValue getNameByLanguage(String lang_id) {
+		for (StringValue v : this.names) {
+			if (v.lang_id.equals(lang_id)==true)
+				return v;
+		}
+		return null;
+	}
+
+	@Override
+	public String toString() {
+		return "Station [id=" + id + ", city_id=" + city_id + ", location="
+				+ location + ", name_key=" + name_key + ", names=" + names
+				+ "]";
+	}
+
+	public void copyFrom(Station s) {
+
+		this.name_key = s.name_key;
+		this.city_id = s.city_id;
+
+		if (s.id != null)
+			this.id = new Integer(s.id);
+
+		if (s.names != null)
+			this.names = new ArrayList<StringValue>(s.names);
+
+		if (this.location != null) {
+			this.location = new Point(s.location.x, s.location.y);
+			this.location.setSrid(s.location.getSrid());
 		}
 
 	}

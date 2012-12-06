@@ -57,8 +57,7 @@ public class StringValuesRepository extends Repository implements
 		} catch (SQLException e) {
 
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -92,6 +91,7 @@ public class StringValuesRepository extends Repository implements
 		} catch (SQLException e) {
 			super.rollback(c);
 			log.error("deleteStringValues() exception: ", e);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -117,6 +117,7 @@ public class StringValuesRepository extends Repository implements
 		} catch (SQLException e) {
 			super.rollback(c);
 			log.error("insertStringValue() exception: ", e);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -144,6 +145,7 @@ public class StringValuesRepository extends Repository implements
 		} catch (SQLException | RepositoryException e) {
 			super.rollback(c);
 			log.error("updateStringValues() exception: ", e);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}

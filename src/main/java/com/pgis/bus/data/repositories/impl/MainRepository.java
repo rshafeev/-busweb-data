@@ -16,7 +16,8 @@ import com.pgis.bus.data.repositories.IMainRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
 
 public class MainRepository extends Repository implements IMainRepository {
-	private static final Logger log = LoggerFactory.getLogger(MainRepository.class);
+	private static final Logger log = LoggerFactory
+			.getLogger(MainRepository.class);
 
 	public MainRepository() {
 		super();
@@ -29,7 +30,6 @@ public class MainRepository extends Repository implements IMainRepository {
 		this.isCommited = isCommited;
 	}
 
-	
 	public Collection<Language> getAllLanguages() throws RepositoryException {
 		Collection<Language> langs = null;
 		Connection c = super.getConnection();
@@ -49,11 +49,9 @@ public class MainRepository extends Repository implements IMainRepository {
 		} catch (SQLException e) {
 			langs = null;
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
-			if(isClosed)
-			DBConnectionFactory.closeConnection(c);
+			super.closeConnection(c);
 		}
 		return langs;
 	}

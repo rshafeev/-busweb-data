@@ -2,9 +2,11 @@ package com.pgis.bus.data;
 
 import java.util.Collection;
 
+import com.pgis.bus.data.helpers.LoadImportObjectOptions;
 import com.pgis.bus.data.helpers.LoadRouteOptions;
 import com.pgis.bus.data.helpers.UpdateRouteOptions;
 import com.pgis.bus.data.impl.DataBaseServiceException;
+import com.pgis.bus.data.models.ImportRouteModel;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.ImportObject;
 import com.pgis.bus.data.orm.Route;
@@ -46,5 +48,18 @@ public interface IAdminDataBaseService extends IDataBaseService {
 	void updateRoute(Route updateRoute, UpdateRouteOptions opts)
 			throws RepositoryException;
 
-	void insertImportObject(ImportObject importObject)throws RepositoryException;
+	ImportObject getImportObject(int cityID, String routeType, String number)
+			throws RepositoryException;
+
+	void updateObjectByID(ImportObject importObject) throws RepositoryException;
+
+	void insertImportObject(ImportObject importObject) throws RepositoryException;
+
+	ImportRouteModel getRouteModelForObj(int objID) throws RepositoryException;
+
+	void removeImportObject(int ID) throws RepositoryException;;
+
+	Collection<ImportObject> getImportObjects(int cityID, String routeType,
+			LoadImportObjectOptions opts) throws RepositoryException;
+
 }

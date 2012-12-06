@@ -104,8 +104,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		} catch (SQLException e) {
 			relations = null;
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -135,8 +134,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			}
 		} catch (Exception e) {
 			log.error("db exception: ", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -208,8 +206,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			// return getRouteRelationsWithStationData(direct_route_id);
 		} catch (Exception e) {
 			log.error("db exception: ", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -237,8 +234,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			}
 		} catch (Exception e) {
 			log.error("db exception: ", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -275,8 +271,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			}
 		} catch (Exception e) {
 			log.error("db exception: ", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -308,8 +303,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			}
 		} catch (Exception e) {
 			log.error("db exception: ", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -341,8 +335,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			}
 		} catch (Exception e) {
 			log.error("db exception: ", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -384,8 +377,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		} catch (Exception e) {
 			routes = null;
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -417,8 +409,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		} catch (Exception e) {
 			routes = null;
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		}
 		return routes;
 	}
@@ -455,8 +446,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		} catch (Exception e) {
 			route = null;
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -488,8 +478,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		} catch (Exception e) {
 			route = null;
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		}
 		return route;
 	}
@@ -508,7 +497,8 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			int id = key.getInt("id");
 			t.setId(id);
 		} else {
-			throw new Exception("not found new id and name_key");
+			throw new RepositoryException(
+					RepositoryException.err_enum.c_id_notFind);
 		}
 
 	}
@@ -531,7 +521,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			d.setId(id);
 
 		} else {
-			throw new Exception("not found new id and name_key");
+			throw new RepositoryException("not found new id and name_key");
 		}
 	}
 
@@ -569,7 +559,9 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			schedule.setId(id);
 
 		} else {
-			throw new Exception("not found new id and name_key");
+
+			throw new RepositoryException(
+					RepositoryException.err_enum.c_id_notFind);
 		}
 		for (ScheduleGroup g : schedule.getScheduleGroups()) {
 			insertScheduleGroup(g, c);
@@ -600,7 +592,8 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			int id = key.getInt("id");
 			directRoute.setId(id);
 		} else {
-			throw new Exception("not found new id and name_key");
+			throw new RepositoryException(
+					RepositoryException.err_enum.c_insertDirectRoute);
 		}
 		insertSchedule(directRoute.getSchedule(), c);
 		for (RouteRelation r : directRoute.getRoute_relations()) {
@@ -650,6 +643,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 				false, false);
 		for (RouteRelation r : route.getDirectRouteWay().getRoute_relations()) {
 			Station s = r.getStationB();
+			s.setCity_id(route.getCity_id());
 			int id = s.getId();
 			if (id <= 0) {
 				s = stationsRepository.insertStation(s);
@@ -681,6 +675,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			for (RouteRelation r : route.getReverseRouteWay()
 					.getRoute_relations()) {
 				Station s = r.getStationB();
+				s.setCity_id(route.getCity_id());
 				int id = s.getId();
 				if (id <= 0) {
 					s = stationsRepository.insertStation(s);
@@ -726,16 +721,18 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 			insertDirectRoute(route.getDirectRouteWay(), c);
 			insertDirectRoute(route.getReverseRouteWay(), c);
-
-			IStringValuesRepository stringValuesRepository = new StringValuesRepository(
-					c, false, false);
-			for (StringValue v : route.getName()) {
-				stringValuesRepository.insertStringValue(v);
+			if (route.getName() != null) {
+				IStringValuesRepository stringValuesRepository = new StringValuesRepository(
+						c, false, false);
+				for (StringValue v : route.getName()) {
+					stringValuesRepository.insertStringValue(v);
+				}
 			}
 			super.commit(c);
 		} catch (Exception e) {
 			log.error("insertRoute() exception: ", e);
 			super.rollback(c);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -753,6 +750,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		} catch (SQLException e) {
 			log.error("removeRoute() exception: ", e);
 			super.rollback(c);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -826,6 +824,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		} catch (Exception e) {
 			log.error("updateRoute() exception: ", e);
 			super.rollback(c);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}
@@ -838,10 +837,10 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		Collection<Route> routes = null;
 
 		try {
-			String query = "select bus.routes.id,number,cost,value as name from bus.routes " +
-					"  JOIN bus.string_values ON bus.string_values.key_id = bus.routes.name_key" +
-					"  WHERE city_id = ? AND route_type_id = bus.route_type_enum(?)" +
-					"  AND lang_id = lang_enum(?);";
+			String query = "select bus.routes.id,number,cost,value as name from bus.routes "
+					+ "  JOIN bus.string_values ON bus.string_values.key_id = bus.routes.name_key"
+					+ "  WHERE city_id = ? AND route_type_id = bus.route_type_enum(?)"
+					+ "  AND lang_id = lang_enum(?);";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, city_id);
 			ps.setString(2, routeTypeID);
@@ -854,7 +853,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 				String name = key.getString("name");
 				double cost = key.getDouble("cost");
 				ArrayList<StringValue> arr = new ArrayList<StringValue>(1);
-				arr.add(new StringValue(lang_id,name));
+				arr.add(new StringValue(lang_id, name));
 				Route route = new Route();
 				route.setId(id);
 				route.setCost(cost);
@@ -866,8 +865,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		} catch (Exception e) {
 			routes = null;
 			log.error("can not read database", e);
-			throw new RepositoryException(
-					RepositoryException.err_enum.c_sql_err);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
 		}

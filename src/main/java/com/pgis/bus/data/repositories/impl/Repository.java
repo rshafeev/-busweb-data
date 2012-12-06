@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.repositories.IRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
+import com.pgis.bus.data.repositories.RepositoryException.err_enum;
 
 public class Repository implements IRepository {
 	private static final Logger log = LoggerFactory.getLogger(Repository.class);
@@ -22,9 +23,25 @@ public class Repository implements IRepository {
 		isCommited = true;
 	}
 
+	protected void throwable(Exception e, err_enum err)
+			throws RepositoryException {
+		if (e instanceof RepositoryException)
+			throw (RepositoryException) e;
+		else
+			throw new RepositoryException(err);
+	}
+
+	protected void throwable(Exception e, err_enum err, String text)
+			throws RepositoryException {
+		if (e instanceof RepositoryException)
+			throw (RepositoryException) e;
+		else
+			throw new RepositoryException(err, text);
+	}
+
 	protected void rollback(Connection c) throws RepositoryException {
 		try {
-			if (c!=null && !c.isClosed())
+			if (c != null && !c.isClosed())
 				c.rollback();
 			throw new RepositoryException(
 					RepositoryException.err_enum.c_transaction_err);
@@ -33,7 +50,7 @@ public class Repository implements IRepository {
 	}
 
 	protected void commit(Connection c) throws SQLException {
-		if (c!=null && this.isCommited)
+		if (c != null && this.isCommited)
 			c.commit();
 	}
 
@@ -57,7 +74,8 @@ public class Repository implements IRepository {
 	}
 
 	protected void closeConnection(Connection c) {
-		if (isClosed && c!=null)
+		if (isClosed && c != null)
 			DBConnectionFactory.closeConnection(c);
 	}
+
 }
