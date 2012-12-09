@@ -8,7 +8,7 @@ import com.pgis.bus.data.orm.ImportObject;
 
 public interface IimportRepository {
 
-	ImportObject getObject(int cityID, String routeType, String number)
+	ImportObject getObject(String cityKey, String routeType, String number)
 			throws RepositoryException;
 
 	void updateObjectByID(ImportObject importObject) throws RepositoryException;
@@ -19,7 +19,7 @@ public interface IimportRepository {
 
 	void removeObject(int ID) throws RepositoryException;;
 
-	Collection<ImportObject> getObjects(int cityID, String routeType,
+	Collection<ImportObject> getObjects(String cityKey, String routeType,
 			LoadImportObjectOptions opts) throws RepositoryException;
 
 	ImportObject getObject(int objID) throws RepositoryException;

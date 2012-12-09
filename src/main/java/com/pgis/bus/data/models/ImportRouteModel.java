@@ -50,6 +50,14 @@ public class ImportRouteModel {
 
 	private GsonLineString reverseRelations[];
 
+	public int getCityID() {
+		return cityID;
+	}
+
+	public void setCityID(int cityID) {
+		this.cityID = cityID;
+	}
+
 	public String getNumber() {
 		return number;
 	}
@@ -122,14 +130,6 @@ public class ImportRouteModel {
 		this.routeID = routeID;
 	}
 
-	public int getCityID() {
-		return cityID;
-	}
-
-	public void setCityID(int cityID) {
-		this.cityID = cityID;
-	}
-
 	public String getRouteType() {
 		return routeType;
 	}
@@ -165,7 +165,6 @@ public class ImportRouteModel {
 			int x11 = 11 * 60 * 60;
 			int x16 = 16 * 60 * 60;
 			int x19 = 19 * 60 * 60;
-			
 
 			if (xS <= x7 && xF >= x19) {
 				Timetable timetable1 = new Timetable();
@@ -338,7 +337,7 @@ public class ImportRouteModel {
 	 * @return Если данные правильны, то функция возвращает true
 	 */
 	public boolean isValid() {
-		
+
 		if (this.routeType == null || this.routeType.length() == 0)
 			return false;
 		if (this.number == null || this.number.length() == 0)
@@ -348,7 +347,7 @@ public class ImportRouteModel {
 		if (this.timeStart > this.timeFinish || this.timeStart < 0) {
 			return false;
 		}
-		
+
 		if (this.directRelations == null || this.directRelations.length == 0)
 			return false;
 		if (this.directStations == null || this.directStations.length == 0)

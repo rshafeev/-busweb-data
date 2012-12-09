@@ -127,4 +127,10 @@ public class DataBaseService implements IDataBaseService {
 		return this.citiesRepotitory.getRouteTypesForCity(cityID);
 	}
 
+	@Override
+	public City getCityByID(int id) throws RepositoryException {
+		
+		return this.citiesRepotitory.getCityByID(id);
+	}
+
 }

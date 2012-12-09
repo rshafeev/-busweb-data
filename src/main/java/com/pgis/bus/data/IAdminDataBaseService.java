@@ -48,7 +48,7 @@ public interface IAdminDataBaseService extends IDataBaseService {
 	void updateRoute(Route updateRoute, UpdateRouteOptions opts)
 			throws RepositoryException;
 
-	ImportObject getImportObject(int cityID, String routeType, String number)
+	ImportObject getImportObject(String cityKey, String routeType, String number)
 			throws RepositoryException;
 
 	void updateObjectByID(ImportObject importObject) throws RepositoryException;
@@ -59,7 +59,7 @@ public interface IAdminDataBaseService extends IDataBaseService {
 
 	void removeImportObject(int ID) throws RepositoryException;;
 
-	Collection<ImportObject> getImportObjects(int cityID, String routeType,
+	Collection<ImportObject> getImportObjects(String cityKey, String routeType,
 			LoadImportObjectOptions opts) throws RepositoryException;
 
 }

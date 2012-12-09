@@ -72,7 +72,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		Connection c = super.getConnection();
 
 		try {
-			String query = "select * from bus.cities where id = ?";
+			String query = "SELECT * FROM bus.cities WHERE id = ?";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, id);
 			ResultSet key = ps.executeQuery();
@@ -82,6 +82,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 				city.id = key.getInt("id");
 				city.lat = key.getDouble("lat");
 				city.lon = key.getDouble("lon");
+				city.key = key.getString("key");
 				city.name_key = key.getInt("name_key");
 				city.scale = key.getInt("scale");
 				city.isShow = key.getBoolean("is_show");
@@ -141,7 +142,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			query += "bus.cities.lon as lon,bus.cities.scale as scale,bus.string_values.lang_id as lang_id,";
 			query += "bus.string_values.value as value FROM bus.cities JOIN bus.string_keys ON ";
 			query += "bus.cities.name_key = bus.string_keys.id JOIN bus.string_values ON ";
-			query += "bus.string_keys.id = bus.string_values.key_id WHERE value=? and lang_id=lang_enum(?)";
+			query += "bus.string_keys.id = bus.string_values.key_id WHERE value=? and lang_id=bus.lang_enum(?)";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setString(1, name);
 			ps.setString(2, lang_name);

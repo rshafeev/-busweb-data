@@ -12,8 +12,10 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.pgis.bus.data.helpers.LoadImportObjectOptions;
 import com.pgis.bus.data.models.ImportRouteModel;
+import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.ImportObject;
 import com.pgis.bus.data.orm.Station;
+import com.pgis.bus.data.repositories.ICitiesRepository;
 import com.pgis.bus.data.repositories.IStationsRepository;
 import com.pgis.bus.data.repositories.IimportRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
@@ -39,16 +41,16 @@ public class ImportRepository extends Repository implements IimportRepository {
 		Connection c = super.getConnection();
 		try {
 			ImportRepository rep = new ImportRepository(c, false, false);
-			ImportObject newObj = rep.getObject(obj.city_id, obj.route_type,
+			ImportObject newObj = rep.getObject(obj.city_key, obj.route_type,
 					obj.route_number);
 			if (newObj != null) {
 				newObj.obj = obj.obj;
 				rep.updateObjectByID(newObj);
 			} else {
-				String query = "INSERT INTO bus.import_objects (city_id,route_type,route_number,obj) "
+				String query = "INSERT INTO bus.import_objects (city_key,route_type,route_number,obj) "
 						+ "VALUES(?,bus.route_type_enum(?),?,?) RETURNING id; ";
 				PreparedStatement ps = c.prepareStatement(query);
-				ps.setInt(1, obj.city_id);
+				ps.setString(1, obj.city_key);
 				ps.setString(2, obj.route_type);
 				ps.setString(3, obj.route_number);
 				ps.setString(4, obj.obj);
@@ -78,12 +80,18 @@ public class ImportRepository extends Repository implements IimportRepository {
 			ImportObject obj = getObject(objID);
 			if (obj == null)
 				return null;
+			ICitiesRepository cities = new CitiesRepository();
+			City city = cities.getCityByKey(obj.city_key);
+			if (city == null)
+				throw new RepositoryException("Can not find city");
 			ImportRouteModel routeModel = (new Gson()).fromJson(obj.obj,
 					ImportRouteModel.class);
-			routeModel.setCityID(obj.city_id);
+
+			routeModel.setCityID(city.id);
 			routeModel.setNumber(obj.route_number);
 			routeModel.setRouteType(obj.route_type);
 			routeModel.init();
+
 			IStationsRepository stations = new StationsRepository();
 
 			int ind = -1;
@@ -128,22 +136,23 @@ public class ImportRepository extends Repository implements IimportRepository {
 	}
 
 	@Override
-	public Collection<ImportObject> getObjects(int cityID, String routeType,
-			LoadImportObjectOptions opts) throws RepositoryException {
+	public Collection<ImportObject> getObjects(String cityKey,
+			String routeType, LoadImportObjectOptions opts)
+			throws RepositoryException {
 		Connection c = super.getConnection();
 		Collection<ImportObject> objects = new ArrayList<ImportObject>();
 		try {
 			String query = null;
 			if (opts.isLoadData() == true) {
 				query = "SELECT id,route_number,obj FROM bus.import_objects WHERE "
-						+ "city_id = ? AND route_type = bus.route_type_enum(?);";
+						+ "city_key = ? AND route_type = bus.route_type_enum(?);";
 			} else {
 				query = "SELECT id,route_number FROM bus.import_objects WHERE "
-						+ "city_id = ? AND route_type = bus.route_type_enum(?)";
+						+ "city_key = ? AND route_type = bus.route_type_enum(?)";
 			}
 
 			PreparedStatement ps = c.prepareStatement(query);
-			ps.setInt(1, cityID);
+			ps.setString(1, cityKey);
 			ps.setString(2, routeType);
 			ResultSet key = ps.executeQuery();
 
@@ -154,7 +163,7 @@ public class ImportRepository extends Repository implements IimportRepository {
 				if (opts.isLoadData() == true) {
 					obj.obj = key.getString("obj");
 				}
-				obj.city_id = cityID;
+				obj.city_key = cityKey;
 				obj.route_type = routeType;
 
 				objects.add(obj);
@@ -182,7 +191,7 @@ public class ImportRepository extends Repository implements IimportRepository {
 				obj = new ImportObject();
 				obj.id = objID;
 				obj.obj = key.getString("obj");
-				obj.city_id = key.getInt("city_id");
+				obj.city_key = key.getString("city_key");
 				obj.route_number = key.getString("route_number");
 				obj.route_type = key.getString("route_type");
 			}
@@ -198,16 +207,16 @@ public class ImportRepository extends Repository implements IimportRepository {
 	}
 
 	@Override
-	public ImportObject getObject(int cityID, String routeType, String number)
-			throws RepositoryException {
+	public ImportObject getObject(String cityKey, String routeType,
+			String number) throws RepositoryException {
 		Connection c = super.getConnection();
 		ImportObject obj = null;
 		try {
 			String query = "SELECT * FROM bus.import_objects WHERE "
-					+ "city_id = ? AND route_type = bus.route_type_enum(?) AND "
+					+ "city_key = ? AND route_type = bus.route_type_enum(?) AND "
 					+ "route_number = ?;";
 			PreparedStatement ps = c.prepareStatement(query);
-			ps.setInt(1, cityID);
+			ps.setString(1, cityKey);
 			ps.setString(2, routeType);
 			ps.setString(3, number);
 			ResultSet key = ps.executeQuery();
@@ -216,7 +225,7 @@ public class ImportRepository extends Repository implements IimportRepository {
 				obj = new ImportObject();
 				obj.id = key.getInt("id");
 				obj.obj = key.getString("obj");
-				obj.city_id = cityID;
+				obj.city_key = cityKey;
 				obj.route_number = number;
 				obj.route_type = routeType;
 			}

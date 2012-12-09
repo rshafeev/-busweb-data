@@ -91,6 +91,11 @@ public class RouteRelation {
 		this.geom = geom;
 	}
 
+	public void optimizePoints() {
+		if (this.geom != null)
+			this.geom.optimizePoints();
+	}
+
 	@Override
 	public String toString() {
 		return "RouteRelation [id=" + id + ", direct_route_id="

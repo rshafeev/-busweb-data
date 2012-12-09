@@ -26,4 +26,6 @@ public interface IStationsRepository extends IRepository {
 
 	Station getStation(int station_id) throws RepositoryException;
 
+	void cleanUnsedStations() throws RepositoryException;
+
 }

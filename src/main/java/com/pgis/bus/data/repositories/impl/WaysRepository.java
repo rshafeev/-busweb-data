@@ -41,13 +41,13 @@ public class WaysRepository extends Repository implements IWaysRepository {
 			String query = "select  * from  bus.shortest_ways(" + "?," /* city_id */
 					+ " geography(?)," /* p1 */
 					+ " geography(?)," /* p2 */
-					+ " day_enum(?)," /* day_id */
+					+ " bus.day_enum(?)," /* day_id */
 					+ " ?," /* time_start */
 					+ " ?," // max_distance*/
 					+ " ?," /* route_types */
 					+ " ?," /* discount */
 					+ " bus.alg_strategy(?)," /* alg_strategy */
-					+ " lang_enum(?)) ORDER BY path_id,index;";
+					+ " bus.lang_enum(?)) ORDER BY path_id,index;";
 			PreparedStatement ps = c.prepareStatement(query);
 
 			ps.setInt(1, options.getCity_id());

@@ -68,7 +68,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 					+ " JOIN bus.stations ON bus.route_relations.station_b_id = bus.stations.id"
 					+ " JOIN bus.string_values ON bus.string_values.key_id = bus.stations.name_key"
 					+ " WHERE direct_route_id = ? AND position_index >= ? AND position_index <= ?"
-					+ " AND lang_id = lang_enum(?) ORDER BY position_index; ";
+					+ " AND lang_id = bus.lang_enum(?) ORDER BY position_index; ";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, routePart.getDirectRouteID());
 			ps.setInt(2, routePart.getIndexStart());
@@ -511,7 +511,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 	private void insertScheduleGroupDay(ScheduleGroupDay d, Connection c)
 			throws Exception {
 		String query = "INSERT INTO bus.schedule_group_days (schedule_group_id,day_id) "
-				+ "VALUES(?,day_enum(?)) RETURNING id;";
+				+ "VALUES(?,bus.day_enum(?)) RETURNING id;";
 		PreparedStatement ps = c.prepareStatement(query);
 		ps.setInt(1, d.getSchedule_group_id());
 		ps.setString(2, d.getDay_id().name());
@@ -612,6 +612,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 	private void insertRouteRelation(RouteRelation r, Connection c)
 			throws Exception {
+		r.optimizePoints();
 		String query = "SELECT * from bus.insert_route_relation(?,?,?,?,?); ";
 		PreparedStatement ps = c.prepareStatement(query);
 
@@ -838,9 +839,9 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 		try {
 			String query = "select bus.routes.id,number,cost,value as name from bus.routes "
-					+ "  JOIN bus.string_values ON bus.string_values.key_id = bus.routes.name_key"
+					+ "  LEFT JOIN bus.string_values ON bus.string_values.key_id = bus.routes.name_key"
 					+ "  WHERE city_id = ? AND route_type_id = bus.route_type_enum(?)"
-					+ "  AND lang_id = lang_enum(?);";
+					+ "  AND (lang_id = bus.lang_enum(?) or lang_id IS NULL) ;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, city_id);
 			ps.setString(2, routeTypeID);
@@ -859,6 +860,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 				route.setCost(cost);
 				route.setNumber(number);
 				route.setCity_id(city_id);
+				route.setName(arr);
 				route.setRoute_type_id(routeTypeID);
 				routes.add(route);
 			}

@@ -41,5 +41,5 @@ public interface IDataBaseService {
 			String lang_id) throws RepositoryException;
 
 	City getCityByKey(String key) throws RepositoryException;
-
+	City getCityByID(int id) throws RepositoryException;
 }

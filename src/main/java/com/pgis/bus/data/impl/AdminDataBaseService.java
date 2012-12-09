@@ -107,9 +107,9 @@ public class AdminDataBaseService extends DataBaseService implements
 	}
 
 	@Override
-	public ImportObject getImportObject(int cityID, String routeType,
+	public ImportObject getImportObject(String cityKey, String routeType,
 			String number) throws RepositoryException {
-		return importRepository.getObject(cityID, routeType, number);
+		return importRepository.getObject(cityKey, routeType, number);
 	}
 
 	@Override
@@ -130,12 +130,10 @@ public class AdminDataBaseService extends DataBaseService implements
 	}
 
 	@Override
-	public Collection<ImportObject> getImportObjects(int cityID,
+	public Collection<ImportObject> getImportObjects(String cityKey,
 			String routeType, LoadImportObjectOptions opts)
 			throws RepositoryException {
-		return importRepository.getObjects(cityID, routeType, opts);
+		return importRepository.getObjects(cityKey, routeType, opts);
 	}
-
-
 
 }

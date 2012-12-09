@@ -281,13 +281,13 @@ public class StationsRepository extends Repository implements
 			throws RepositoryException {
 		Connection c = super.getConnection();
 		Station station = null;
-		if(name==null || location == null)
+		if (name == null || location == null)
 			return null;
 		try {
 			String query = "SELECT bus.stations.id as id FROM bus.stations "
 					+ "JOIN bus.string_values ON bus.string_values.key_id = bus.stations.name_key "
 					+ "WHERE st_distance(bus.stations.location,geography(?)) < 10 AND "
-					+ " lang_id = lang_enum(?) AND value = ?;";
+					+ " lang_id = bus.lang_enum(?) AND value = ?;";
 
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setObject(1, new PGgeometry(location));
@@ -309,4 +309,27 @@ public class StationsRepository extends Repository implements
 		return station;
 	}
 
+	@Override
+	public void cleanUnsedStations() throws RepositoryException {
+		Connection c = super.getConnection();
+		try {
+			String query = "DELETE FROM bus.stations "
+					+ "WHERE bus.stations.id IN ( "
+					+ "SELECT bus.stations.id from bus.stations "
+					+ "LEFT JOIN   bus.route_relations "
+					+ "ON bus.stations.id = bus.route_relations.station_b_id "
+					+ "WHERE bus.route_relations.id IS NULL);";
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.execute();
+			if (isCommited)
+				c.commit();
+		} catch (SQLException e) {
+			log.error("cleanUnsedStations() exception: ", e);
+			super.rollback(c);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} finally {
+			super.closeConnection(c);
+		}
+
+	}
 }

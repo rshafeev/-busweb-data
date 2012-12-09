@@ -103,7 +103,7 @@ public class StringValuesRepository extends Repository implements
 		Connection c = super.getConnection();
 		int id = -1;
 		try {
-			String query = "INSERT INTO bus.string_values (key_id,lang_id,value) VALUES(?,lang_enum(?),?) RETURNING id;";
+			String query = "INSERT INTO bus.string_values (key_id,lang_id,value) VALUES(?,bus.lang_enum(?),?) RETURNING id;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, value.key_id);
 			ps.setString(2, value.lang_id);
