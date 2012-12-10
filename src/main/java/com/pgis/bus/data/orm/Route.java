@@ -130,4 +130,12 @@ public class Route {
 		return fullName;
 
 	}
+	
+	public boolean isValid(){
+		if(this.directRouteWay == null|| this.directRouteWay.isValid()==false)
+			return false;
+		if(this.reverseRouteWay == null || this.reverseRouteWay.isValid()== false)
+			return false;
+		return true;
+	}
 }

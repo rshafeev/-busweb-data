@@ -79,6 +79,7 @@ public class TestDBConnectionManager implements IDBConnectionManager {
 	public void closeConnection(Connection c) {
 		try {
 			if (c != null){
+				c.rollback();
 				c.close();
 			}
 		} catch (SQLException e) {

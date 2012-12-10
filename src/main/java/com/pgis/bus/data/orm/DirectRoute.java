@@ -118,4 +118,17 @@ public class DirectRoute {
 		}
 	}
 
+	public boolean isValid() {
+		if (route_relations == null)
+			return false;
+		boolean isFirst = true;
+		for (RouteRelation r : this.route_relations) {
+			if (isFirst == false && (r.getGeom() == null || r.getGeom().isValid() == false))
+				return false;
+
+			isFirst = false;
+		}
+		return true;
+	}
+
 }

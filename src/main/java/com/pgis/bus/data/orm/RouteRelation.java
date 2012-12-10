@@ -54,7 +54,7 @@ public class RouteRelation {
 	}
 
 	public void setStationB(Station stationB) {
-		if (stationB != null)
+		if (stationB != null && stationB.getId() != null)
 			this.station_b_id = stationB.getId();
 		this.stationB = stationB;
 	}

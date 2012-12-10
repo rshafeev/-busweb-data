@@ -269,12 +269,14 @@ public class ImportRouteModel {
 			if (i > 0) {
 				stA = this.directStations[i - 1];
 				geom = this.directRelations[i - 1];
-				relation.setStation_a_id(stA.getId());
+				if (stA.getId() != null)
+					relation.setStation_a_id(stA.getId());
 				relation.setGeom(geom);
 			}
 			stB = this.directStations[i];
 			relation.setPosition_index(i);
-			relation.setStation_b_id(stB.getId());
+			if (stB.getId() != null)
+				relation.setStation_b_id(stB.getId());
 			relation.setStationB(stB);
 			directRouteRelations.add(relation);
 		}
@@ -292,12 +294,14 @@ public class ImportRouteModel {
 			if (i > 0) {
 				stA = this.reverseStations[i - 1];
 				geom = this.reverseRelations[i - 1];
-				relation.setStation_a_id(stA.getId());
+				if (stA.getId() != null)
+					relation.setStation_a_id(stA.getId());
 				relation.setGeom(geom);
 			}
 			stB = this.reverseStations[i];
 			relation.setPosition_index(i);
-			relation.setStation_b_id(stB.getId());
+			if (stB.getId() != null)
+				relation.setStation_b_id(stB.getId());
 			relation.setStationB(stB);
 
 			reverseRouteRelations.add(relation);
@@ -363,6 +367,8 @@ public class ImportRouteModel {
 		if (this.reverseStations.length != this.reverseRelations.length + 1) {
 			return false;
 		}
+		
+	
 		return true;
 	}
 }

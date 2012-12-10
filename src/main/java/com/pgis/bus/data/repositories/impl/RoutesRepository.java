@@ -624,6 +624,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 		PGgeometry geom = null;
 		if (r.getGeom() != null) {
+			log.debug(r.getGeom().toString());
 			geom = new PGgeometry(r.getGeom().toLineString());
 		}
 		ps.setObject(5, geom);
@@ -645,8 +646,8 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		for (RouteRelation r : route.getDirectRouteWay().getRoute_relations()) {
 			Station s = r.getStationB();
 			s.setCity_id(route.getCity_id());
-			int id = s.getId();
-			if (id <= 0) {
+			Integer id = s.getId();
+			if (id == null || id <= 0) {
 				s = stationsRepository.insertStation(s);
 				r.setStation_b_id(s.getId());
 				r.setStationB(s);
@@ -672,6 +673,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			route.setReverseRouteWay(DirectRoute.createReverseByDirect(route
 					.getDirectRouteWay()));
 		} else {
+
 			// insert stations from reverseWay
 			for (RouteRelation r : route.getReverseRouteWay()
 					.getRoute_relations()) {
@@ -695,10 +697,15 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		Connection c = super.getConnection();
 		try {
 			// validate
-			if (route.getDirectRouteWay() == null) {
+			if (route.getDirectRouteWay() == null
+					|| route.getDirectRouteWay().isValid() == false) {
 				throw new RepositoryException(
 						RepositoryException.err_enum.c_route_data);
-
+			}
+			if (route.getReverseRouteWay() != null
+					&& route.getReverseRouteWay().isValid() == false) {
+				throw new RepositoryException(
+						RepositoryException.err_enum.c_route_data);
 			}
 			this.insertStationsForRoute(route, c);
 			route.updateIDs();

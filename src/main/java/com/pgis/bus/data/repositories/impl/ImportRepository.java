@@ -38,8 +38,13 @@ public class ImportRepository extends Repository implements IimportRepository {
 
 	@Override
 	public void insertObject(ImportObject obj) throws RepositoryException {
+		// validation
+		if (obj == null || obj.obj == null)
+			throw new RepositoryException(
+					RepositoryException.err_enum.c_input_data);
 		Connection c = super.getConnection();
 		try {
+
 			ImportRepository rep = new ImportRepository(c, false, false);
 			ImportObject newObj = rep.getObject(obj.city_key, obj.route_type,
 					obj.route_number);
@@ -132,7 +137,20 @@ public class ImportRepository extends Repository implements IimportRepository {
 
 	@Override
 	public void removeObject(int ID) throws RepositoryException {
-
+		Connection c = super.getConnection();
+		try {
+			String query = "DELETE FROM bus.import_objects  WHERE id = ? ;";
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setInt(1, ID);
+			ps.execute();
+			super.commit(c);
+		} catch (Exception e) {
+			log.error("updateObject() exception: ", e);
+			super.rollback(c);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} finally {
+			super.closeConnection(c);
+		}
 	}
 
 	@Override
