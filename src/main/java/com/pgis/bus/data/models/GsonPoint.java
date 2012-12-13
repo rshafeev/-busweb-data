@@ -12,6 +12,11 @@ public class GsonPoint {
 
 	}
 
+	public GsonPoint(double x, double y) {
+		this.x = x;
+		this.y = y;
+	}
+
 	public GsonPoint(GsonPoint copy) {
 		x = copy.x;
 		y = copy.y;
@@ -31,5 +36,4 @@ public class GsonPoint {
 		return "GsonPoint [x=" + x + ", y=" + y + "]";
 	}
 
-	
 }

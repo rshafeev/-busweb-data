@@ -25,7 +25,9 @@ public class GsonLineString {
 	public GsonLineString() {
 
 	}
-
+	public GsonLineString(Collection<GsonPoint> points) {
+		this.points = points.toArray(new GsonPoint[points.size()]);
+	}
 	public GsonLineString(GsonPoint[] points) {
 		this.points = points;
 	}
