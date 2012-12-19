@@ -38,7 +38,7 @@ public class WaysRepository extends Repository implements IWaysRepository {
 		Connection c = super.getConnection();
 		Collection<WayElem> ways = null;
 		try {
-			String query = "select  * from  bus.shortest_ways(" + "?," /* city_id */
+			String query = "select  * from  bus.find_shortest_paths(" + "?," /* city_id */
 					+ " geography(?)," /* p1 */
 					+ " geography(?)," /* p2 */
 					+ " bus.day_enum(?)," /* day_id */
@@ -74,14 +74,15 @@ public class WaysRepository extends Repository implements IWaysRepository {
 				wayElem.route_name = key.getString("route_name");
 				wayElem.station_name = key.getString("station_name");
 
-				wayElem.move_time = (PGInterval) key.getObject("move_time");
+				if (key.getObject("move_time") != null)
+					wayElem.move_time = (PGInterval) key.getObject("move_time");
 				wayElem.wait_time = (PGInterval) key.getObject("wait_time");
 				wayElem.cost = key.getDouble("cost");
 				wayElem.distance = key.getDouble("distance");
 				ways.add(wayElem);
 			}
 			super.commit(c);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			super.rollback(c);
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);

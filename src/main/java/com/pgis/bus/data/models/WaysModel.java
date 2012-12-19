@@ -10,7 +10,12 @@ import com.pgis.bus.data.orm.WayElem;
 
 public class WaysModel {
 	private Collection<WayModel> ways;
-
+    
+	/**
+	 * Время поиска маршрутов, сек
+	 */
+	private double findTime;
+	
 	public WaysModel() {
 		ways = new ArrayList<WayModel>();
 	}
@@ -37,6 +42,15 @@ public class WaysModel {
 			ways.add(new WayModel(it.next()));
 		}
 
+	}
+
+	
+	public double getFindTimeSecs() {
+		return findTime;
+	}
+
+	public void setFindTime(long findTime) {
+		this.findTime = findTime/1000.0;
 	}
 
 	public Collection<WayModel> getWays() {
