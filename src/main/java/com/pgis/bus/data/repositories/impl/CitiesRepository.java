@@ -30,6 +30,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		this.connection = c;
 		this.isClosed = isClosed;
 		this.isCommited = isCommited;
+
 	}
 
 	@Override
