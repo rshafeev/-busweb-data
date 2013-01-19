@@ -6,18 +6,27 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pgis.bus.data.DBConnectionFactory;
+import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.repositories.IRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.RepositoryException.err_enum;
 
 public class Repository implements IRepository {
 	private static final Logger log = LoggerFactory.getLogger(Repository.class);
+	protected IDBConnectionManager connManager;
 	protected Connection connection;
 	protected boolean isClosed;
 	protected boolean isCommited;
 
-	public Repository() {
+	protected Repository() {
+		this.connManager = connManager;
+		connection = null;
+		isClosed = true;
+		isCommited = true;
+	}
+	
+	public Repository(IDBConnectionManager connManager) {
+		this.connManager = connManager;
 		connection = null;
 		isClosed = true;
 		isCommited = true;
@@ -57,7 +66,7 @@ public class Repository implements IRepository {
 	protected Connection getConnection() throws RepositoryException {
 		if (connection != null)
 			return connection;
-		Connection conn = DBConnectionFactory.getConnection();
+		Connection conn = connManager.getConnection();
 		try {
 			if (conn == null) {
 				throw new RepositoryException(
@@ -75,7 +84,7 @@ public class Repository implements IRepository {
 
 	protected void closeConnection(Connection c) {
 		if (isClosed && c != null)
-			DBConnectionFactory.closeConnection(c);
+			connManager.closeConnection(c);
 	}
 
 }

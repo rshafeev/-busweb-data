@@ -11,6 +11,8 @@ import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.repositories.IStringValuesRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
@@ -20,12 +22,12 @@ public class StringValuesRepository extends Repository implements
 	private static final Logger log = LoggerFactory
 			.getLogger(StringValuesRepository.class);
 
-	public StringValuesRepository() {
-		super();
+	public StringValuesRepository(IDBConnectionManager connManager) {
+		super(connManager);
 	}
 
-	public StringValuesRepository(Connection c, boolean isClosed,
-			boolean isCommited) {
+	public StringValuesRepository(Connection c,
+			boolean isClosed, boolean isCommited) {
 		super();
 		this.connection = c;
 		this.isClosed = isClosed;
@@ -130,6 +132,7 @@ public class StringValuesRepository extends Repository implements
 		Connection c = super.getConnection();
 
 		try {
+		
 			StringValuesRepository repository = new StringValuesRepository(c,
 					false, false);
 			repository.deleteStringValues(string_key);

@@ -11,24 +11,24 @@ import test.com.pgis.data.TestDBConnectionManager;
 import test.com.pgis.data.TestDataSource;
 
 import com.pgis.bus.data.Authenticate_enum;
-import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.repositories.impl.UsersRepository;
 
 //import com.pgis.bus.data.repositories.UsersRepository;
 public class UsersRepositoryTest_local {
+
+	TestDBConnectionManager dbConnectionManager = null;
 	@Before
 	public void init() {
 		TestDataSource source = new TestDataSource();
-		TestDBConnectionManager dbConnectionManager = new TestDBConnectionManager(source.getDataSource());
-		DBConnectionFactory.init(dbConnectionManager);
+		dbConnectionManager = new TestDBConnectionManager(
+				source.getDataSource());
 		System.out.print("init test\n");
 	}
 
 	@After
 	public void destroy() {
-		DBConnectionFactory.free();
+		dbConnectionManager.free();
 	}
-
 	@Test
 	public void test() throws Exception {
 		assertFalse(false);
@@ -36,7 +36,7 @@ public class UsersRepositoryTest_local {
 
 	@Test
 	public void authenticateTest() throws Exception {
-		UsersRepository users = new UsersRepository();
+		UsersRepository users = new UsersRepository(dbConnectionManager);
 		Authenticate_enum result =  users.authenticate("admin","roma", "14R199009");
 		
 	}

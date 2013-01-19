@@ -10,7 +10,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pgis.bus.data.DBConnectionFactory;
+import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.orm.Language;
 import com.pgis.bus.data.repositories.IMainRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
@@ -19,12 +19,13 @@ public class MainRepository extends Repository implements IMainRepository {
 	private static final Logger log = LoggerFactory
 			.getLogger(MainRepository.class);
 
-	public MainRepository() {
-		super();
+	public MainRepository(IDBConnectionManager connManager) {
+		super(connManager);
 	}
 
-	public MainRepository(Connection c, boolean isClosed, boolean isCommited) {
-		super();
+	public MainRepository(IDBConnectionManager connManager, Connection c,
+			boolean isClosed, boolean isCommited) {
+		super(connManager);
 		this.connection = c;
 		this.isClosed = isClosed;
 		this.isCommited = isCommited;

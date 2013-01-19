@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import org.postgis.Point;
 
-import com.pgis.bus.data.DBConnectionFactory;
+import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.IDataBaseService;
 import com.pgis.bus.data.models.FindWaysOptions;
 import com.pgis.bus.data.models.RouteGeoData;
@@ -36,27 +36,29 @@ public class DataBaseService implements IDataBaseService {
 	protected IStationsRepository stationsRepository;
 	protected IWaysRepository waysRepository;
 	protected IRoutesRepository routesRepository;
-
-	private void init() {
-		usersRepotitory = new UsersRepository();
-		citiesRepotitory = new CitiesRepository();
-		mainRepository = new MainRepository();
-		stationsRepository = new StationsRepository();
-		waysRepository = new WaysRepository();
-		routesRepository = new RoutesRepository();
+	protected IDBConnectionManager connectionManager;
+	private void init(IDBConnectionManager connectionManager) {
+		usersRepotitory = new UsersRepository(connectionManager);
+		citiesRepotitory = new CitiesRepository(connectionManager);
+		mainRepository = new MainRepository(connectionManager);
+		stationsRepository = new StationsRepository(connectionManager);
+		waysRepository = new WaysRepository(connectionManager);
+		routesRepository = new RoutesRepository(connectionManager);
+		
 	}
 
 	protected Connection getConnection() throws DataBaseServiceException {
 
-		Connection conn = DBConnectionFactory.getConnection();
+		Connection conn = connectionManager.getConnection();
 		if (conn == null)
 			throw new DataBaseServiceException(
 					DataBaseServiceException.err_enum.c_connect_to_db_err);
 		return conn;
 	}
 
-	public DataBaseService() {
-		init();
+	public DataBaseService(IDBConnectionManager connectionManager) {
+		this.connectionManager = connectionManager;
+		init(connectionManager);
 	}
 
 	@Override

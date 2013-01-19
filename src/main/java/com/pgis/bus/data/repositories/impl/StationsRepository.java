@@ -11,6 +11,8 @@ import org.postgis.PGgeometry;
 import org.postgis.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.repositories.IStationsRepository;
@@ -23,11 +25,12 @@ public class StationsRepository extends Repository implements
 	private static final Logger log = LoggerFactory
 			.getLogger(StationsRepository.class);
 
-	public StationsRepository() {
-		super();
+	public StationsRepository(IDBConnectionManager connManager) {
+		super(connManager);
 	}
 
-	public StationsRepository(Connection c, boolean isClosed, boolean isCommited) {
+	public StationsRepository(Connection c,
+			boolean isClosed, boolean isCommited) {
 		super();
 		this.connection = c;
 		this.isClosed = isClosed;
@@ -64,7 +67,7 @@ public class StationsRepository extends Repository implements
 				station.setLocation((Point) g_location.getGeometry());
 
 				// get names
-				IStringValuesRepository stringValuesRepository = new StringValuesRepository();
+				IStringValuesRepository stringValuesRepository = new StringValuesRepository(c,false,false);
 				int name_key = key.getInt("name_key");
 				Collection<StringValue> name = stringValuesRepository
 						.getStringValues(name_key);
@@ -206,7 +209,7 @@ public class StationsRepository extends Repository implements
 				station.setLocation((Point) g_location.getGeometry());
 
 				// get names
-				IStringValuesRepository stringValuesRepository = new StringValuesRepository();
+				IStringValuesRepository stringValuesRepository = new StringValuesRepository(c,false,false);
 				int name_key = key.getInt("name_key");
 				Collection<StringValue> name = stringValuesRepository
 						.getStringValues(name_key);
@@ -257,7 +260,7 @@ public class StationsRepository extends Repository implements
 				station.setLocation((Point) g_location.getGeometry());
 
 				// get names
-				IStringValuesRepository stringValuesRepository = new StringValuesRepository();
+				IStringValuesRepository stringValuesRepository = new StringValuesRepository(c,false,false);
 				int name_key = key.getInt("name_key");
 				Collection<StringValue> name = stringValuesRepository
 						.getStringValues(name_key);

@@ -12,6 +12,7 @@ import org.postgresql.util.PGInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.models.FindWaysOptions;
 import com.pgis.bus.data.orm.WayElem;
 import com.pgis.bus.data.repositories.IWaysRepository;
@@ -21,12 +22,13 @@ public class WaysRepository extends Repository implements IWaysRepository {
 	private static final Logger log = LoggerFactory
 			.getLogger(WaysRepository.class);
 
-	public WaysRepository() {
-		super();
+	public WaysRepository(IDBConnectionManager connManager) {
+		super(connManager);
 	}
 
-	public WaysRepository(Connection c, boolean isClosed, boolean isCommited) {
-		super();
+	public WaysRepository(IDBConnectionManager connManager, Connection c,
+			boolean isClosed, boolean isCommited) {
+		super(connManager);
 		this.connection = c;
 		this.isClosed = isClosed;
 		this.isCommited = isCommited;

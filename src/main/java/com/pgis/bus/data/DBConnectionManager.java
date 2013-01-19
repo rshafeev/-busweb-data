@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 public class DBConnectionManager implements IDBConnectionManager {
 	private javax.sql.DataSource source = null;
 	private final Logger log = LoggerFactory
-			.getLogger(DBConnectionFactory.class);
+			.getLogger(DBConnectionManager.class);
 	private String dataSourceName;
 
 	public DBConnectionManager(javax.sql.DataSource source2) {

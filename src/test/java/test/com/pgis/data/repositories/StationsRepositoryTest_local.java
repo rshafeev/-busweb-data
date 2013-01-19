@@ -13,7 +13,6 @@ import org.postgis.Point;
 import test.com.pgis.data.TestDBConnectionManager;
 import test.com.pgis.data.TestDataSource;
 
-import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.Station;
 
@@ -25,18 +24,18 @@ import com.pgis.bus.data.repositories.impl.StationsRepository;
 
 //import com.pgis.bus.data.repositories.UsersRepository;
 public class StationsRepositoryTest_local {
+	TestDBConnectionManager dbConnectionManager = null;
 	@Before
 	public void init() {
 		TestDataSource source = new TestDataSource();
-		TestDBConnectionManager dbConnectionManager = new TestDBConnectionManager(
+		dbConnectionManager = new TestDBConnectionManager(
 				source.getDataSource());
-		DBConnectionFactory.init(dbConnectionManager);
 		System.out.print("init test\n");
 	}
 
 	@After
 	public void destroy() {
-		DBConnectionFactory.free();
+		dbConnectionManager.free();
 	}
 
 	@Test
@@ -47,7 +46,7 @@ public class StationsRepositoryTest_local {
 	@Test
 	public void getAllStationsTest() throws Exception {
 		// get city
-		Connection c = DBConnectionFactory.getConnection();
+		Connection c = dbConnectionManager.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_en", "Kharkov");
 		assertNotNull(city);
@@ -63,7 +62,7 @@ public class StationsRepositoryTest_local {
 		}
 
 		c.rollback();
-		DBConnectionFactory.closeConnection(c);
+		dbConnectionManager.closeConnection(c);
 
 	}
 
@@ -71,7 +70,7 @@ public class StationsRepositoryTest_local {
 	public void getAllStationsInBoxTest() throws Exception {
 		System.out.println("getAllStationsInBoxTest()");
 		// get city
-		Connection c = DBConnectionFactory.getConnection();
+		Connection c = dbConnectionManager.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_en", "Kharkov");
 		assertNotNull(city);
@@ -87,14 +86,14 @@ public class StationsRepositoryTest_local {
 		}
 
 		c.rollback();
-		DBConnectionFactory.closeConnection(c);
+		dbConnectionManager.closeConnection(c);
 
 	}
 
 	@Test
 	public void insertStationTest() throws Exception {
 		// get city
-		Connection c = DBConnectionFactory.getConnection();
+		Connection c = dbConnectionManager.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_en", "Kharkov");
 		assertNotNull(city);
@@ -111,14 +110,14 @@ public class StationsRepositoryTest_local {
 		newStation = stationsRepository.insertStation(newStation);
 		System.out.println("New station: " + newStation.getId());
 		c.rollback();
-		DBConnectionFactory.closeConnection(c);
+		dbConnectionManager.closeConnection(c);
 
 	}
 
 	@Test
 	public void updateStationTest() throws Exception {
 		// get city
-		Connection c = DBConnectionFactory.getConnection();
+		Connection c = dbConnectionManager.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_ru", "Харьков");
 		assertNotNull(city);
@@ -138,7 +137,7 @@ public class StationsRepositoryTest_local {
 		System.out.println(updateStation.getCity_id());
 
 		c.rollback();
-		DBConnectionFactory.closeConnection(c);
+		dbConnectionManager.closeConnection(c);
 
 	}
 
@@ -146,7 +145,7 @@ public class StationsRepositoryTest_local {
 	public void getStationByLocationTest() throws Exception {
 		System.out.println("getStationByLocationTest()...");
 		// get city
-		Connection c = DBConnectionFactory.getConnection();
+		Connection c = dbConnectionManager.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_ru", "Харьков");
 		assertNotNull(city);
@@ -167,7 +166,7 @@ public class StationsRepositoryTest_local {
 		
 		// clear 
 		c.rollback();
-		DBConnectionFactory.closeConnection(c);
+		dbConnectionManager.closeConnection(c);
 
 	}
 

@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.gson.Gson;
-import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.models.ImportRouteModel;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.ImportObject;
@@ -29,20 +28,19 @@ import test.com.pgis.data.TestDataSource;
 
 public class ImportRepositoryTest_local {
 
+	TestDBConnectionManager dbConnectionManager = null;
 	@Before
 	public void init() {
 		TestDataSource source = new TestDataSource();
-		TestDBConnectionManager dbConnectionManager = new TestDBConnectionManager(
+		dbConnectionManager = new TestDBConnectionManager(
 				source.getDataSource());
-		DBConnectionFactory.init(dbConnectionManager);
 		System.out.print("init test\n");
 	}
 
 	@After
 	public void destroy() {
-		DBConnectionFactory.free();
+		dbConnectionManager.free();
 	}
-
 	@Test(expected = RepositoryException.class)
 	public void insrtRouteTest() throws RepositoryException {
 		System.out.println("insrtRouteTest()...");
@@ -59,14 +57,14 @@ public class ImportRepositoryTest_local {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		Connection c = DBConnectionFactory.getConnection();
+		Connection c = dbConnectionManager.getConnection();
 		ICitiesRepository cities = new CitiesRepository(c, false, false);
 		City city = cities.getCityByKey("kyiv");
 		newRoute.setCity_id(city.id);
 		IRoutesRepository routes = new RoutesRepository(c, false, false);
 		routes.insertRoute(newRoute);
 
-		DBConnectionFactory.closeConnection(c);
+		dbConnectionManager.closeConnection(c);
 	}
 
 	/**
@@ -85,7 +83,7 @@ public class ImportRepositoryTest_local {
 				+ "route_import_insert.dat");
 
 		// create repositories
-		Connection c = DBConnectionFactory.getConnection();
+		Connection c = dbConnectionManager.getConnection();
 		IimportRepository imports = new ImportRepository(c, false, false);
 
 		// create importObject
@@ -106,7 +104,7 @@ public class ImportRepositoryTest_local {
 		assertNotNull(importObject.obj);
 
 		// close connection
-		DBConnectionFactory.closeConnection(c);
+		dbConnectionManager.closeConnection(c);
 	}
 
 	/**
@@ -120,7 +118,7 @@ public class ImportRepositoryTest_local {
 		System.out.println("insertRouteTest()...");
 
 		// create repositories
-		Connection c = DBConnectionFactory.getConnection();
+		Connection c = dbConnectionManager.getConnection();
 		IimportRepository imports = new ImportRepository(c, false, false);
 
 		// create importObject
@@ -134,7 +132,7 @@ public class ImportRepositoryTest_local {
 		assertTrue(importObject.id > 0);
 
 		// close connection
-		DBConnectionFactory.closeConnection(c);
+		dbConnectionManager.closeConnection(c);
 	}
 
 	/**
@@ -153,7 +151,7 @@ public class ImportRepositoryTest_local {
 				+ "route_import_insert.dat");
 
 		// create repositories
-		Connection c = DBConnectionFactory.getConnection();
+		Connection c = dbConnectionManager.getConnection();
 		IimportRepository imports = new ImportRepository(c, false, false);
 
 		// create importObject
@@ -173,6 +171,6 @@ public class ImportRepositoryTest_local {
 		assertNull(checkObject);
 
 		// close connection
-		DBConnectionFactory.closeConnection(c);
+		dbConnectionManager.closeConnection(c);
 	}
 }

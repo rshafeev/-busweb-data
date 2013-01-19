@@ -11,6 +11,7 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.repositories.ICitiesRepository;
@@ -21,11 +22,12 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 	private static final Logger log = LoggerFactory
 			.getLogger(CitiesRepository.class);
 
-	public CitiesRepository() {
-		super();
+	public CitiesRepository(IDBConnectionManager connManager) {
+		super(connManager);
 	}
 
-	public CitiesRepository(Connection c, boolean isClosed, boolean isCommited) {
+	public CitiesRepository(Connection c,
+			boolean isClosed, boolean isCommited) {
 		super();
 		this.connection = c;
 		this.isClosed = isClosed;
@@ -43,7 +45,8 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			PreparedStatement ps = c.prepareStatement(query);
 			ResultSet key = ps.executeQuery();
 			cities = new ArrayList<City>();
-			IStringValuesRepository stringValuesRepository = new StringValuesRepository();
+			IStringValuesRepository stringValuesRepository = new StringValuesRepository(
+					super.connManager);
 			while (key.next()) {
 				City city = new City();
 				city.id = key.getInt("id");
@@ -77,7 +80,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, id);
 			ResultSet key = ps.executeQuery();
-			IStringValuesRepository stringValuesRepository = new StringValuesRepository();
+			IStringValuesRepository stringValuesRepository = new StringValuesRepository(super.connManager);
 			if (key.next()) {
 				City city = new City();
 				city.id = key.getInt("id");
@@ -110,7 +113,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			ps.setString(1, key);
 
 			ResultSet rs = ps.executeQuery();
-			IStringValuesRepository stringValuesRepository = new StringValuesRepository();
+			IStringValuesRepository stringValuesRepository = new StringValuesRepository(super.connManager);
 			if (rs.next()) {
 				City city = new City();
 				city.id = rs.getInt("id");

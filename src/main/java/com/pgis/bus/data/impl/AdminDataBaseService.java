@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.pgis.bus.data.Authenticate_enum;
 import com.pgis.bus.data.IAdminDataBaseService;
+import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.helpers.LoadImportObjectOptions;
 import com.pgis.bus.data.helpers.LoadRouteOptions;
 import com.pgis.bus.data.helpers.UpdateRouteOptions;
@@ -18,9 +19,9 @@ public class AdminDataBaseService extends DataBaseService implements
 
 	IimportRepository importRepository = null;
 
-	public AdminDataBaseService() {
-		super();
-		importRepository = new ImportRepository();
+	public AdminDataBaseService(IDBConnectionManager connectionManager) {
+		super(connectionManager);
+		importRepository = new ImportRepository(connectionManager);
 	}
 
 	@Override

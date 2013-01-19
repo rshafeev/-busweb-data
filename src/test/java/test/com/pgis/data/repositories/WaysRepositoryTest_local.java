@@ -12,7 +12,6 @@ import org.postgis.Point;
 import test.com.pgis.data.TestDBConnectionManager;
 import test.com.pgis.data.TestDataSource;
 
-import com.pgis.bus.data.DBConnectionFactory;
 import com.pgis.bus.data.models.FindWaysOptions;
 import com.pgis.bus.data.models.RouteTypeDiscount;
 import com.pgis.bus.data.models.WaysModel;
@@ -24,18 +23,18 @@ import com.pgis.bus.data.repositories.impl.WaysRepository;
 
 public class WaysRepositoryTest_local {
 
+	TestDBConnectionManager dbConnectionManager = null;
 	@Before
 	public void init() {
 		TestDataSource source = new TestDataSource();
-		TestDBConnectionManager dbConnectionManager = new TestDBConnectionManager(
+		dbConnectionManager = new TestDBConnectionManager(
 				source.getDataSource());
-		DBConnectionFactory.init(dbConnectionManager);
 		System.out.print("init test\n");
 	}
 
 	@After
 	public void destroy() {
-		DBConnectionFactory.free();
+		dbConnectionManager.free();
 	}
 
 	@Test
@@ -64,7 +63,7 @@ public class WaysRepositoryTest_local {
 		opts.setAlg_strategy(AlgStrategyEnum.c_cost);
 		opts.setLang_id("c_ru");
 		// get ways
-		IWaysRepository r = new WaysRepository();
+		IWaysRepository r = new WaysRepository(dbConnectionManager);
 		Collection<WayElem> ways = r.getShortestWays(opts);
 		WaysModel model = new WaysModel(ways);
 		System.out.println(model.toString());

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.Authenticate_enum;
+import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.orm.User;
 import com.pgis.bus.data.repositories.IUsersRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
@@ -14,12 +15,13 @@ public class UsersRepository extends Repository implements IUsersRepository {
 	private static final Logger log = LoggerFactory
 			.getLogger(UsersRepository.class);
 
-	public UsersRepository() {
-		super();
+	public UsersRepository(IDBConnectionManager connManager) {
+		super(connManager);
 	}
 
-	public UsersRepository(Connection c, boolean isClosed, boolean isCommited) {
-		super();
+	public UsersRepository(IDBConnectionManager connManager, Connection c,
+			boolean isClosed, boolean isCommited) {
+		super(connManager);
 		this.connection = c;
 		this.isClosed = isClosed;
 		this.isCommited = isCommited;
