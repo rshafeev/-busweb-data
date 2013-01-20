@@ -6,11 +6,15 @@ import org.postgis.Point;
 
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.StringValue;
+import com.pgis.bus.net.models.StationModel;
 
 public interface IStationsRepository extends IRepository {
 
 	Station getStation(StringValue name, Point location)
 			throws RepositoryException;
+
+	Collection<StationModel> findStations(String phrase, int cityID,
+			String langID, int limitCount) throws RepositoryException;
 
 	Collection<Station> getStationsByCity(int city_id)
 			throws RepositoryException;

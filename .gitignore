@@ -3,8 +3,6 @@
 *.project
 *.classpath
 *.settings
-<<<<<<< HEAD
-=======
 *.private
 *.jar
 *.class
@@ -13,6 +11,3 @@ target*/
 build/
 bin/
 target/
->>>>>>> 96600d1929838e5e765d5e12f72d64af681041c8
-
-

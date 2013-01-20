@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.helpers.GeoHelper;
 import com.pgis.bus.data.orm.ScheduleGroupDay;
-import com.pgis.bus.data.orm.type.DayEnum;
 import com.pgis.bus.data.repositories.impl.CitiesRepository;
 
 public class GsonLineString {

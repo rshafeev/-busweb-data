@@ -12,6 +12,13 @@ public class City implements Cloneable {
 	public int name_key;
 	public HashMap<String, StringValue> name; // key - language id, value - name
 
+	public String getNameByLang(String langID) {
+		StringValue nameValue = this.name.get(langID);
+		if (nameValue == null)
+			return null;
+		return nameValue.value;
+	}
+
 	public City clone() {
 		try {
 			City city;

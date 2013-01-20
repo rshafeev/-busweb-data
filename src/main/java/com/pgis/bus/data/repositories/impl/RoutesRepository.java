@@ -15,6 +15,8 @@ import org.postgis.Point;
 import org.postgresql.util.PGInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.helpers.LoadDirectRouteOptions;
 import com.pgis.bus.data.helpers.LoadRouteOptions;
 import com.pgis.bus.data.helpers.LoadRouteRelationOptions;
@@ -31,21 +33,22 @@ import com.pgis.bus.data.orm.ScheduleGroupDay;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.orm.Timetable;
-import com.pgis.bus.data.orm.type.DayEnum;
 import com.pgis.bus.data.repositories.IRoutesRepository;
 import com.pgis.bus.data.repositories.IStationsRepository;
 import com.pgis.bus.data.repositories.IStringValuesRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
+import com.pgis.bus.net.orm.DayEnum;
 
 public class RoutesRepository extends Repository implements IRoutesRepository {
 	private static final Logger log = LoggerFactory
 			.getLogger(RoutesRepository.class);
 
-	public RoutesRepository() {
-		super();
+	public RoutesRepository(IDBConnectionManager connManager) {
+		super(connManager);
 	}
 
-	public RoutesRepository(Connection c, boolean isClosed, boolean isCommited) {
+	public RoutesRepository( Connection c,
+			boolean isClosed, boolean isCommited) {
 		super();
 		this.connection = c;
 		this.isClosed = isClosed;
@@ -195,7 +198,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			}
 
 			if (loadRouteRelationOptions.isLoadStationsData()) {
-				IStationsRepository stationsRepository = new StationsRepository();
+				IStationsRepository stationsRepository = new StationsRepository(c,false,false);
 				for (RouteRelation relation : relations) {
 					int station_id = relation.getStation_b_id();
 					Station stationB = stationsRepository
@@ -386,7 +389,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			IStringValuesRepository stringValuesRepository = null;
 
 			if (opts.isLoadRouteNamesData()) {
-				stringValuesRepository = new StringValuesRepository();
+				stringValuesRepository = new StringValuesRepository(c,false,false);
 			}
 
 			for (Route route : routes) {
@@ -455,7 +458,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			IStringValuesRepository stringValuesRepository = null;
 
 			if (opts.isLoadRouteNamesData()) {
-				stringValuesRepository = new StringValuesRepository();
+				stringValuesRepository = new StringValuesRepository(c,false,false);
 			}
 
 			if (route != null) {

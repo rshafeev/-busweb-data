@@ -12,7 +12,8 @@ import com.pgis.bus.data.orm.ScheduleGroup;
 import com.pgis.bus.data.orm.ScheduleGroupDay;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.Timetable;
-import com.pgis.bus.data.orm.type.DayEnum;
+import com.pgis.bus.data.params.DefaultParameters;
+import com.pgis.bus.net.orm.DayEnum;
 
 public class ImportRouteModel {
 
@@ -323,13 +324,13 @@ public class ImportRouteModel {
 		if (this.directStations != null) {
 			for (int i = 0; i < this.directStations.length; i++) {
 				Station s = this.directStations[i];
-				s.getLocation().setSrid(4326);
+				s.getLocation().setSrid(DefaultParameters.GEOMETRY_SRID);
 			}
 		}
 		if (this.reverseStations != null) {
 			for (int i = 0; i < this.reverseStations.length; i++) {
 				Station s = this.reverseStations[i];
-				s.getLocation().setSrid(4326);
+				s.getLocation().setSrid(DefaultParameters.GEOMETRY_SRID);
 			}
 		}
 

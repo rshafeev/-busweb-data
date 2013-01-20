@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
+import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.helpers.LoadImportObjectOptions;
 import com.pgis.bus.data.models.ImportRouteModel;
 import com.pgis.bus.data.orm.City;
@@ -25,11 +26,12 @@ public class ImportRepository extends Repository implements IimportRepository {
 	private static final Logger log = LoggerFactory
 			.getLogger(ImportRepository.class);
 
-	public ImportRepository() {
-		super();
+	public ImportRepository(IDBConnectionManager connManager) {
+		super(connManager);
 	}
 
-	public ImportRepository(Connection c, boolean isClosed, boolean isCommited) {
+	public ImportRepository(Connection c,
+			boolean isClosed, boolean isCommited) {
 		super();
 		this.connection = c;
 		this.isClosed = isClosed;
@@ -85,7 +87,8 @@ public class ImportRepository extends Repository implements IimportRepository {
 			ImportObject obj = getObject(objID);
 			if (obj == null)
 				return null;
-			ICitiesRepository cities = new CitiesRepository();
+			Connection c = super.getConnection();
+			ICitiesRepository cities = new CitiesRepository(c,false,false);
 			City city = cities.getCityByKey(obj.city_key);
 			if (city == null)
 				throw new RepositoryException("Can not find city");
@@ -97,7 +100,7 @@ public class ImportRepository extends Repository implements IimportRepository {
 			routeModel.setRouteType(obj.route_type);
 			routeModel.init();
 
-			IStationsRepository stations = new StationsRepository();
+			IStationsRepository stations = new StationsRepository(c,false,false);
 
 			int ind = -1;
 			for (int i = 0; i < routeModel.getDirectStations().length; i++) {
