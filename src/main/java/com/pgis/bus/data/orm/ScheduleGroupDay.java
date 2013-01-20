@@ -1,6 +1,7 @@
 package com.pgis.bus.data.orm;
 
-import com.pgis.bus.data.orm.type.DayEnum;
+import com.pgis.bus.net.orm.DayEnum;
+
 
 public class ScheduleGroupDay {
 

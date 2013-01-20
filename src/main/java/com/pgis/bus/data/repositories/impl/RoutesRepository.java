@@ -33,11 +33,11 @@ import com.pgis.bus.data.orm.ScheduleGroupDay;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.orm.Timetable;
-import com.pgis.bus.data.orm.type.DayEnum;
 import com.pgis.bus.data.repositories.IRoutesRepository;
 import com.pgis.bus.data.repositories.IStationsRepository;
 import com.pgis.bus.data.repositories.IStringValuesRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
+import com.pgis.bus.net.orm.DayEnum;
 
 public class RoutesRepository extends Repository implements IRoutesRepository {
 	private static final Logger log = LoggerFactory

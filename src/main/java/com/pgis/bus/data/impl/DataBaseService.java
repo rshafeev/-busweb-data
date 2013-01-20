@@ -7,7 +7,6 @@ import org.postgis.Point;
 
 import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.IDataBaseService;
-import com.pgis.bus.data.models.FindWaysOptions;
 import com.pgis.bus.data.models.RouteGeoData;
 import com.pgis.bus.data.models.RoutePart;
 import com.pgis.bus.data.orm.City;
@@ -28,15 +27,17 @@ import com.pgis.bus.data.repositories.impl.RoutesRepository;
 import com.pgis.bus.data.repositories.impl.StationsRepository;
 import com.pgis.bus.data.repositories.impl.UsersRepository;
 import com.pgis.bus.data.repositories.impl.WaysRepository;
+import com.pgis.bus.net.request.FindPathsOptions;
 
 public class DataBaseService implements IDataBaseService {
 	protected IUsersRepository usersRepotitory;
 	protected ICitiesRepository citiesRepotitory;
 	protected IMainRepository mainRepository;
-	protected IStationsRepository stationsRepository;
+	protected IStationsRepository stationsRepository = null;
 	protected IWaysRepository waysRepository;
 	protected IRoutesRepository routesRepository;
 	protected IDBConnectionManager connectionManager;
+
 	private void init(IDBConnectionManager connectionManager) {
 		usersRepotitory = new UsersRepository(connectionManager);
 		citiesRepotitory = new CitiesRepository(connectionManager);
@@ -44,7 +45,7 @@ public class DataBaseService implements IDataBaseService {
 		stationsRepository = new StationsRepository(connectionManager);
 		waysRepository = new WaysRepository(connectionManager);
 		routesRepository = new RoutesRepository(connectionManager);
-		
+
 	}
 
 	protected Connection getConnection() throws DataBaseServiceException {
@@ -94,7 +95,7 @@ public class DataBaseService implements IDataBaseService {
 	}
 
 	@Override
-	public Collection<WayElem> getShortestWays(FindWaysOptions options)
+	public Collection<WayElem> getShortestWays(FindPathsOptions options)
 			throws RepositoryException {
 		return waysRepository.getShortestWays(options);
 	}
@@ -131,8 +132,13 @@ public class DataBaseService implements IDataBaseService {
 
 	@Override
 	public City getCityByID(int id) throws RepositoryException {
-		
+
 		return this.citiesRepotitory.getCityByID(id);
+	}
+
+	@Override
+	public IStationsRepository Stations() {
+		return this.stationsRepository;
 	}
 
 }

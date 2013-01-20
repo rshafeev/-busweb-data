@@ -18,6 +18,8 @@ import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.repositories.IStationsRepository;
 import com.pgis.bus.data.repositories.IStringValuesRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
+import com.pgis.bus.net.models.Location;
+import com.pgis.bus.net.models.StationModel;
 
 public class StationsRepository extends Repository implements
 		IStationsRepository {
@@ -29,8 +31,7 @@ public class StationsRepository extends Repository implements
 		super(connManager);
 	}
 
-	public StationsRepository(Connection c,
-			boolean isClosed, boolean isCommited) {
+	public StationsRepository(Connection c, boolean isClosed, boolean isCommited) {
 		super();
 		this.connection = c;
 		this.isClosed = isClosed;
@@ -67,7 +68,8 @@ public class StationsRepository extends Repository implements
 				station.setLocation((Point) g_location.getGeometry());
 
 				// get names
-				IStringValuesRepository stringValuesRepository = new StringValuesRepository(c,false,false);
+				IStringValuesRepository stringValuesRepository = new StringValuesRepository(
+						c, false, false);
 				int name_key = key.getInt("name_key");
 				Collection<StringValue> name = stringValuesRepository
 						.getStringValues(name_key);
@@ -209,7 +211,8 @@ public class StationsRepository extends Repository implements
 				station.setLocation((Point) g_location.getGeometry());
 
 				// get names
-				IStringValuesRepository stringValuesRepository = new StringValuesRepository(c,false,false);
+				IStringValuesRepository stringValuesRepository = new StringValuesRepository(
+						c, false, false);
 				int name_key = key.getInt("name_key");
 				Collection<StringValue> name = stringValuesRepository
 						.getStringValues(name_key);
@@ -260,7 +263,8 @@ public class StationsRepository extends Repository implements
 				station.setLocation((Point) g_location.getGeometry());
 
 				// get names
-				IStringValuesRepository stringValuesRepository = new StringValuesRepository(c,false,false);
+				IStringValuesRepository stringValuesRepository = new StringValuesRepository(
+						c, false, false);
 				int name_key = key.getInt("name_key");
 				Collection<StringValue> name = stringValuesRepository
 						.getStringValues(name_key);
@@ -334,5 +338,61 @@ public class StationsRepository extends Repository implements
 			super.closeConnection(c);
 		}
 
+	}
+
+	@Override
+	public Collection<StationModel> findStations(String phrase, int cityID,
+			String langID, int limitCount) throws RepositoryException {
+		Connection c = super.getConnection();
+		Collection<StationModel> stations = null;
+
+		try {
+			String query = "select bus.stations.id as id, "
+					+ "bus.string_values.value as name, "
+					+ "geometry(bus.stations.location) as location "
+					+ "from bus.stations  "
+					+ "JOIN bus.string_values ON bus.string_values.key_id = bus.stations.name_key "
+					+ "where city_id = ? and lang_id = bus.lang_enum(?) and  value @@ ? limit ?;";
+
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setInt(1, cityID);
+			ps.setString(2, langID);
+			ps.setString(3, phrase);
+			ps.setInt(4, limitCount);
+			ResultSet key = ps.executeQuery();
+			stations = new ArrayList<StationModel>();
+
+			while (key.next()) {
+				StationModel station = new StationModel();
+				// get id
+				int id = key.getInt("id");
+				station.setId(id);
+
+				// get location
+				PGgeometry g_location = (PGgeometry) key.getObject("location");
+				if (!(g_location.getGeometry() instanceof Point)) {
+					throw new SQLException(
+							"can not convert geo_location to org.pgis.Point");
+				}
+				Point dbLocation = (Point) g_location.getGeometry();
+				Location location = new Location();
+				location.setLat(dbLocation.x);
+				location.setLon(dbLocation.y);
+				station.setLocation(location);
+
+				// get name
+				String name = key.getString("name");
+				station.setName(name);
+
+				stations.add(station);
+			}
+		} catch (SQLException e) {
+			stations = null;
+			log.error("can not read database", e);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} finally {
+			super.closeConnection(c);
+		}
+		return stations;
 	}
 }
