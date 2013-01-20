@@ -67,7 +67,7 @@ public class WaysModel {
 	}
 
 	public String toString() {
-		String out = "";
+		String out = "test";
 		Iterator<WayModel> i = ways.iterator();
 		Integer ind = 1;
 		while (i.hasNext()) {

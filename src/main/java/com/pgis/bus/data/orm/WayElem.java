@@ -15,6 +15,8 @@ public class WayElem implements Comparable<WayElem> {
 	public double cost;
 	public double distance;
 
+
+
 	public String toString() {
 		String s = "";
 		s = Integer.toString(path_id) + " ";
