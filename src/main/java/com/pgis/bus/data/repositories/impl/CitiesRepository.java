@@ -46,7 +46,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			ResultSet key = ps.executeQuery();
 			cities = new ArrayList<City>();
 			IStringValuesRepository stringValuesRepository = new StringValuesRepository(
-					super.connManager);
+					c,false,false);
 			while (key.next()) {
 				City city = new City();
 				city.id = key.getInt("id");
@@ -80,7 +80,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, id);
 			ResultSet key = ps.executeQuery();
-			IStringValuesRepository stringValuesRepository = new StringValuesRepository(super.connManager);
+			IStringValuesRepository stringValuesRepository = new StringValuesRepository(c,false,false);
 			if (key.next()) {
 				City city = new City();
 				city.id = key.getInt("id");
@@ -113,7 +113,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			ps.setString(1, key);
 
 			ResultSet rs = ps.executeQuery();
-			IStringValuesRepository stringValuesRepository = new StringValuesRepository(super.connManager);
+			IStringValuesRepository stringValuesRepository = new StringValuesRepository(c,false,false);
 			if (rs.next()) {
 				City city = new City();
 				city.id = rs.getInt("id");

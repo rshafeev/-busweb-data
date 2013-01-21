@@ -15,7 +15,7 @@ public class TestDataSource {
 		source.setDatabaseName(dbName);
 		source.setUser(user);
 		source.setPassword(password);
-		source.setMaxConnections(100);
+		source.setMaxConnections(200);
 		source.setServerName(serverName);
 		
 		return source;

@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.gson.Gson;
+import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.models.ImportRouteModel;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.ImportObject;
@@ -22,25 +23,19 @@ import com.pgis.bus.data.repositories.impl.CitiesRepository;
 import com.pgis.bus.data.repositories.impl.ImportRepository;
 import com.pgis.bus.data.repositories.impl.RoutesRepository;
 
+import test.com.pgis.data.DBTestConnectionFactory;
 import test.com.pgis.data.FileManager;
 import test.com.pgis.data.TestDBConnectionManager;
 import test.com.pgis.data.TestDataSource;
 
 public class ImportRepositoryTest_local {
 
-	TestDBConnectionManager dbConnectionManager = null;
+	IDBConnectionManager dbConnectionManager = null;
 	@Before
 	public void init() {
-		TestDataSource source = new TestDataSource();
-		dbConnectionManager = new TestDBConnectionManager(
-				source.getDataSource());
-		System.out.print("init test\n");
+		dbConnectionManager = DBTestConnectionFactory.getTestDBConnectionManager();
 	}
 
-	@After
-	public void destroy() {
-		dbConnectionManager.free();
-	}
 	@Test(expected = RepositoryException.class)
 	public void insrtRouteTest() throws RepositoryException {
 		System.out.println("insrtRouteTest()...");
