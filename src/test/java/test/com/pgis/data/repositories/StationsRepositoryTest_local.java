@@ -10,9 +10,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.postgis.Point;
 
+import test.com.pgis.data.DBTestConnectionFactory;
 import test.com.pgis.data.TestDBConnectionManager;
 import test.com.pgis.data.TestDataSource;
 
+import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.Station;
 
@@ -24,18 +26,10 @@ import com.pgis.bus.data.repositories.impl.StationsRepository;
 
 //import com.pgis.bus.data.repositories.UsersRepository;
 public class StationsRepositoryTest_local {
-	TestDBConnectionManager dbConnectionManager = null;
+	IDBConnectionManager dbConnectionManager = null;
 	@Before
 	public void init() {
-		TestDataSource source = new TestDataSource();
-		dbConnectionManager = new TestDBConnectionManager(
-				source.getDataSource());
-		System.out.print("init test\n");
-	}
-
-	@After
-	public void destroy() {
-		dbConnectionManager.free();
+		dbConnectionManager = DBTestConnectionFactory.getTestDBConnectionManager();
 	}
 
 	@Test

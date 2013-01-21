@@ -7,9 +7,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import test.com.pgis.data.DBTestConnectionFactory;
 import test.com.pgis.data.TestDBConnectionManager;
 import test.com.pgis.data.TestDataSource;
 
+import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.models.WaysModel;
 import com.pgis.bus.data.orm.WayElem;
 import com.pgis.bus.data.repositories.IWaysRepository;
@@ -23,19 +25,11 @@ import com.pgis.bus.net.request.data.RouteTypeDiscount;
 
 public class WaysRepositoryTest_local {
 
-	TestDBConnectionManager dbConnectionManager = null;
 
+	IDBConnectionManager dbConnectionManager = null;
 	@Before
 	public void init() {
-		TestDataSource source = new TestDataSource();
-		dbConnectionManager = new TestDBConnectionManager(
-				source.getDataSource());
-		System.out.print("init test\n");
-	}
-
-	@After
-	public void destroy() {
-		dbConnectionManager.free();
+		dbConnectionManager = DBTestConnectionFactory.getTestDBConnectionManager();
 	}
 
 	@Test
