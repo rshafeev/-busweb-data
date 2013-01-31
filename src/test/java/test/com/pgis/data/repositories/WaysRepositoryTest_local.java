@@ -12,7 +12,6 @@ import test.com.pgis.data.TestDBConnectionManager;
 import test.com.pgis.data.TestDataSource;
 
 import com.pgis.bus.data.IDBConnectionManager;
-import com.pgis.bus.data.models.WaysModel;
 import com.pgis.bus.data.orm.WayElem;
 import com.pgis.bus.data.repositories.IWaysRepository;
 import com.pgis.bus.data.repositories.impl.WaysRepository;
@@ -58,7 +57,6 @@ public class WaysRepositoryTest_local {
 		// get ways
 		IWaysRepository r = new WaysRepository(dbConnectionManager);
 		Collection<WayElem> ways = r.getShortestWays(opts);
-		WaysModel model = new WaysModel(ways);
-		System.out.println(model.toString());
+
 	}
 }
