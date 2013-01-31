@@ -11,33 +11,34 @@ import java.net.URL;
 import java.nio.charset.Charset;
 
 public class FileManager {
-	
+
 	public static String getTestResourcePath() {
-		return "/media/Files/premiumGIS/Software/Programms/"
-				+ "busApps/busWeb.data/src/test/resources/";
+		return "/media/Data/Documents/premiumGIS/Software/Programms"
+				+ "/busApps/busWeb.data/src/test/resources/";
 
 	}
-	public static boolean isFileAlreadyExist(String fullFileName){
+
+	public static boolean isFileAlreadyExist(String fullFileName) {
 		return (new File(fullFileName)).exists();
 	}
+
 	public static String getFileData(String fullFileName) {
 		String source = null;
 		try {
 			File file = new File(fullFileName);
 			InputStream in = new FileInputStream(file);
-			byte[] b  = new byte[(int)file.length()];
+			byte[] b = new byte[(int) file.length()];
 			int len = b.length;
 			int total = 0;
 
 			while (total < len) {
-			  int result = in.read(b, total, len - total);
-			  if (result == -1) {
-			    break;
-			  }
-			  total += result;
+				int result = in.read(b, total, len - total);
+				if (result == -1) {
+					break;
+				}
+				total += result;
 			}
-			source = new String( b , Charset.forName("UTF-8"));
-
+			source = new String(b, Charset.forName("UTF-8"));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -55,17 +56,16 @@ public class FileManager {
 					new FileOutputStream(fullFileName), "UTF-8");
 			isw.write(data);
 			isw.close();
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	public static boolean createFolder(String folder){
+
+	public static boolean createFolder(String folder) {
 		try {
-			 boolean success = (
-					  new File(folder)).mkdir();
-					 return success;
+			boolean success = (new File(folder)).mkdir();
+			return success;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
