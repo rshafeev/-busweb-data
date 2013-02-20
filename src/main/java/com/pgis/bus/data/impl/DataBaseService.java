@@ -13,20 +13,20 @@ import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.Language;
 import com.pgis.bus.data.orm.Route;
 import com.pgis.bus.data.orm.Station;
-import com.pgis.bus.data.orm.WayElem;
+import com.pgis.bus.data.orm.type.Path_t;
 import com.pgis.bus.data.repositories.ICitiesRepository;
 import com.pgis.bus.data.repositories.IMainRepository;
+import com.pgis.bus.data.repositories.IPathsRepository;
 import com.pgis.bus.data.repositories.IRoutesRepository;
 import com.pgis.bus.data.repositories.IStationsRepository;
 import com.pgis.bus.data.repositories.IUsersRepository;
-import com.pgis.bus.data.repositories.IWaysRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.impl.CitiesRepository;
 import com.pgis.bus.data.repositories.impl.MainRepository;
 import com.pgis.bus.data.repositories.impl.RoutesRepository;
 import com.pgis.bus.data.repositories.impl.StationsRepository;
 import com.pgis.bus.data.repositories.impl.UsersRepository;
-import com.pgis.bus.data.repositories.impl.WaysRepository;
+import com.pgis.bus.data.repositories.impl.PathsRepository;
 import com.pgis.bus.net.request.FindPathsOptions;
 
 public class DataBaseService implements IDataBaseService {
@@ -34,7 +34,7 @@ public class DataBaseService implements IDataBaseService {
 	protected ICitiesRepository citiesRepotitory;
 	protected IMainRepository mainRepository;
 	protected IStationsRepository stationsRepository = null;
-	protected IWaysRepository waysRepository;
+	protected IPathsRepository pathsRepository;
 	protected IRoutesRepository routesRepository;
 	protected IDBConnectionManager connectionManager;
 
@@ -43,7 +43,7 @@ public class DataBaseService implements IDataBaseService {
 		citiesRepotitory = new CitiesRepository(connectionManager);
 		mainRepository = new MainRepository(connectionManager);
 		stationsRepository = new StationsRepository(connectionManager);
-		waysRepository = new WaysRepository(connectionManager);
+		pathsRepository = new PathsRepository(connectionManager);
 		routesRepository = new RoutesRepository(connectionManager);
 
 	}
@@ -95,9 +95,9 @@ public class DataBaseService implements IDataBaseService {
 	}
 
 	@Override
-	public Collection<WayElem> getShortestWays(FindPathsOptions options)
+	public Collection<Path_t> getShortestPaths(FindPathsOptions options)
 			throws RepositoryException {
-		return waysRepository.getShortestWays(options);
+		return pathsRepository.getShortestPaths(options);
 	}
 
 	@Override

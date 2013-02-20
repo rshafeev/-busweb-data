@@ -17,21 +17,21 @@ import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.helpers.DateTimeHelper;
-import com.pgis.bus.data.orm.WayElem;
+import com.pgis.bus.data.orm.type.Path_t;
 import com.pgis.bus.data.params.DefaultParameters;
-import com.pgis.bus.data.repositories.IWaysRepository;
+import com.pgis.bus.data.repositories.IPathsRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.net.request.FindPathsOptions;
 
-public class WaysRepository extends Repository implements IWaysRepository {
+public class PathsRepository extends Repository implements IPathsRepository {
 	private static final Logger log = LoggerFactory
-			.getLogger(WaysRepository.class);
+			.getLogger(PathsRepository.class);
 
-	public WaysRepository(IDBConnectionManager connManager) {
+	public PathsRepository(IDBConnectionManager connManager) {
 		super(connManager);
 	}
 
-	public WaysRepository(IDBConnectionManager connManager, Connection c,
+	public PathsRepository(IDBConnectionManager connManager, Connection c,
 			boolean isClosed, boolean isCommited) {
 		super(connManager);
 		this.connection = c;
@@ -40,10 +40,10 @@ public class WaysRepository extends Repository implements IWaysRepository {
 	}
 
 	@Override
-	public Collection<WayElem> getShortestWays(FindPathsOptions options)
+	public Collection<Path_t> getShortestPaths(FindPathsOptions options)
 			throws RepositoryException {
 		Connection c = super.getConnection();
-		Collection<WayElem> ways = null;
+		Collection<Path_t> paths = null;
 		Calendar calendar = Calendar.getInstance();
 		
 		try {
@@ -54,6 +54,7 @@ public class WaysRepository extends Repository implements IWaysRepository {
 					+ " ?," /* time_start */
 					+ " ?," // max_distance*/
 					+ " ?," /* route_types */
+					+ " ?," /* _has_transitions */ 
 					+ " ?," /* discount */
 					+ " bus.alg_strategy(?)," /* alg_strategy */
 					+ " bus.lang_enum(?)) ORDER BY path_id,index;";
@@ -74,28 +75,34 @@ public class WaysRepository extends Repository implements IWaysRepository {
 			ps.setTime(5, DateTimeHelper.getTimeFromSeconds(options.getOutTime().getTimeStartSecs()));
 			ps.setDouble(6, options.getMaxDistance());
 			ps.setArray(7, c.createArrayOf("text", options.getRouteTypeArr()));
-			ps.setArray(8, c.createArrayOf("float", options.getDiscountArr()));
-			ps.setString(9, options.getAlgStrategy().name());
-			ps.setString(10, options.getLangID());
+			ps.setBoolean(8, options.isTransitions());
+			ps.setArray(9, c.createArrayOf("float", options.getDiscountArr()));
+			ps.setString(10, options.getAlgStrategy().name());
+			ps.setString(11, options.getLangID());
 
 			ResultSet key = ps.executeQuery();
-			ways = new ArrayList<WayElem>();
+			paths = new ArrayList<Path_t>();
 			while (key.next()) {
-				WayElem wayElem = new WayElem();
-				wayElem.path_id = key.getInt("path_id");
-				wayElem.index = key.getInt("index");
-				wayElem.direct_route_id = key.getInt("direct_route_id");
-				wayElem.route_type = key.getString("route_type");
-				wayElem.relation_index = key.getInt("relation_index");
-				wayElem.route_name = key.getString("route_name");
-				wayElem.station_name = key.getString("station_name");
+				Path_t pathElem = new Path_t();
+				pathElem.path_id = key.getInt("path_id");
+				pathElem.index = key.getInt("index");
+				pathElem.direct_route_id = key.getInt("direct_route_id");
+				pathElem.route_type = key.getString("route_type");
+				pathElem.route_name = key.getString("route_name");
+				pathElem.relation_index_a = key.getInt("relation_index_a");
+				pathElem.relation_index_b = key.getInt("relation_index_b");
+				pathElem.station_name_a = key.getString("station_name_a");
+				pathElem.station_name_b = key.getString("station_name_b");
 
 				if (key.getObject("move_time") != null)
-					wayElem.move_time = (PGInterval) key.getObject("move_time");
-				wayElem.wait_time = (PGInterval) key.getObject("wait_time");
-				wayElem.cost = key.getDouble("cost");
-				wayElem.distance = key.getDouble("distance");
-				ways.add(wayElem);
+					pathElem.move_time = (PGInterval) key.getObject("move_time");
+				if(key.getObject("wait_time") != null)
+					pathElem.wait_time = (PGInterval) key.getObject("wait_time");
+				if(key.getObject("frequency") != null)
+					pathElem.frequency = (PGInterval) key.getObject("frequency");
+				pathElem.cost = key.getDouble("cost");
+				pathElem.distance = key.getDouble("distance");
+				paths.add(pathElem);
 			}
 			super.commit(c);
 		} catch (Exception e) {
@@ -106,6 +113,6 @@ public class WaysRepository extends Repository implements IWaysRepository {
 			super.closeConnection(c);
 		}
 
-		return ways;
+		return paths;
 	}
 }

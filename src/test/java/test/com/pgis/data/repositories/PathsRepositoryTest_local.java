@@ -12,9 +12,9 @@ import test.com.pgis.data.TestDBConnectionManager;
 import test.com.pgis.data.TestDataSource;
 
 import com.pgis.bus.data.IDBConnectionManager;
-import com.pgis.bus.data.orm.WayElem;
-import com.pgis.bus.data.repositories.IWaysRepository;
-import com.pgis.bus.data.repositories.impl.WaysRepository;
+import com.pgis.bus.data.orm.type.Path_t;
+import com.pgis.bus.data.repositories.IPathsRepository;
+import com.pgis.bus.data.repositories.impl.PathsRepository;
 import com.pgis.bus.net.models.Location;
 import com.pgis.bus.net.orm.AlgStrategyEnum;
 import com.pgis.bus.net.orm.DayEnum;
@@ -22,7 +22,7 @@ import com.pgis.bus.net.request.FindPathsOptions;
 import com.pgis.bus.net.request.data.OutTime;
 import com.pgis.bus.net.request.data.RouteTypeDiscount;
 
-public class WaysRepositoryTest_local {
+public class PathsRepositoryTest_local {
 
 
 	IDBConnectionManager dbConnectionManager = null;
@@ -39,9 +39,6 @@ public class WaysRepositoryTest_local {
 
 		OutTime outTime = new OutTime(DayEnum.c_Monday, 10, 0);
 		RouteTypeDiscount[] route_types = {
-				new RouteTypeDiscount("c_route_station_input", 1.0),
-				new RouteTypeDiscount("c_route_station_output", 1.0),
-				new RouteTypeDiscount("c_route_transition", 1.0),
 				new RouteTypeDiscount("c_route_trolley", 1.0),
 				new RouteTypeDiscount("c_route_metro", 0.5),
 				new RouteTypeDiscount("c_route_bus", 1.0) };
@@ -51,12 +48,17 @@ public class WaysRepositoryTest_local {
 		opts.setP2(p2);
 		opts.setOutTime(outTime);
 		opts.setMaxDistance(300);
-		opts.setUsageRouteTypes(Arrays.asList(route_types));
+		opts.setRouteTypes(Arrays.asList(route_types));
+		opts.setTransitions(true);
 		opts.setAlgStrategy(AlgStrategyEnum.c_cost);
 		opts.setLangID("c_ru");
+		
 		// get ways
-		IWaysRepository r = new WaysRepository(dbConnectionManager);
-		Collection<WayElem> ways = r.getShortestWays(opts);
-
+		IPathsRepository r = new PathsRepository(dbConnectionManager);
+		Collection<Path_t> paths = r.getShortestPaths(opts);
+		for(Path_t p : paths ){
+			System.out.println(p.toString());
+		}
+		
 	}
 }

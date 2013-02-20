@@ -7,6 +7,7 @@ import org.postgis.Point;
 import com.pgis.bus.data.models.RouteGeoData;
 import com.pgis.bus.data.models.RoutePart;
 import com.pgis.bus.data.orm.*;
+import com.pgis.bus.data.orm.type.Path_t;
 import com.pgis.bus.data.repositories.IStationsRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.net.request.FindPathsOptions;
@@ -37,7 +38,7 @@ public interface IDataBaseService {
 
 	City getCityByName(String lang_id, String value) throws RepositoryException;
 
-	Collection<WayElem> getShortestWays(FindPathsOptions options)
+	Collection<Path_t> getShortestPaths(FindPathsOptions options)
 			throws RepositoryException;
 
 	Collection<RouteGeoData> getGeoDataByRoutePart(RoutePart routePart,
