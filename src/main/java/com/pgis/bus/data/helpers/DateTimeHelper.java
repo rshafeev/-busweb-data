@@ -14,8 +14,10 @@ public class DateTimeHelper {
 				+ c.get(Calendar.MINUTE) * 60 + c.get(Calendar.SECOND);
 		return secs;
 	}
-
+	
 	public static int toSeconds(PGInterval interval) {
+		if(interval == null)
+			return 0;
 		int secs = interval.getHours() * 60 * 60 + interval.getMinutes() * 60
 				+ (int) interval.getSeconds();
 		return secs;

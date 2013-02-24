@@ -15,39 +15,39 @@ public class RoutePart {
 	 * направления: прямой и обратный. Поэтому дуги маршрута зависят также от
 	 * направления)
 	 */
-	private int directRouteID;
+	private int ID;
 
 	/**
 	 * Индекс первой дуги
 	 */
-	private int indexStart;
+	private int startInd;
 
 	/**
 	 * Индекс последней дуги
 	 */
-	private int indexFinish;
+	private int finishInd;
 
 	public int getDirectRouteID() {
-		return directRouteID;
+		return ID;
 	}
 
 	public void setDirectRouteID(int directRouteID) {
-		this.directRouteID = directRouteID;
+		this.ID = directRouteID;
 	}
 
 	public int getIndexStart() {
-		return indexStart;
+		return startInd;
 	}
 
 	public void setIndexStart(int indexStart) {
-		this.indexStart = indexStart;
+		this.startInd = indexStart;
 	}
 
 	public int getIndexFinish() {
-		return indexFinish;
+		return finishInd;
 	}
 
 	public void setIndexFinish(int indexFinish) {
-		this.indexFinish = indexFinish;
+		this.finishInd = indexFinish;
 	}
 }

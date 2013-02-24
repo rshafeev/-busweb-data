@@ -1,5 +1,8 @@
 package com.pgis.bus.data.models;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.postgis.LineString;
 import org.postgis.Point;
 
@@ -29,6 +32,13 @@ public class RouteGeoData {
 		out += "]";
 		return out;
 
+	}
+	public Collection<Double[]> relationGeomToArray(){
+		 Collection<Double[]> points = new  ArrayList<Double[]>();
+		 for(Point p : relationGeom.getPoints()){
+			 points.add(new Double[]{p.x,p.y});
+		 }
+		 return points;
 	}
 
 	public void setIndex(int index) {

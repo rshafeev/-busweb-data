@@ -3,6 +3,7 @@ package test.com.pgis.data.repositories;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +33,7 @@ public class PathsRepositoryTest_local {
 	}
 
 	@Test
-	public void getShortestWays1_Test() throws Exception {
+	public void getShortestPaths1_Test() throws Exception {
 		// prepare data
 		Location p1 = new Location(50.026350246659, 36.3360857963562);
 		Location p2 = new Location(50.0355169337227, 36.2198925018311);
@@ -58,6 +59,42 @@ public class PathsRepositoryTest_local {
 		Collection<Path_t> paths = r.getShortestPaths(opts);
 		for(Path_t p : paths ){
 			System.out.println(p.toString());
+			if(p.direct_route_id!= 0){
+				assertTrue(p.wait_time!=null);
+			}
+			
+			
+		}
+		
+	}
+	
+	@Test
+	public void getShortestPaths2_Test() throws Exception {
+		// prepare data
+		Location p1 = new Location(50.01303427698978, 36.22690200805664);
+		Location p2 = new Location(50.00365685169585, 36.30380630493164);
+
+		OutTime outTime = new OutTime(DayEnum.c_Sunday, 10, 10);
+		RouteTypeDiscount[] route_types = {
+				new RouteTypeDiscount("c_route_trolley", 1.0),
+				new RouteTypeDiscount("c_route_metro", 0.5),
+				new RouteTypeDiscount("c_route_bus", 1.0) };
+		FindPathsOptions opts = new FindPathsOptions();
+		opts.setCityID(1);
+		opts.setP1(p1);
+		opts.setP2(p2);
+		opts.setOutTime(outTime);
+		opts.setMaxDistance(300);
+		opts.setRouteTypes(Arrays.asList(route_types));
+		opts.setTransitions(true);
+		opts.setAlgStrategy(AlgStrategyEnum.c_opt);
+		opts.setLangID("c_ru");
+		
+		// get ways
+		IPathsRepository r = new PathsRepository(dbConnectionManager);
+		Collection<Path_t> paths = r.getShortestPaths(opts);
+		for(Path_t p : paths ){
+			//System.out.println(p.toString());
 		}
 		
 	}
