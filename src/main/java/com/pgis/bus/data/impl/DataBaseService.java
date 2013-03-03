@@ -7,6 +7,7 @@ import org.postgis.Point;
 
 import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.IDataBaseService;
+import com.pgis.bus.data.helpers.LoadRouteOptions;
 import com.pgis.bus.data.models.RouteGeoData;
 import com.pgis.bus.data.models.RoutePart;
 import com.pgis.bus.data.orm.City;
@@ -141,4 +142,15 @@ public class DataBaseService implements IDataBaseService {
 		return this.stationsRepository;
 	}
 
+	@Override
+	public Collection<Route> getRoutes(String route_type_id, int city_id,
+			LoadRouteOptions opts) throws RepositoryException {
+		return routesRepository.getRoutes(route_type_id, city_id, opts);
+	}
+
+	@Override
+	public Route getRoute(Integer routeID, LoadRouteOptions opts)
+			throws RepositoryException {
+		return routesRepository.getRoute(routeID, opts);
+	}
 }

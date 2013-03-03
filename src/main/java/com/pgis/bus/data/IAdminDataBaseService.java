@@ -35,12 +35,6 @@ public interface IAdminDataBaseService extends IDataBaseService {
 
 	void deleteStation(int station_id) throws RepositoryException;
 
-	Collection<Route> getRoutes(String route_type_id, int city_id,
-			LoadRouteOptions opts) throws RepositoryException;
-
-	Route getRoute(Integer routeID, LoadRouteOptions opts)
-			throws RepositoryException;
-
 	void insertRoute(Route newRoute) throws RepositoryException;
 
 	void removeRoute(int routeID) throws RepositoryException;

@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.postgis.Point;
 
+import com.pgis.bus.data.helpers.LoadRouteOptions;
 import com.pgis.bus.data.models.RouteGeoData;
 import com.pgis.bus.data.models.RoutePart;
 import com.pgis.bus.data.orm.*;
@@ -46,4 +47,10 @@ public interface IDataBaseService {
 
 	City getCityByKey(String key) throws RepositoryException;
 	City getCityByID(int id) throws RepositoryException;
+	
+	Collection<Route> getRoutes(String route_type_id, int city_id,
+			LoadRouteOptions opts) throws RepositoryException;
+
+	Route getRoute(Integer routeID, LoadRouteOptions opts)
+			throws RepositoryException;
 }

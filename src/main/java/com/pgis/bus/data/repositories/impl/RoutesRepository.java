@@ -447,43 +447,31 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 				route.setRoute_type_id(routeTypeID);
 
 			}
+			if (route == null)
+				throw new Exception("not found");
+			RoutesRepository rep = new RoutesRepository(c, false, false);
+			if (opts.isLoadRouteNamesData()) {
+				IStringValuesRepository stringValuesRepository = new StringValuesRepository(
+						c, false, false);
+				Collection<StringValue> name = stringValuesRepository
+						.getStringValues(route.getName_key());
+				route.setName(name);
+			}
+			if (opts.isLoadDirectRouteData()) {
+				DirectRoute dRoute = rep.getDirectRoute(route.getId(), true,
+						opts.getDirectRouteOptions());
+				DirectRoute rRoute = rep.getDirectRoute(route.getId(), false,
+						opts.getDirectRouteOptions());
+				route.setDirectRouteWay(dRoute);
+				route.setReverseRouteWay(rRoute);
+			}
+
 		} catch (Exception e) {
 			route = null;
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
 			super.closeConnection(c);
-		}
-
-		try {
-			IStringValuesRepository stringValuesRepository = null;
-
-			if (opts.isLoadRouteNamesData()) {
-				stringValuesRepository = new StringValuesRepository(c, false,
-						false);
-			}
-
-			if (route != null) {
-				if (opts.isLoadRouteNamesData()) {
-
-					Collection<StringValue> name = stringValuesRepository
-							.getStringValues(route.getName_key());
-					route.setName(name);
-				}
-				if (opts.isLoadDirectRouteData()) {
-					DirectRoute dRoute = getDirectRoute(route.getId(), true,
-							opts.getDirectRouteOptions());
-					DirectRoute rRoute = getDirectRoute(route.getId(), false,
-							opts.getDirectRouteOptions());
-					route.setDirectRouteWay(dRoute);
-					route.setReverseRouteWay(rRoute);
-				}
-
-			}
-		} catch (Exception e) {
-			route = null;
-			log.error("can not read database", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		}
 		return route;
 	}

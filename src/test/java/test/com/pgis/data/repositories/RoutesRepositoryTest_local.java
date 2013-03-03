@@ -194,7 +194,27 @@ public class RoutesRepositoryTest_local {
 		}
 
 	}
-
+	
+	@Test
+	public void getRoute_Test() throws Exception{
+		LoadRouteRelationOptions loadRouteRelationOptions = new LoadRouteRelationOptions();
+		loadRouteRelationOptions.setLoadStationsData(true);
+		LoadDirectRouteOptions loadDirectRouteOptions = new LoadDirectRouteOptions();
+		loadDirectRouteOptions.setLoadScheduleData(false);
+		loadDirectRouteOptions
+				.setLoadRouteRelationOptions(loadRouteRelationOptions);
+		LoadRouteOptions opts = new LoadRouteOptions();
+		opts.setLoadRouteNamesData(true);
+		opts.setDirectRouteOptions(loadDirectRouteOptions);
+		
+		Connection c = dbConnectionManager.getConnection();
+		IRoutesRepository repository = new RoutesRepository(c, false, false);
+	    Route route = repository.getRoute(267, opts);
+	    assertNotNull(route);
+	    c.rollback();
+		dbConnectionManager.closeConnection(c);
+	}
+	
 	@Test
 	public void insertRoute_Test() throws Exception {
 		System.out.println("insertRoute_Test()");

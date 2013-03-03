@@ -73,18 +73,6 @@ public class AdminDataBaseService extends DataBaseService implements
 	}
 
 	@Override
-	public Collection<Route> getRoutes(String route_type_id, int city_id,
-			LoadRouteOptions opts) throws RepositoryException {
-		return routesRepository.getRoutes(route_type_id, city_id, opts);
-	}
-
-	@Override
-	public Route getRoute(Integer routeID, LoadRouteOptions opts)
-			throws RepositoryException {
-		return routesRepository.getRoute(routeID, opts);
-	}
-
-	@Override
 	public void insertRoute(Route newRoute) throws RepositoryException {
 		routesRepository.insertRoute(newRoute);
 	}

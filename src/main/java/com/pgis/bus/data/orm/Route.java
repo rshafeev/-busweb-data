@@ -122,8 +122,10 @@ public class Route {
 		String fullName = this.number;
 		if (this.name != null) {
 			for (StringValue v : this.name) {
-				if (v.equals(lang_id)) {
-					fullName += v.value;
+				if (v.lang_id.equals(lang_id)) {
+					if(v.value!=null)
+						fullName += v.value;
+					break;
 				}
 			}
 		}
