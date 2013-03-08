@@ -6,6 +6,7 @@
 *.private
 *.jar
 *.class
+*.directory
 bin*/
 target*/
 build/
