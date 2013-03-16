@@ -6,14 +6,14 @@ import java.sql.Connection;
 import java.util.Collection;
 import java.util.HashMap;
 
+import javax.sql.DataSource;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import test.com.pgis.data.DBTestConnectionFactory;
 import test.com.pgis.data.TestDBConnectionManager;
-import test.com.pgis.data.TestDataSource;
 
+import com.pgis.bus.data.DBConnectionManager;
 import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.StringValue;
@@ -24,9 +24,10 @@ import com.pgis.bus.data.repositories.impl.Repository;
 public class CitiesRepositoryTest_local {
 
 	IDBConnectionManager dbConnectionManager = null;
+
 	@Before
 	public void init() {
-		dbConnectionManager = DBTestConnectionFactory.getTestDBConnectionManager();
+		dbConnectionManager = TestDBConnectionManager.create();
 	}
 
 	@Test
@@ -38,8 +39,8 @@ public class CitiesRepositoryTest_local {
 
 	@Test
 	public void updateCityTest() throws Exception {
-		Connection c =  dbConnectionManager.getConnection();
-		
+		Connection c = dbConnectionManager.getConnection();
+
 		ICitiesRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_en", "Kharkov");
 		assertNotNull(city);
@@ -105,7 +106,7 @@ public class CitiesRepositoryTest_local {
 		// test
 		Connection c = dbConnectionManager.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
-		City responceCity = db.getCityByName("c_en","Kharkov");
+		City responceCity = db.getCityByName("c_en", "Kharkov");
 		assertNotNull(responceCity);
 		assertTrue(responceCity.id > 0);
 		assertTrue(responceCity.name_key > 0);

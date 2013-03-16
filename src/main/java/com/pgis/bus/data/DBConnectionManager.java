@@ -2,11 +2,8 @@ package com.pgis.bus.data;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
+import javax.sql.DataSource;
+import org.postgresql.ds.PGPoolingDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,32 +11,26 @@ public class DBConnectionManager implements IDBConnectionManager {
 	private javax.sql.DataSource source = null;
 	private final Logger log = LoggerFactory
 			.getLogger(DBConnectionManager.class);
-	private String dataSourceName;
 
-	public DBConnectionManager(javax.sql.DataSource source2) {
-		this.source = source2;
-
+	public static PGPoolingDataSource createPGPoolingDataSource(
+			String sourceName, String serverName, String dbName, String user,
+			String password) {
+		PGPoolingDataSource source = PGPoolingDataSource
+				.getDataSource(sourceName);
+		if (source != null)
+			return source;
+		source = new PGPoolingDataSource();
+		source.setDataSourceName(sourceName);
+		source.setDatabaseName(dbName);
+		source.setUser(user);
+		source.setPassword(password);
+		source.setMaxConnections(100);
+		source.setServerName(serverName);
+		return source;
 	}
 
-	/**
-	 * Инициализирует фабрику подключений к БД
-	 * 
-	 * @param dataSourceName
-	 *            - JNDI имя пула подключений (например: myPool/jdbc)
-	 */
-	public DBConnectionManager(String dataSourceName) {
-		try {
-			this.dataSourceName = dataSourceName;
-			String prefix = "java:/comp/env";
-			Context ctx = new InitialContext();
-			Context envContext = (Context) ctx.lookup(prefix);
-			source = (javax.sql.DataSource) envContext.lookup(dataSourceName);
-			log.debug("DB-pool created: ok");
-
-		} catch (NamingException e) {
-			log.debug("DB-pool created: false");
-			log.debug(e.toString(true));
-		}
+	public DBConnectionManager(DataSource source) {
+		this.source = source;
 	}
 
 	/**
@@ -88,16 +79,11 @@ public class DBConnectionManager implements IDBConnectionManager {
 	 * Очистить фабрику
 	 */
 	public void free() {
-		if (this.source != null) {
-			if (this.source instanceof org.apache.tomcat.jdbc.pool.DataSource)
-				((org.apache.tomcat.jdbc.pool.DataSource) this.source).close();
-			this.source = null;
-			log.debug("destroy DB-pool: ok");
-		}
+		log.debug("destroy DB-pool: ok");
 	}
 
-	public String getDataSourceName() {
-		return dataSourceName;
+	public javax.sql.DataSource getSource() {
+		return source;
 	}
 
 }

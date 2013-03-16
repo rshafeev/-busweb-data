@@ -6,10 +6,13 @@ import java.sql.SQLException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.sql.DataSource;
 
+import org.postgresql.ds.PGPoolingDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.pgis.bus.data.DBConnectionManager;
 import com.pgis.bus.data.IDBConnectionManager;
 
 public class TestDBConnectionManager implements IDBConnectionManager {
@@ -17,30 +20,17 @@ public class TestDBConnectionManager implements IDBConnectionManager {
 	private final Logger log = LoggerFactory
 			.getLogger(TestDBConnectionManager.class);
 	
+	public static IDBConnectionManager create(){
+		PGPoolingDataSource source = DBConnectionManager.createPGPoolingDataSource("jdbc:postgresql",
+				"localhost", "bus.test", "postgres", "postgres");
+		IDBConnectionManager dbConnectionManager = new TestDBConnectionManager(source);
+		return dbConnectionManager;
+	}
 	public TestDBConnectionManager(javax.sql.DataSource source2) {
 		this.source = source2;
 		
 	}
 
-	/**
-	 * Инициализирует фабрику подключений к БД
-	 * 
-	 * @param dataSourceName
-	 *            - JNDI имя пула подключений (например: myPool/jdbc)
-	 */
-	public TestDBConnectionManager(String dataSourceName) {
-		try {
-			String prefix = "java:/comp/env";
-			Context ctx = new InitialContext();
-			Context envContext = (Context) ctx.lookup(prefix);
-			source = (javax.sql.DataSource) envContext.lookup(dataSourceName);
-			log.debug("DB-pool created: ok");
-
-		} catch (NamingException e) {
-			log.debug("DB-pool created: false");
-			log.debug(e.toString(true));
-		}
-	}
 
 	/**
 	 * Извлечь подключение из пула Обратите внимание! После окончания работы с
@@ -91,11 +81,14 @@ public class TestDBConnectionManager implements IDBConnectionManager {
 	 * Очистить фабрику
 	 */
 	public void free() {
-		if (this.source != null) {
-			if (this.source instanceof org.apache.tomcat.jdbc.pool.DataSource)
-				((org.apache.tomcat.jdbc.pool.DataSource) this.source).close();
-			this.source = null;
-			log.debug("destroy DB-pool: ok");
-		}
+		this.source = null;
+		log.debug("destroy DB-pool: ok");
 	}
+
+
+	public javax.sql.DataSource getSource() {
+		return source;
+	}
+	
+	
 }

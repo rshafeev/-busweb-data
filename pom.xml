@@ -6,9 +6,13 @@
 	<groupId>com.premiumgis</groupId>
 	<artifactId>busWeb.data</artifactId>
 	<version>0.0.1</version>
-
+    
+    <properties>
+			<tomcat.version>7.0.37</tomcat.version>
+	</properties>
+	
 	<build>
-
+      
 		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 		<resources>
 			<resource>
@@ -69,27 +73,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>1.0.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-core</artifactId>
-			<version>1.0.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>postgresql</groupId>
+			<groupId>org.jumpmind.symmetric.jdbc</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>9.1-901-1.jdbc4</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-jdbc</artifactId>
-			<version>7.0.27</version>
+			<version>9.2-1002-jdbc4</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -108,6 +94,12 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jdbc</artifactId>
+			<version>${tomcat.version}</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 

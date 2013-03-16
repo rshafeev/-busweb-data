@@ -1,45 +1,70 @@
 package com.pgis.bus.data.impl;
 
-import java.sql.Connection;
-import java.util.Collection;
-
-import org.postgis.Point;
-
 import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.IDataBaseService;
-import com.pgis.bus.data.helpers.LoadRouteOptions;
-import com.pgis.bus.data.models.RouteGeoData;
-import com.pgis.bus.data.models.RoutePart;
-import com.pgis.bus.data.orm.City;
-import com.pgis.bus.data.orm.Language;
-import com.pgis.bus.data.orm.Route;
-import com.pgis.bus.data.orm.Station;
-import com.pgis.bus.data.orm.type.Path_t;
 import com.pgis.bus.data.repositories.ICitiesRepository;
 import com.pgis.bus.data.repositories.IMainRepository;
 import com.pgis.bus.data.repositories.IPathsRepository;
 import com.pgis.bus.data.repositories.IRoutesRepository;
 import com.pgis.bus.data.repositories.IStationsRepository;
 import com.pgis.bus.data.repositories.IUsersRepository;
-import com.pgis.bus.data.repositories.RepositoryException;
+import com.pgis.bus.data.repositories.IimportRepository;
 import com.pgis.bus.data.repositories.impl.CitiesRepository;
 import com.pgis.bus.data.repositories.impl.MainRepository;
 import com.pgis.bus.data.repositories.impl.RoutesRepository;
 import com.pgis.bus.data.repositories.impl.StationsRepository;
 import com.pgis.bus.data.repositories.impl.UsersRepository;
 import com.pgis.bus.data.repositories.impl.PathsRepository;
-import com.pgis.bus.net.request.FindPathsOptions;
 
 public class DataBaseService implements IDataBaseService {
-	protected IUsersRepository usersRepotitory;
-	protected ICitiesRepository citiesRepotitory;
-	protected IMainRepository mainRepository;
+	protected IUsersRepository usersRepotitory= null;
+	protected ICitiesRepository citiesRepotitory= null;
+	protected IMainRepository mainRepository= null;
 	protected IStationsRepository stationsRepository = null;
-	protected IPathsRepository pathsRepository;
-	protected IRoutesRepository routesRepository;
-	protected IDBConnectionManager connectionManager;
+	protected IPathsRepository pathsRepository= null;
+	protected IRoutesRepository routesRepository= null;
+    protected IimportRepository importRepository = null;
+	protected IDBConnectionManager connectionManager= null;
 
-	private void init(IDBConnectionManager connectionManager) {
+	public DataBaseService(){
+		
+	}
+	
+	public void setUsersRepotitory(IUsersRepository usersRepotitory) {
+		this.usersRepotitory = usersRepotitory;
+	}
+
+	public void setCitiesRepotitory(ICitiesRepository citiesRepotitory) {
+		this.citiesRepotitory = citiesRepotitory;
+	}
+
+	public void setMainRepository(IMainRepository mainRepository) {
+		this.mainRepository = mainRepository;
+	}
+
+	public void setStationsRepository(IStationsRepository stationsRepository) {
+		this.stationsRepository = stationsRepository;
+	}
+
+	public void setPathsRepository(IPathsRepository pathsRepository) {
+		this.pathsRepository = pathsRepository;
+	}
+
+	public void setRoutesRepository(IRoutesRepository routesRepository) {
+		this.routesRepository = routesRepository;
+	}
+
+	public void setConnectionManager(IDBConnectionManager connectionManager) {
+		this.connectionManager = connectionManager;
+	}
+	
+	
+
+	public void setImportRepository(IimportRepository importRepository) {
+		this.importRepository = importRepository;
+	}
+
+	public DataBaseService(IDBConnectionManager connectionManager) {
 		usersRepotitory = new UsersRepository(connectionManager);
 		citiesRepotitory = new CitiesRepository(connectionManager);
 		mainRepository = new MainRepository(connectionManager);
@@ -49,108 +74,39 @@ public class DataBaseService implements IDataBaseService {
 
 	}
 
-	protected Connection getConnection() throws DataBaseServiceException {
-
-		Connection conn = connectionManager.getConnection();
-		if (conn == null)
-			throw new DataBaseServiceException(
-					DataBaseServiceException.err_enum.c_connect_to_db_err);
-		return conn;
-	}
-
-	public DataBaseService(IDBConnectionManager connectionManager) {
-		this.connectionManager = connectionManager;
-		init(connectionManager);
+	@Override
+	public IUsersRepository Users() {
+		return usersRepotitory;
 	}
 
 	@Override
-	public Collection<City> getAllCities() throws RepositoryException {
-		return citiesRepotitory.getAllCities();
+	public ICitiesRepository Cities() {
+		return citiesRepotitory;
 	}
 
 	@Override
-	public City getCityByName(String lang_id, String value)
-			throws RepositoryException {
-		return citiesRepotitory.getCityByName(lang_id, value);
-	}
-
-	@Override
-	public Collection<Language> getAllLanguages() throws RepositoryException {
-		return mainRepository.getAllLanguages();
-	}
-
-	@Override
-	public Station getStation(int id) {
-		return null;
-	}
-
-	@Override
-	public Station getStationByName(String name, Language lang) {
-		return null;
-	}
-
-	@Override
-	public Collection<Station> getStationsByCity(int city_id)
-			throws RepositoryException {
-		return stationsRepository.getStationsByCity(city_id);
-	}
-
-	@Override
-	public Collection<Path_t> getShortestPaths(FindPathsOptions options)
-			throws RepositoryException {
-		return pathsRepository.getShortestPaths(options);
-	}
-
-	@Override
-	public Collection<RouteGeoData> getGeoDataByRoutePart(RoutePart routePart,
-			String lang_id) throws RepositoryException {
-		return routesRepository.getGeoDataByRoutePart(routePart, lang_id);
-	}
-
-	@Override
-	public Collection<Station> getStationsByBox(int city_id, Point p1, Point p2)
-			throws RepositoryException {
-		return stationsRepository.getStationsByBox(city_id, p1, p2);
-	}
-
-	@Override
-	public City getCityByKey(String key) throws RepositoryException {
-
-		return citiesRepotitory.getCityByKey(key);
-	}
-
-	@Override
-	public Collection<Route> getRoutes(String routeTypeID, int city_id,
-			String lang_id) throws RepositoryException {
-		return routesRepository.getRoutes(routeTypeID, city_id, lang_id);
-	}
-
-	@Override
-	public Collection<String> getRouteTypesForCity(int cityID)
-			throws RepositoryException {
-		return this.citiesRepotitory.getRouteTypesForCity(cityID);
-	}
-
-	@Override
-	public City getCityByID(int id) throws RepositoryException {
-
-		return this.citiesRepotitory.getCityByID(id);
+	public IMainRepository Main() {
+		return mainRepository;
 	}
 
 	@Override
 	public IStationsRepository Stations() {
-		return this.stationsRepository;
+		return stationsRepository;
 	}
 
 	@Override
-	public Collection<Route> getRoutes(String route_type_id, int city_id,
-			LoadRouteOptions opts) throws RepositoryException {
-		return routesRepository.getRoutes(route_type_id, city_id, opts);
+	public IPathsRepository Paths() {
+		return pathsRepository;
 	}
 
 	@Override
-	public Route getRoute(Integer routeID, LoadRouteOptions opts)
-			throws RepositoryException {
-		return routesRepository.getRoute(routeID, opts);
+	public IRoutesRepository Routes() {
+		return routesRepository;
 	}
+
+	@Override
+	public IimportRepository Import() {
+		return importRepository;
+	}
+
 }

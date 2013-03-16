@@ -2,14 +2,11 @@ package test.com.pgis.data.repositories;
 
 import static org.junit.Assert.*;
 
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import test.com.pgis.data.DBTestConnectionFactory;
 import test.com.pgis.data.TestDBConnectionManager;
-import test.com.pgis.data.TestDataSource;
 
 import com.pgis.bus.data.Authenticate_enum;
 import com.pgis.bus.data.IDBConnectionManager;
@@ -19,10 +16,13 @@ import com.pgis.bus.data.repositories.impl.UsersRepository;
 public class UsersRepositoryTest_local {
 
 	IDBConnectionManager dbConnectionManager = null;
+
 	@Before
 	public void init() {
-		dbConnectionManager = DBTestConnectionFactory.getTestDBConnectionManager();
+		dbConnectionManager = TestDBConnectionManager.create();
+
 	}
+
 	@Test
 	public void test() throws Exception {
 		assertFalse(false);
@@ -31,7 +31,8 @@ public class UsersRepositoryTest_local {
 	@Test
 	public void authenticateTest() throws Exception {
 		UsersRepository users = new UsersRepository(dbConnectionManager);
-		Authenticate_enum result =  users.authenticate("admin","roma", "14R199009");
-		
+		Authenticate_enum result = users.authenticate("admin", "roma",
+				"14R199009");
+
 	}
 }

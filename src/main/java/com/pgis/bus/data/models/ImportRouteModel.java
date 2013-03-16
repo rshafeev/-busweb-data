@@ -16,7 +16,8 @@ import com.pgis.bus.data.params.DefaultParameters;
 import com.pgis.bus.net.orm.DayEnum;
 
 public class ImportRouteModel {
-
+    
+	private String cityKey; 
 	private int cityID;
 
 	private int routeID;
@@ -50,6 +51,15 @@ public class ImportRouteModel {
 	private Station reverseStations[];
 
 	private GsonLineString reverseRelations[];
+
+	
+	public String getCityKey() {
+		return cityKey;
+	}
+
+	public void setCityKey(String cityKey) {
+		this.cityKey = cityKey;
+	}
 
 	public int getCityID() {
 		return cityID;

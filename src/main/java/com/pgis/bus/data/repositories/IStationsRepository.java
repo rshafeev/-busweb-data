@@ -32,4 +32,7 @@ public interface IStationsRepository extends IRepository {
 
 	void cleanUnsedStations() throws RepositoryException;
 
+	Collection<Station> getStationsList(int cityID, String langID)
+			throws RepositoryException;
+
 }

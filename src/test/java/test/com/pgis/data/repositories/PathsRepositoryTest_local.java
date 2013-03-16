@@ -7,10 +7,7 @@ import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import test.com.pgis.data.DBTestConnectionFactory;
 import test.com.pgis.data.TestDBConnectionManager;
-import test.com.pgis.data.TestDataSource;
 
 import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.orm.type.Path_t;
@@ -25,11 +22,12 @@ import com.pgis.bus.net.request.data.RouteTypeDiscount;
 
 public class PathsRepositoryTest_local {
 
-
 	IDBConnectionManager dbConnectionManager = null;
+
 	@Before
 	public void init() {
-		dbConnectionManager = DBTestConnectionFactory.getTestDBConnectionManager();
+		dbConnectionManager = TestDBConnectionManager.create();
+
 	}
 
 	@Test
@@ -53,21 +51,20 @@ public class PathsRepositoryTest_local {
 		opts.setTransitions(true);
 		opts.setAlgStrategy(AlgStrategyEnum.c_cost);
 		opts.setLangID("c_ru");
-		
+
 		// get ways
 		IPathsRepository r = new PathsRepository(dbConnectionManager);
 		Collection<Path_t> paths = r.getShortestPaths(opts);
-		for(Path_t p : paths ){
+		for (Path_t p : paths) {
 			System.out.println(p.toString());
-			if(p.direct_route_id!= 0){
-				assertTrue(p.wait_time!=null);
+			if (p.direct_route_id != 0) {
+				assertTrue(p.wait_time != null);
 			}
-			
-			
+
 		}
-		
+
 	}
-	
+
 	@Test
 	public void getShortestPaths2_Test() throws Exception {
 		// prepare data
@@ -89,13 +86,13 @@ public class PathsRepositoryTest_local {
 		opts.setTransitions(true);
 		opts.setAlgStrategy(AlgStrategyEnum.c_opt);
 		opts.setLangID("c_ru");
-		
+
 		// get ways
 		IPathsRepository r = new PathsRepository(dbConnectionManager);
 		Collection<Path_t> paths = r.getShortestPaths(opts);
-		for(Path_t p : paths ){
-			//System.out.println(p.toString());
+		for (Path_t p : paths) {
+			// System.out.println(p.toString());
 		}
-		
+
 	}
 }

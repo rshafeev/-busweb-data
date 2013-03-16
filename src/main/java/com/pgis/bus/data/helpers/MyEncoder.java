@@ -3,6 +3,7 @@ package com.pgis.bus.data.helpers;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+
 public class MyEncoder {
 	int dataBits = 8;
 	int codeBits = 6;
