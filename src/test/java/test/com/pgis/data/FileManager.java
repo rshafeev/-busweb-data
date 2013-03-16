@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
 public class FileManager {
 
 	public static String getTestResourcePath() {
-		return "/media/Data/Documents/premiumGIS/Software/Programms"
+		return "/media/Files/premiumGIS/Software/Programms"
 				+ "/busApps/busWeb.data/src/test/resources/";
 
 	}

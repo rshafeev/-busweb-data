@@ -9,20 +9,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import test.com.pgis.data.DBTestConnectionFactory;
 import test.com.pgis.data.FileManager;
 import test.com.pgis.data.TestDBConnectionManager;
-import test.com.pgis.data.TestDataSource;
 
 import com.google.gson.Gson;
-import com.pgis.bus.data.IAdminDataBaseService;
 import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.IDataBaseService;
 import com.pgis.bus.data.helpers.LoadDirectRouteOptions;
 import com.pgis.bus.data.helpers.LoadRouteOptions;
 import com.pgis.bus.data.helpers.LoadRouteRelationOptions;
 import com.pgis.bus.data.helpers.UpdateRouteOptions;
-import com.pgis.bus.data.impl.AdminDataBaseService;
 import com.pgis.bus.data.impl.DataBaseService;
 import com.pgis.bus.data.models.RouteGeoData;
 import com.pgis.bus.data.models.RoutePart;
@@ -36,14 +32,14 @@ import com.pgis.bus.data.repositories.impl.RoutesRepository;
 
 public class RoutesRepositoryTest_local {
 
-
 	IDBConnectionManager dbConnectionManager = null;
+
 	@Before
 	public void init() {
-		dbConnectionManager = DBTestConnectionFactory.getTestDBConnectionManager();
+		dbConnectionManager = TestDBConnectionManager.create();
+
 	}
-	
-	
+
 	@Test
 	public void getGeoDataByRoutePart_Test() throws Exception {
 		System.out.println("getGeoDataByRoutePart_Test()...");
@@ -101,10 +97,10 @@ public class RoutesRepositoryTest_local {
 
 		// get routes
 		IDataBaseService db = new DataBaseService(dbConnectionManager);
-		Collection<Route> routes = db.getRoutes(route_type, city.id,
+		Collection<Route> routes = db.Routes().getRoutes(route_type, city.id,
 				lang_id);
 		for (Route route : routes) {
-			
+
 			System.out.println(route.toString());
 		}
 
@@ -194,9 +190,9 @@ public class RoutesRepositoryTest_local {
 		}
 
 	}
-	
+
 	@Test
-	public void getRoute_Test() throws Exception{
+	public void getRoute_Test() throws Exception {
 		LoadRouteRelationOptions loadRouteRelationOptions = new LoadRouteRelationOptions();
 		loadRouteRelationOptions.setLoadStationsData(true);
 		LoadDirectRouteOptions loadDirectRouteOptions = new LoadDirectRouteOptions();
@@ -206,15 +202,15 @@ public class RoutesRepositoryTest_local {
 		LoadRouteOptions opts = new LoadRouteOptions();
 		opts.setLoadRouteNamesData(true);
 		opts.setDirectRouteOptions(loadDirectRouteOptions);
-		
+
 		Connection c = dbConnectionManager.getConnection();
 		IRoutesRepository repository = new RoutesRepository(c, false, false);
-	    Route route = repository.getRoute(267, opts);
-	    assertNotNull(route);
-	    c.rollback();
+		Route route = repository.getRoute(267, opts);
+		assertNotNull(route);
+		c.rollback();
 		dbConnectionManager.closeConnection(c);
 	}
-	
+
 	@Test
 	public void insertRoute_Test() throws Exception {
 		System.out.println("insertRoute_Test()");

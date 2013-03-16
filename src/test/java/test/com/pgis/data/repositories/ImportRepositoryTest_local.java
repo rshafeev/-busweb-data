@@ -22,18 +22,15 @@ import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.impl.CitiesRepository;
 import com.pgis.bus.data.repositories.impl.ImportRepository;
 import com.pgis.bus.data.repositories.impl.RoutesRepository;
-
-import test.com.pgis.data.DBTestConnectionFactory;
 import test.com.pgis.data.FileManager;
 import test.com.pgis.data.TestDBConnectionManager;
-import test.com.pgis.data.TestDataSource;
 
 public class ImportRepositoryTest_local {
 
 	IDBConnectionManager dbConnectionManager = null;
 	@Before
 	public void init() {
-		dbConnectionManager = DBTestConnectionFactory.getTestDBConnectionManager();
+		dbConnectionManager = TestDBConnectionManager.create();
 	}
 
 	@Test(expected = RepositoryException.class)

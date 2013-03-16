@@ -10,9 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.postgis.Point;
 
-import test.com.pgis.data.DBTestConnectionFactory;
 import test.com.pgis.data.TestDBConnectionManager;
-import test.com.pgis.data.TestDataSource;
 
 import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.orm.City;
@@ -27,14 +25,34 @@ import com.pgis.bus.data.repositories.impl.StationsRepository;
 //import com.pgis.bus.data.repositories.UsersRepository;
 public class StationsRepositoryTest_local {
 	IDBConnectionManager dbConnectionManager = null;
+
 	@Before
 	public void init() {
-		dbConnectionManager = DBTestConnectionFactory.getTestDBConnectionManager();
+		dbConnectionManager = TestDBConnectionManager.create();
 	}
 
 	@Test
 	public void test() throws Exception {
 		assertFalse(false);
+	}
+
+	@Test
+	public void getStationsListTest() throws Exception {
+		// get city
+		Connection c = dbConnectionManager.getConnection();
+		ICitiesRepository db = new CitiesRepository(c, false, false);
+		City city = db.getCityByName("c_en", "Kyiv");
+		assertNotNull(city);
+
+		// get stations
+		IStationsRepository stationsRepository = new StationsRepository(c,
+				false, false);
+		Collection<Station> stations = stationsRepository.getStationsList(
+				city.id, "c_ru");
+		System.out.println(stations.size());
+		c.rollback();
+		dbConnectionManager.closeConnection(c);
+
 	}
 
 	@Test
@@ -51,10 +69,10 @@ public class StationsRepositoryTest_local {
 		Collection<Station> stations = stationsRepository
 				.getStationsByCity(city.id);
 		for (Station s : stations) {
-			System.out.println("Station id : " + s.getLocation().x);
-			System.out.println("Station id : " + s.getLocation().y);
+			// System.out.println("Station id : " + s.getLocation().x);
+			// System.out.println("Station id : " + s.getLocation().y);
 		}
-
+		System.out.println(stations.size());
 		c.rollback();
 		dbConnectionManager.closeConnection(c);
 
@@ -157,8 +175,8 @@ public class StationsRepositoryTest_local {
 				.iterator().next(), station.getLocation());
 		assertNotNull(findStation);
 		System.out.println("findStation" + findStation.toString());
-		
-		// clear 
+
+		// clear
 		c.rollback();
 		dbConnectionManager.closeConnection(c);
 

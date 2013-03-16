@@ -39,6 +39,42 @@ public class StationsRepository extends Repository implements
 	}
 
 	@Override
+	public Collection<Station> getStationsList(int cityID, String langID)
+			throws RepositoryException {
+		Connection c = super.getConnection();
+		Collection<Station> stations = null;
+
+		try {
+			String query = "select bus.stations.id as id, value as name from bus.stations "
+					+ "join bus.string_values on string_values.key_id = stations.name_key "
+					+ "where city_id = ? and lang_id = bus.lang_enum(?)";
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setInt(1, cityID);
+			ps.setString(2, langID);
+			ResultSet key = ps.executeQuery();
+			stations = new ArrayList<Station>();
+
+			while (key.next()) {
+				Station station = new Station();
+				station.setId(key.getInt("id"));
+				Collection<StringValue> name = new ArrayList<StringValue>();
+				name.add(new StringValue(langID ,key.getString("name") ));
+				station.setNames(name);
+				station.setCity_id(cityID);
+				stations.add(station);
+			}
+		} catch (SQLException e) {
+			stations = null;
+			log.error("can not read database", e);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} finally {
+			super.closeConnection(c);
+		}
+		return stations;
+
+	}
+
+	@Override
 	public Collection<Station> getStationsByCity(int city_id)
 			throws RepositoryException {
 		Connection c = super.getConnection();
