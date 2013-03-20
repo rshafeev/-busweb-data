@@ -81,7 +81,7 @@ public class StationsRepository extends Repository implements
 		Collection<Station> stations = null;
 
 		try {
-			String query = "SELECT id,city_id,geometry(location) as location,name_key"
+			String query = "SELECT id, geometry(location) as location, name_key "
 					+ " FROM bus.stations WHERE city_id = ? ;";
 
 			PreparedStatement ps = c.prepareStatement(query);
@@ -267,26 +267,27 @@ public class StationsRepository extends Repository implements
 	}
 
 	@Override
-	public Collection<Station> getStationsByBox(int city_id, Point p1, Point p2)
+	public Collection<Station> getStationsFromBox(int cityID, Point p1, Point p2, String langID )
 			throws RepositoryException {
 		Connection c = super.getConnection();
 		Collection<Station> stations = null;
 		PGbox3d box = new org.postgis.PGbox3d(p1, p2);
 
 		try {
-			String query = "SELECT id,city_id,geometry(location) as location,name_key"
-					+ " FROM bus.stations "
-					+ "WHERE city_id = ? AND geometry(location) && ?";
-
+			String query = "SELECT bus.stations.id as id, geometry(location) as location, value as name FROM bus.stations "
+					+ "left join bus.string_values on stations.name_key = string_values.key_id "
+					+ "WHERE city_id = ? AND geometry(location) && ? AND lang_id = bus.lang_enum(?);";
+			
 			PreparedStatement ps = c.prepareStatement(query);
-			ps.setInt(1, city_id);
+			ps.setInt(1, cityID);
 			ps.setObject(2, box);
+			ps.setString(3, langID);
 			ResultSet key = ps.executeQuery();
 			stations = new ArrayList<Station>();
 
 			while (key.next()) {
 				Station station = new Station();
-				station.setCity_id(city_id);
+				station.setCity_id(cityID);
 				int id = key.getInt("id");
 				station.setId(id);
 
@@ -297,16 +298,9 @@ public class StationsRepository extends Repository implements
 							"can not convert geo_location to org.pgis.Point");
 				}
 				station.setLocation((Point) g_location.getGeometry());
-
-				// get names
-				IStringValuesRepository stringValuesRepository = new StringValuesRepository(
-						c, false, false);
-				int name_key = key.getInt("name_key");
-				Collection<StringValue> name = stringValuesRepository
-						.getStringValues(name_key);
+				Collection<StringValue> name = new ArrayList<StringValue>();
+				name.add(new StringValue(langID ,key.getString("name") ));
 				station.setNames(name);
-				station.setName_key(name_key);
-
 				stations.add(station);
 			}
 		} catch (SQLException e) {

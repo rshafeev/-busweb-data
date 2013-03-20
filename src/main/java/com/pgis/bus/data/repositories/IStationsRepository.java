@@ -19,8 +19,6 @@ public interface IStationsRepository extends IRepository {
 	Collection<Station> getStationsByCity(int city_id)
 			throws RepositoryException;
 
-	Collection<Station> getStationsByBox(int city_id, Point p1, Point p2)
-			throws RepositoryException;
 
 	Station insertStation(Station station) throws RepositoryException;
 
@@ -34,5 +32,8 @@ public interface IStationsRepository extends IRepository {
 
 	Collection<Station> getStationsList(int cityID, String langID)
 			throws RepositoryException;
+
+	Collection<Station> getStationsFromBox(int cityID, Point p1, Point p2,
+			String langID) throws RepositoryException;
 
 }

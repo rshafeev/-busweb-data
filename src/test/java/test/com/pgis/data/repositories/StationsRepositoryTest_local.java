@@ -56,7 +56,7 @@ public class StationsRepositoryTest_local {
 	}
 
 	@Test
-	public void getAllStationsTest() throws Exception {
+	public void getStationsByCityTest() throws Exception {
 		// get city
 		Connection c = dbConnectionManager.getConnection();
 		ICitiesRepository db = new CitiesRepository(c, false, false);
@@ -79,7 +79,7 @@ public class StationsRepositoryTest_local {
 	}
 
 	@Test
-	public void getAllStationsInBoxTest() throws Exception {
+	public void getgetStationsFromBoxTest() throws Exception {
 		System.out.println("getAllStationsInBoxTest()");
 		// get city
 		Connection c = dbConnectionManager.getConnection();
@@ -90,8 +90,8 @@ public class StationsRepositoryTest_local {
 		// get stations
 		IStationsRepository stationsRepository = new StationsRepository(c,
 				false, false);
-		Collection<Station> stations = stationsRepository.getStationsByBox(
-				city.id, new Point(49, 35), new Point(51, 37));
+		Collection<Station> stations = stationsRepository.getStationsFromBox(
+				city.id, new Point(49, 35), new Point(51, 37), "c_ru");
 		for (Station s : stations) {
 			System.out.println("Station id : " + s.getLocation().x);
 			System.out.println("Station id : " + s.getLocation().y);
