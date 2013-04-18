@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public class ScheduleGroup {
 	private int id;
-	private int schedule_id;
+	private int scheduleID;
 	private Collection<ScheduleGroupDay> days;
 	private Collection<Timetable> timetables;
 
@@ -16,7 +16,7 @@ public class ScheduleGroup {
 		this.id = id;
 		if (days != null) {
 			for (ScheduleGroupDay day : days) {
-				day.setSchedule_group_id(id);
+				day.setScheduleGroupID(id);
 			}
 		}
 		if (timetables != null) {
@@ -26,12 +26,12 @@ public class ScheduleGroup {
 		}
 	}
 
-	public int getSchedule_id() {
-		return schedule_id;
+	public int getScheduleID() {
+		return scheduleID;
 	}
 
-	public void setSchedule_id(int schedule_id) {
-		this.schedule_id = schedule_id;
+	public void setScheduleID(int schedule_id) {
+		this.scheduleID = schedule_id;
 	}
 
 	public Collection<ScheduleGroupDay> getDays() {

@@ -18,7 +18,7 @@ import com.pgis.bus.data.repositories.ICitiesRepository;
 import com.pgis.bus.data.repositories.IStringValuesRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
 
-public class CitiesRepository extends Repository implements ICitiesRepository {
+public class CitiesRepository extends Repository implements ICitiesModelRepository {
 	private static final Logger log = LoggerFactory
 			.getLogger(CitiesRepository.class);
 
@@ -57,7 +57,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 				city.scale = key.getInt("scale");
 				city.isShow = key.getBoolean("is_show");
 				city.name = stringValuesRepository
-						.getStringValuesToHashMap(city.name_key);
+						.getToHashMap(city.name_key);
 
 				cities.add(city);
 			}
@@ -91,7 +91,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 				city.scale = key.getInt("scale");
 				city.isShow = key.getBoolean("is_show");
 				city.name = stringValuesRepository
-						.getStringValuesToHashMap(city.name_key);
+						.getToHashMap(city.name_key);
 				return city;
 			}
 		} catch (SQLException e) {
@@ -124,7 +124,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 				city.isShow = rs.getBoolean("is_show");
 				city.key = key;
 				city.name = stringValuesRepository
-						.getStringValuesToHashMap(city.name_key);
+						.getToHashMap(city.name_key);
 				return city;
 			}
 		} catch (SQLException e) {
@@ -164,7 +164,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 				city.scale = key.getInt("scale");
 				city.isShow = key.getBoolean("is_show");
 				city.name = stringValuesRepository
-						.getStringValuesToHashMap(city.name_key);
+						.getToHashMap(city.name_key);
 				return city;
 			}
 		} catch (SQLException e) {
@@ -202,7 +202,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			while (i.hasNext()) {
 				StringValue s = i.next();
 				s.key_id = responceCity.name_key;
-				s.id = stringValuesRepository.insertStringValue(s);
+				s.id = stringValuesRepository.insert(s);
 			}
 			super.commit(c);
 		} catch (SQLException e) {
@@ -256,11 +256,11 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			ps.execute();
 			IStringValuesRepository stringValuesRepository = new StringValuesRepository(
 					c, false, false);
-			stringValuesRepository.updateStringValues(updateCity.name_key,
+			stringValuesRepository.update(updateCity.name_key,
 					updateCity.name.values());
 			responceCity = updateCity.clone();
 			responceCity.name = stringValuesRepository
-					.getStringValuesToHashMap(updateCity.name_key);
+					.getToHashMap(updateCity.name_key);
 			super.commit(c);
 
 		} catch (SQLException e) {

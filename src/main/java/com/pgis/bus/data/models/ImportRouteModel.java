@@ -4,20 +4,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import com.pgis.bus.data.orm.DirectRoute;
 import com.pgis.bus.data.orm.Route;
 import com.pgis.bus.data.orm.RouteRelation;
+import com.pgis.bus.data.orm.RouteWay;
 import com.pgis.bus.data.orm.Schedule;
 import com.pgis.bus.data.orm.ScheduleGroup;
 import com.pgis.bus.data.orm.ScheduleGroupDay;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.Timetable;
-import com.pgis.bus.data.params.DefaultParameters;
 import com.pgis.bus.net.orm.DayEnum;
 
 public class ImportRouteModel {
-    
-	private String cityKey; 
+
+	private String cityKey;
 	private int cityID;
 
 	private int routeID;
@@ -52,7 +51,6 @@ public class ImportRouteModel {
 
 	private GsonLineString reverseRelations[];
 
-	
 	public String getCityKey() {
 		return cityKey;
 	}
@@ -260,73 +258,42 @@ public class ImportRouteModel {
 		// create schedule
 		Schedule schedule = new Schedule();
 		ScheduleGroup scheduleGroup = new ScheduleGroup();
-		scheduleGroup.setDays(Arrays
-				.asList(new ScheduleGroupDay[] { new ScheduleGroupDay(
-						DayEnum.c_all) }));
+		scheduleGroup.setDays(Arrays.asList(new ScheduleGroupDay[] { new ScheduleGroupDay(DayEnum.c_all) }));
 		scheduleGroup.setTimetables(timeTables);
-		schedule.setScheduleGroups(Arrays
-				.asList(new ScheduleGroup[] { scheduleGroup }));
+		schedule.setScheduleGroups(Arrays.asList(new ScheduleGroup[] { scheduleGroup }));
 
 		// direct
-		DirectRoute directRouteWay = new DirectRoute();
+		RouteWay directRouteWay = new RouteWay();
 		directRouteWay.setDirect(true);
-		directRouteWay.setRoute_id(-1);
+		directRouteWay.setRouteID(-1);
 		directRouteWay.setSchedule(schedule);
 		Collection<RouteRelation> directRouteRelations = new ArrayList<RouteRelation>();
-		for (int i = 0; i < this.directStations.length; i++) {
-			RouteRelation relation = new RouteRelation();
-			Station stA = null, stB = null;
-			GsonLineString geom = null;
-			if (i > 0) {
-				stA = this.directStations[i - 1];
-				geom = this.directRelations[i - 1];
-				if (stA.getId() != null)
-					relation.setStation_a_id(stA.getId());
-				relation.setGeom(geom);
-			}
-			stB = this.directStations[i];
-			relation.setPosition_index(i);
-			if (stB.getId() != null)
-				relation.setStation_b_id(stB.getId());
-			relation.setStationB(stB);
-			directRouteRelations.add(relation);
-		}
-		directRouteWay.setRoute_relations(directRouteRelations);
-		// reverse
-		DirectRoute reverseRouteWay = new DirectRoute();
-		reverseRouteWay.setDirect(false);
-		reverseRouteWay.setRoute_id(-1);
-		reverseRouteWay.setSchedule(schedule);
-		Collection<RouteRelation> reverseRouteRelations = new ArrayList<RouteRelation>();
-		for (int i = 0; i < this.reverseStations.length; i++) {
-			RouteRelation relation = new RouteRelation();
-			Station stA = null, stB = null;
-			GsonLineString geom = null;
-			if (i > 0) {
-				stA = this.reverseStations[i - 1];
-				geom = this.reverseRelations[i - 1];
-				if (stA.getId() != null)
-					relation.setStation_a_id(stA.getId());
-				relation.setGeom(geom);
-			}
-			stB = this.reverseStations[i];
-			relation.setPosition_index(i);
-			if (stB.getId() != null)
-				relation.setStation_b_id(stB.getId());
-			relation.setStationB(stB);
-
-			reverseRouteRelations.add(relation);
-		}
-		reverseRouteWay.setRoute_relations(reverseRouteRelations);
+		/*
+		 * for (int i = 0; i < this.directStations.length; i++) { RouteRelation relation = new RouteRelation(); Station
+		 * stA = null, stB = null; GsonLineString geom = null; if (i > 0) { stA = this.directStations[i - 1]; geom =
+		 * this.directRelations[i - 1]; if (stA.getId() != null) relation.setStation_a_id(stA.getId());
+		 * relation.setGeom(geom); } stB = this.directStations[i]; relation.setPosition_index(i); if (stB.getId() !=
+		 * null) relation.setStation_b_id(stB.getId()); relation.setStationB(stB); directRouteRelations.add(relation); }
+		 * directRouteWay.setRoute_relations(directRouteRelations); // reverse RouteWay reverseRouteWay = new
+		 * RouteWay(); reverseRouteWay.setDirect(false); reverseRouteWay.setRoute_id(-1);
+		 * reverseRouteWay.setSchedule(schedule); Collection<RouteRelation> reverseRouteRelations = new
+		 * ArrayList<RouteRelation>(); for (int i = 0; i < this.reverseStations.length; i++) { RouteRelation relation =
+		 * new RouteRelation(); Station stA = null, stB = null; GsonLineString geom = null; if (i > 0) { stA =
+		 * this.reverseStations[i - 1]; geom = this.reverseRelations[i - 1]; if (stA.getId() != null)
+		 * relation.setStation_a_id(stA.getId()); relation.setGeom(geom); } stB = this.reverseStations[i];
+		 * relation.setPosition_index(i); if (stB.getId() != null) relation.setStation_b_id(stB.getId());
+		 * relation.setStationB(stB);
+		 * 
+		 * reverseRouteRelations.add(relation); } reverseRouteWay.setRoute_relations(reverseRouteRelations);
+		 */
 		// create route
 		Route r = new Route();
-		r.setCity_id(this.cityID);
+		r.setCityID(this.cityID);
 		r.setCost(this.cost);
-		r.setName(null);
-		r.setNumber(this.number);
-		r.setRoute_type_id(this.routeType);
-		r.setDirectRouteWay(directRouteWay);
-		r.setReverseRouteWay(reverseRouteWay);
+		// r.setNumber(this.number);
+		r.setRouteTypeID(this.routeType);
+		// r.setDirectRouteWay(directRouteWay);
+		// r.setReverseRouteWay(reverseRouteWay);
 		return r;
 	}
 
@@ -334,13 +301,11 @@ public class ImportRouteModel {
 		if (this.directStations != null) {
 			for (int i = 0; i < this.directStations.length; i++) {
 				Station s = this.directStations[i];
-				s.getLocation().setSrid(DefaultParameters.GEOMETRY_SRID);
 			}
 		}
 		if (this.reverseStations != null) {
 			for (int i = 0; i < this.reverseStations.length; i++) {
 				Station s = this.reverseStations[i];
-				s.getLocation().setSrid(DefaultParameters.GEOMETRY_SRID);
 			}
 		}
 
@@ -378,8 +343,7 @@ public class ImportRouteModel {
 		if (this.reverseStations.length != this.reverseRelations.length + 1) {
 			return false;
 		}
-		
-	
+
 		return true;
 	}
 }

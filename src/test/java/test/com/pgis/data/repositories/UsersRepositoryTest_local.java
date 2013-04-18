@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import test.com.pgis.data.TestDBConnectionManager;
 
-import com.pgis.bus.data.Authenticate_enum;
+import com.pgis.bus.data.AuthenticateResult;
 import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.repositories.impl.UsersRepository;
 
@@ -31,7 +31,7 @@ public class UsersRepositoryTest_local {
 	@Test
 	public void authenticateTest() throws Exception {
 		UsersRepository users = new UsersRepository(dbConnectionManager);
-		Authenticate_enum result = users.authenticate("admin", "roma",
+		AuthenticateResult result = users.authenticate("admin", "roma",
 				"14R199009");
 
 	}

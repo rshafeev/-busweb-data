@@ -12,10 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.orm.Language;
-import com.pgis.bus.data.repositories.IMainRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
+import com.pgis.bus.data.repositories.orm.ILanguagesRepository;
 
-public class MainRepository extends Repository implements IMainRepository {
+public class MainRepository extends Repository implements ILanguagesRepository {
 	private static final Logger log = LoggerFactory
 			.getLogger(MainRepository.class);
 

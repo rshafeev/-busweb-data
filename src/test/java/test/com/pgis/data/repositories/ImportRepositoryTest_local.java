@@ -17,11 +17,12 @@ import com.pgis.bus.data.orm.ImportObject;
 import com.pgis.bus.data.orm.Route;
 import com.pgis.bus.data.repositories.ICitiesRepository;
 import com.pgis.bus.data.repositories.IRoutesRepository;
-import com.pgis.bus.data.repositories.IimportRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.impl.CitiesRepository;
 import com.pgis.bus.data.repositories.impl.ImportRepository;
 import com.pgis.bus.data.repositories.impl.RoutesRepository;
+import com.pgis.bus.data.repositories.orm.IObjectsRepository;
+
 import test.com.pgis.data.FileManager;
 import test.com.pgis.data.TestDBConnectionManager;
 
@@ -34,7 +35,7 @@ public class ImportRepositoryTest_local {
 	}
 
 	@Test(expected = RepositoryException.class)
-	public void insrtRouteTest() throws RepositoryException {
+	public void insertRouteTest() throws RepositoryException {
 		System.out.println("insrtRouteTest()...");
 		String data = FileManager.getFileData(FileManager.getTestResourcePath()
 				+ "route_import_insert.dat");
@@ -50,11 +51,11 @@ public class ImportRepositoryTest_local {
 			e.printStackTrace();
 		}
 		Connection c = dbConnectionManager.getConnection();
-		ICitiesRepository cities = new CitiesRepository(c, false, false);
+		ICitiesModelRepository cities = new CitiesRepository(c, false, false);
 		City city = cities.getCityByKey("kyiv");
-		newRoute.setCity_id(city.id);
-		IRoutesRepository routes = new RoutesRepository(c, false, false);
-		routes.insertRoute(newRoute);
+		newRoute.setCityID(city.id);
+		IRoutesModelRepository routes = new RoutesRepository(c, false, false);
+		routes.insert(newRoute);
 
 		dbConnectionManager.closeConnection(c);
 	}
@@ -76,7 +77,7 @@ public class ImportRepositoryTest_local {
 
 		// create repositories
 		Connection c = dbConnectionManager.getConnection();
-		IimportRepository imports = new ImportRepository(c, false, false);
+		IObjectsRepository imports = new ImportRepository(c, false, false);
 
 		// create importObject
 		ImportObject importObject = new ImportObject();
@@ -111,7 +112,7 @@ public class ImportRepositoryTest_local {
 
 		// create repositories
 		Connection c = dbConnectionManager.getConnection();
-		IimportRepository imports = new ImportRepository(c, false, false);
+		IObjectsRepository imports = new ImportRepository(c, false, false);
 
 		// create importObject
 		ImportObject importObject = new ImportObject();
@@ -144,7 +145,7 @@ public class ImportRepositoryTest_local {
 
 		// create repositories
 		Connection c = dbConnectionManager.getConnection();
-		IimportRepository imports = new ImportRepository(c, false, false);
+		IObjectsRepository imports = new ImportRepository(c, false, false);
 
 		// create importObject
 		ImportObject importObject = new ImportObject();

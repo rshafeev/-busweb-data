@@ -11,17 +11,18 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.pgis.bus.data.IDBConnectionManager;
-import com.pgis.bus.data.helpers.LoadImportObjectOptions;
+import com.pgis.bus.data.geo.GeoObjectsFactory;
 import com.pgis.bus.data.models.ImportRouteModel;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.ImportObject;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.repositories.ICitiesRepository;
 import com.pgis.bus.data.repositories.IStationsRepository;
-import com.pgis.bus.data.repositories.IimportRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
+import com.pgis.bus.data.repositories.opts.LoadImportObjectOptions;
+import com.pgis.bus.data.repositories.orm.IObjectsRepository;
 
-public class ImportRepository extends Repository implements IimportRepository {
+public class ImportRepository extends Repository implements IObjectsRepository {
 
 	private static final Logger log = LoggerFactory
 			.getLogger(ImportRepository.class);
@@ -30,8 +31,7 @@ public class ImportRepository extends Repository implements IimportRepository {
 		super(connManager);
 	}
 
-	public ImportRepository(Connection c,
-			boolean isClosed, boolean isCommited) {
+	public ImportRepository(Connection c, boolean isClosed, boolean isCommited) {
 		super();
 		this.connection = c;
 		this.isClosed = isClosed;
@@ -88,7 +88,7 @@ public class ImportRepository extends Repository implements IimportRepository {
 			if (obj == null)
 				return null;
 			Connection c = super.getConnection();
-			ICitiesRepository cities = new CitiesRepository(c,false,false);
+			ICitiesModelRepository cities = new CitiesRepository(c, false, false);
 			City city = cities.getCityByKey(obj.city_key);
 			if (city == null)
 				throw new RepositoryException("Can not find city");
@@ -100,16 +100,18 @@ public class ImportRepository extends Repository implements IimportRepository {
 			routeModel.setRouteType(obj.route_type);
 			routeModel.init();
 
-			IStationsRepository stations = new StationsRepository(c,false,false);
+			IStationsModelRepository stations = new StationsRepository(c, false,
+					false);
 
 			int ind = -1;
 			for (int i = 0; i < routeModel.getDirectStations().length; i++) {
 				Station rowStation = routeModel.getDirectStations()[i];
-				Station findStation = stations.getStation(
-						rowStation.getNameByLanguage("c_ru"),
-						rowStation.getLocation());
+				Station findStation = stations
+						.getStation(rowStation.getNameByLanguage("c_ru"),
+								GeoObjectsFactory.createPoint(rowStation
+										.getLocation()));
 				if (findStation != null) {
-					routeModel.getDirectStations()[i].copyFrom(findStation);
+					routeModel.getDirectStations()[i] = findStation;
 				} else {
 					routeModel.getDirectStations()[i].setId(ind);
 					ind--;
@@ -118,11 +120,12 @@ public class ImportRepository extends Repository implements IimportRepository {
 
 			for (int i = 0; i < routeModel.getReverseStations().length; i++) {
 				Station rowStation = routeModel.getReverseStations()[i];
-				Station findStation = stations.getStation(
-						rowStation.getNameByLanguage("c_ru"),
-						rowStation.getLocation());
+				Station findStation = stations
+						.getStation(rowStation.getNameByLanguage("c_ru"),
+								GeoObjectsFactory.createPoint(rowStation
+										.getLocation()));
 				if (findStation != null) {
-					routeModel.getReverseStations()[i].copyFrom(findStation);
+					routeModel.getReverseStations()[i] = findStation;
 				} else {
 					rowStation.setId(ind);
 					ind--;

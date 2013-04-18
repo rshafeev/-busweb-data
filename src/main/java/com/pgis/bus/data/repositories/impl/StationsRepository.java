@@ -13,16 +13,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.geo.GeoObjectsFactory;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.repositories.IStationsRepository;
 import com.pgis.bus.data.repositories.IStringValuesRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
-import com.pgis.bus.net.models.Location;
-import com.pgis.bus.net.models.StationModel;
+import com.pgis.bus.net.models.geom.PointModel;
+import com.pgis.bus.net.models.station.StationModel;
 
 public class StationsRepository extends Repository implements
-		IStationsRepository {
+		IStationsModelRepository {
 
 	private static final Logger log = LoggerFactory
 			.getLogger(StationsRepository.class);
@@ -60,7 +61,7 @@ public class StationsRepository extends Repository implements
 				Collection<StringValue> name = new ArrayList<StringValue>();
 				name.add(new StringValue(langID ,key.getString("name") ));
 				station.setNames(name);
-				station.setCity_id(cityID);
+				station.setCityID(cityID);
 				stations.add(station);
 			}
 		} catch (SQLException e) {
@@ -91,7 +92,7 @@ public class StationsRepository extends Repository implements
 
 			while (key.next()) {
 				Station station = new Station();
-				station.setCity_id(city_id);
+				station.setCityID(city_id);
 				int id = key.getInt("id");
 				station.setId(id);
 
@@ -110,7 +111,7 @@ public class StationsRepository extends Repository implements
 				Collection<StringValue> name = stringValuesRepository
 						.getStringValues(name_key);
 				station.setNames(name);
-				station.setName_key(name_key);
+				station.setNameKey(name_key);
 
 				stations.add(station);
 			}
@@ -134,8 +135,8 @@ public class StationsRepository extends Repository implements
 			String query = "INSERT INTO bus.stations (city_id,location) VALUES(?,?) RETURNING  id,name_key;";
 
 			PreparedStatement ps = c.prepareStatement(query);
-			ps.setInt(1, station.getCity_id());
-			ps.setObject(2, new PGgeometry(station.getLocation()));
+			ps.setInt(1, station.getCityID());
+			ps.setObject(2, new PGgeometry(GeoObjectsFactory.createPoint(station.getLocation())));
 			ResultSet key = ps.executeQuery();
 
 			if (key.next()) {
@@ -143,7 +144,7 @@ public class StationsRepository extends Repository implements
 				int name_key = key.getInt("name_key");
 
 				responceStation.setId(id);
-				responceStation.setName_key(name_key);
+				responceStation.setNameKey(name_key);
 
 				// insert name values
 				IStringValuesRepository stringValuesRepository = new StringValuesRepository(
@@ -151,8 +152,8 @@ public class StationsRepository extends Repository implements
 				if (responceStation.getNames() != null) {
 
 					for (StringValue s : responceStation.getNames()) {
-						s.key_id = responceStation.getName_key();
-						s.id = stringValuesRepository.insertStringValue(s);
+						s.key_id = responceStation.getNameKey();
+						s.id = stringValuesRepository.insert(s);
 					}
 				}
 				super.commit(c);
@@ -177,15 +178,15 @@ public class StationsRepository extends Repository implements
 			String query = "UPDATE  bus.stations SET city_id=?, location=? WHERE id=?; ";
 
 			PreparedStatement ps = c.prepareStatement(query);
-			ps.setInt(1, station.getCity_id());
-			ps.setObject(2, new PGgeometry(station.getLocation()));
+			ps.setInt(1, station.getCityID());
+			ps.setObject(2, new PGgeometry(GeoObjectsFactory.createPoint(station.getLocation())));
 			ps.setInt(3, station.getId());
 			ps.execute();
 
 			// insert name values
 			IStringValuesRepository stringValuesRepository = new StringValuesRepository(
 					c, false, false);
-			stringValuesRepository.updateStringValues(station.getName_key(),
+			stringValuesRepository.update(station.getNameKey(),
 					station.getNames());
 
 			super.commit(c);
@@ -234,7 +235,7 @@ public class StationsRepository extends Repository implements
 
 			if (key.next()) {
 				station = new Station();
-				station.setCity_id(key.getInt("city_id"));
+				station.setCityID(key.getInt("city_id"));
 				int id = key.getInt("id");
 				station.setId(id);
 
@@ -253,7 +254,7 @@ public class StationsRepository extends Repository implements
 				Collection<StringValue> name = stringValuesRepository
 						.getStringValues(name_key);
 				station.setNames(name);
-				station.setName_key(name_key);
+				station.setNameKey(name_key);
 
 			}
 		} catch (SQLException e) {
@@ -287,7 +288,7 @@ public class StationsRepository extends Repository implements
 
 			while (key.next()) {
 				Station station = new Station();
-				station.setCity_id(cityID);
+				station.setCityID(cityID);
 				int id = key.getInt("id");
 				station.setId(id);
 
@@ -405,7 +406,7 @@ public class StationsRepository extends Repository implements
 							"can not convert geo_location to org.pgis.Point");
 				}
 				Point dbLocation = (Point) g_location.getGeometry();
-				Location location = new Location();
+				PointModel location = new PointModel();
 				location.setLat(dbLocation.x);
 				location.setLon(dbLocation.y);
 				station.setLocation(location);

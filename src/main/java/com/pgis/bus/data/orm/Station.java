@@ -1,26 +1,45 @@
 package com.pgis.bus.data.orm;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.postgis.Point;
 
-public class Station implements Cloneable {
+import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.models.factory.geom.PointModelFactory;
+import com.pgis.bus.data.repositories.RepositoryException;
+import com.pgis.bus.data.repositories.orm.IStringValuesRepository;
+import com.pgis.bus.data.repositories.orm.impl.StringValuesRepository;
+import com.pgis.bus.net.models.geom.PointModel;
+
+public class Station extends ORMObject implements Cloneable {
 	private Integer id;
 	private int city_id;
-	private Point location;
+	private PointModel location;
 	private int name_key;
-	private Collection<StringValue> names; // key - language id, value -
+	private Collection<StringValue> name; // key - language id, value -
 
-	public int getCity_id() {
+	public Station() {
+		super();
+	}
+
+	public Station(IDBConnectionManager connManager) {
+		super(connManager);
+	}
+
+	public Station(Station s) {
+		super();
+		this.copy(s);
+	}
+
+	public int getCityID() {
 		return city_id;
 	}
 
-	public void setCity_id(int city_id) {
+	public void setCityID(int city_id) {
 		this.city_id = city_id;
 	}
 
-	public Point getLocation() {
+	public PointModel getLocation() {
 		return location;
 	}
 
@@ -28,11 +47,15 @@ public class Station implements Cloneable {
 
 	// NodeTransports
 	public void setLocation(Point location) {
+		this.location = PointModelFactory.createModel(location);
+	}
+
+	public void setLocation(PointModel location) {
 		this.location = location;
 	}
 
 	public void setLocation(double lat, double lon) {
-		location = new Point(lat, lon);
+		location = new PointModel(lat, lon);
 	}
 
 	public Integer getId() {
@@ -43,27 +66,56 @@ public class Station implements Cloneable {
 		this.id = id;
 	}
 
-	public int getName_key() {
+	public int getNameKey() {
 		return name_key;
 	}
 
-	public void setName_key(int name_key) {
+	public void setNameKey(int name_key) {
 		this.name_key = name_key;
 	}
 
-	public Collection<StringValue> getNames() {
-		return names;
+	public Collection<StringValue> getName() throws RepositoryException {
+		if (name == null && super.connManager != null) {
+			IStringValuesRepository rep = new StringValuesRepository(super.connManager);
+			this.name = rep.get(this.name_key);
+		}
+		return this.name;
 	}
 
-	public void setNames(Collection<StringValue> names) {
-		this.names = names;
+	public void setName(Collection<StringValue> name) {
+		this.name = name;
+	}
+
+	public StringValue getNameByLang(String langID) throws RepositoryException {
+		Collection<StringValue> name = this.getName();
+		for (StringValue v : name) {
+			if (v.getLangID().equals(langID) == true)
+				return v;
+		}
+		return null;
+	}
+
+	public void copy(Station from) {
+		super.copy(from);
+		this.name_key = from.name_key;
+		this.city_id = from.city_id;
+
+		if (this.id != null)
+			this.id = new Integer(from.id);
+
+		if (from.name != null)
+			this.name = from.name;
+
+		if (from.location != null) {
+			this.location = new PointModel(from.location);
+		}
 	}
 
 	public Station clone() {
 
 		try {
 			Station obj = (Station) super.clone();
-			obj.copyFrom(this);
+			obj.copy(this);
 			return obj;
 		} catch (CloneNotSupportedException e) {
 			return null;
@@ -71,37 +123,10 @@ public class Station implements Cloneable {
 
 	}
 
-	public StringValue getNameByLanguage(String lang_id) {
-		for (StringValue v : this.names) {
-			if (v.lang_id.equals(lang_id)==true)
-				return v;
-		}
-		return null;
-	}
-
 	@Override
 	public String toString() {
-		return "Station [id=" + id + ", city_id=" + city_id + ", location="
-				+ location + ", name_key=" + name_key + ", names=" + names
-				+ "]";
-	}
-
-	public void copyFrom(Station s) {
-
-		this.name_key = s.name_key;
-		this.city_id = s.city_id;
-
-		if (s.id != null)
-			this.id = new Integer(s.id);
-
-		if (s.names != null)
-			this.names = new ArrayList<StringValue>(s.names);
-
-		if (this.location != null) {
-			this.location = new Point(s.location.x, s.location.y);
-			this.location.setSrid(s.location.getSrid());
-		}
-
+		return "Station [id=" + id + ", city_id=" + city_id + ", location=" + location + ", name_key=" + name_key
+				+ ", names=" + name + "]";
 	}
 
 }

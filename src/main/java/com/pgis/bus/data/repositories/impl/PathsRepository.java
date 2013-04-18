@@ -21,7 +21,7 @@ import com.pgis.bus.data.orm.type.Path_t;
 import com.pgis.bus.data.params.DefaultParameters;
 import com.pgis.bus.data.repositories.IPathsRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
-import com.pgis.bus.net.request.FindPathsOptions;
+import com.pgis.bus.net.request.FindPathsRequest;
 
 public class PathsRepository extends Repository implements IPathsRepository {
 	private static final Logger log = LoggerFactory
@@ -40,7 +40,7 @@ public class PathsRepository extends Repository implements IPathsRepository {
 	}
 
 	@Override
-	public Collection<Path_t> getShortestPaths(FindPathsOptions options)
+	public Collection<Path_t> getShortestPaths(FindPathsRequest options)
 			throws RepositoryException {
 		Connection c = super.getConnection();
 		Collection<Path_t> paths = null;
@@ -86,7 +86,7 @@ public class PathsRepository extends Repository implements IPathsRepository {
 				Path_t pathElem = new Path_t();
 				pathElem.path_id = key.getInt("path_id");
 				pathElem.index = key.getInt("index");
-				pathElem.direct_route_id = key.getInt("direct_route_id");
+				pathElem.rway_id = key.getInt("rway_id");
 				pathElem.route_type = key.getString("route_type");
 				pathElem.route_name = key.getString("route_name");
 				pathElem.relation_index_a = key.getInt("relation_index_a");

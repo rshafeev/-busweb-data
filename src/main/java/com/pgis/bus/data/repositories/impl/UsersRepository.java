@@ -3,7 +3,7 @@ package com.pgis.bus.data.repositories.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pgis.bus.data.Authenticate_enum;
+import com.pgis.bus.data.AuthenticateResult;
 import com.pgis.bus.data.IDBConnectionManager;
 import com.pgis.bus.data.orm.User;
 import com.pgis.bus.data.repositories.IUsersRepository;
@@ -59,7 +59,7 @@ public class UsersRepository extends Repository implements IUsersRepository {
 	}
 
 	@Override
-	public Authenticate_enum authenticate(String userRole, String userName,
+	public AuthenticateResult authenticate(String userRole, String userName,
 			String userPassword) throws RepositoryException {
 		Connection conn = super.getConnection();
 		try {
@@ -70,7 +70,7 @@ public class UsersRepository extends Repository implements IUsersRepository {
 			ps.setString(3, userPassword);
 			ResultSet key = ps.executeQuery();
 			if (key.next()) {
-				return Authenticate_enum.getType(key.getInt(1));
+				return AuthenticateResult.getType(key.getInt(1));
 			}
 		} catch (SQLException e) {
 			log.error("can not read database", e);
@@ -78,7 +78,7 @@ public class UsersRepository extends Repository implements IUsersRepository {
 		} finally {
 			super.closeConnection(conn);
 		}
-		return Authenticate_enum.c_unknown;
+		return AuthenticateResult.c_unknown;
 	}
 
 }

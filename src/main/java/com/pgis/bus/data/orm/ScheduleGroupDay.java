@@ -6,7 +6,7 @@ import com.pgis.bus.net.orm.DayEnum;
 public class ScheduleGroupDay {
 
 	private int id;
-	private int schedule_group_id;
+	private int scheduleGroupID;
 	private DayEnum day_id;
 
 	public ScheduleGroupDay(){
@@ -14,7 +14,7 @@ public class ScheduleGroupDay {
 	}
 	public ScheduleGroupDay(DayEnum day){
 		this.day_id = day;
-		this.schedule_group_id = -1;
+		this.scheduleGroupID = -1;
 		this.id = -1;
 	}
 	public int getId() {
@@ -25,26 +25,26 @@ public class ScheduleGroupDay {
 		this.id = id;
 	}
 
-	public int getSchedule_group_id() {
-		return schedule_group_id;
+	public int getScheduleGroupID() {
+		return scheduleGroupID;
 	}
 
-	public void setSchedule_group_id(int schedule_group_id) {
-		this.schedule_group_id = schedule_group_id;
+	public void setScheduleGroupID(int schedule_group_id) {
+		this.scheduleGroupID = schedule_group_id;
 	}
 
-	public DayEnum getDay_id() {
+	public DayEnum getDayID() {
 		return day_id;
 	}
 
-	public void setDay_id(DayEnum day_id) {
+	public void setDayID(DayEnum day_id) {
 		this.day_id = day_id;
 	}
 
 	@Override
 	public String toString() {
 		return "ScheduleGroupDay [id=" + id + ", schedule_group_id="
-				+ schedule_group_id + ", day_id=" + day_id + "]";
+				+ scheduleGroupID + ", day_id=" + day_id + "]";
 	}
 
 }

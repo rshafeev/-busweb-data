@@ -13,6 +13,7 @@ import org.postgis.Point;
 import test.com.pgis.data.TestDBConnectionManager;
 
 import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.geo.GeoObjectsFactory;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.Station;
 
@@ -40,12 +41,12 @@ public class StationsRepositoryTest_local {
 	public void getStationsListTest() throws Exception {
 		// get city
 		Connection c = dbConnectionManager.getConnection();
-		ICitiesRepository db = new CitiesRepository(c, false, false);
+		ICitiesModelRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_en", "Kyiv");
 		assertNotNull(city);
 
 		// get stations
-		IStationsRepository stationsRepository = new StationsRepository(c,
+		IStationsModelRepository stationsRepository = new StationsRepository(c,
 				false, false);
 		Collection<Station> stations = stationsRepository.getStationsList(
 				city.id, "c_ru");
@@ -59,12 +60,12 @@ public class StationsRepositoryTest_local {
 	public void getStationsByCityTest() throws Exception {
 		// get city
 		Connection c = dbConnectionManager.getConnection();
-		ICitiesRepository db = new CitiesRepository(c, false, false);
+		ICitiesModelRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_en", "Kharkov");
 		assertNotNull(city);
 
 		// get stations
-		IStationsRepository stationsRepository = new StationsRepository(c,
+		IStationsModelRepository stationsRepository = new StationsRepository(c,
 				false, false);
 		Collection<Station> stations = stationsRepository
 				.getStationsByCity(city.id);
@@ -83,20 +84,15 @@ public class StationsRepositoryTest_local {
 		System.out.println("getAllStationsInBoxTest()");
 		// get city
 		Connection c = dbConnectionManager.getConnection();
-		ICitiesRepository db = new CitiesRepository(c, false, false);
+		ICitiesModelRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_en", "Kharkov");
 		assertNotNull(city);
 
 		// get stations
-		IStationsRepository stationsRepository = new StationsRepository(c,
+		IStationsModelRepository stationsRepository = new StationsRepository(c,
 				false, false);
 		Collection<Station> stations = stationsRepository.getStationsFromBox(
 				city.id, new Point(49, 35), new Point(51, 37), "c_ru");
-		for (Station s : stations) {
-			System.out.println("Station id : " + s.getLocation().x);
-			System.out.println("Station id : " + s.getLocation().y);
-		}
-
 		c.rollback();
 		dbConnectionManager.closeConnection(c);
 
@@ -106,18 +102,17 @@ public class StationsRepositoryTest_local {
 	public void insertStationTest() throws Exception {
 		// get city
 		Connection c = dbConnectionManager.getConnection();
-		ICitiesRepository db = new CitiesRepository(c, false, false);
+		ICitiesModelRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_en", "Kharkov");
 		assertNotNull(city);
 
 		// insert station
 
 		Station newStation = new Station();
-		newStation.setCity_id(city.id);
+		newStation.setCityID(city.id);
 		newStation.setLocation(new Point(50, 40));
-		newStation.getLocation().setSrid(4326);
 
-		IStationsRepository stationsRepository = new StationsRepository(c,
+		IStationsModelRepository stationsRepository = new StationsRepository(c,
 				false, false);
 		newStation = stationsRepository.insertStation(newStation);
 		System.out.println("New station: " + newStation.getId());
@@ -130,12 +125,12 @@ public class StationsRepositoryTest_local {
 	public void updateStationTest() throws Exception {
 		// get city
 		Connection c = dbConnectionManager.getConnection();
-		ICitiesRepository db = new CitiesRepository(c, false, false);
+		ICitiesModelRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_ru", "Харьков");
 		assertNotNull(city);
 
 		// get station
-		IStationsRepository stationsRepository = new StationsRepository(c,
+		IStationsModelRepository stationsRepository = new StationsRepository(c,
 				false, false);
 		Collection<Station> stations = stationsRepository
 				.getStationsByCity(city.id);
@@ -146,7 +141,7 @@ public class StationsRepositoryTest_local {
 		Station updateStation = station.clone();
 		updateStation = stationsRepository.updateStation(updateStation);
 		System.out.println("update station:");
-		System.out.println(updateStation.getCity_id());
+		System.out.println(updateStation.getCityID());
 
 		c.rollback();
 		dbConnectionManager.closeConnection(c);
@@ -158,12 +153,12 @@ public class StationsRepositoryTest_local {
 		System.out.println("getStationByLocationTest()...");
 		// get city
 		Connection c = dbConnectionManager.getConnection();
-		ICitiesRepository db = new CitiesRepository(c, false, false);
+		ICitiesModelRepository db = new CitiesRepository(c, false, false);
 		City city = db.getCityByName("c_ru", "Харьков");
 		assertNotNull(city);
 
 		// get station
-		IStationsRepository stationsRepository = new StationsRepository(c,
+		IStationsModelRepository stationsRepository = new StationsRepository(c,
 				false, false);
 		Collection<Station> stations = stationsRepository
 				.getStationsByCity(city.id);
@@ -172,7 +167,7 @@ public class StationsRepositoryTest_local {
 
 		// find station
 		Station findStation = stationsRepository.getStation(station.getNames()
-				.iterator().next(), station.getLocation());
+				.iterator().next(), GeoObjectsFactory.createPoint(station.getLocation()));
 		assertNotNull(findStation);
 		System.out.println("findStation" + findStation.toString());
 
