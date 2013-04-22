@@ -8,17 +8,17 @@ import com.pgis.bus.net.models.StringValueModel;
 
 public class StringValueModelFactory {
 
-	public static StringValueModel createModel(StringValue v){
+	public static StringValueModel createModel(StringValue v) {
 		StringValueModel model = new StringValueModel();
-		model.setId(v.id);
-		model.setLang(v.lang_id);
-		model.setValue(v.value);
+		model.setId(v.getId());
+		model.setLang(v.getLangID());
+		model.setValue(v.getValue());
 		return model;
 	}
-	
-	public static Collection<StringValueModel> createModels(Collection<StringValue>  arr){
+
+	public static Collection<StringValueModel> createModels(Collection<StringValue> arr) {
 		Collection<StringValueModel> models = new ArrayList<StringValueModel>();
-		for(StringValue v : arr){
+		for (StringValue v : arr) {
 			models.add(createModel(v));
 		}
 		return models;

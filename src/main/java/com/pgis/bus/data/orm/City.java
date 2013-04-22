@@ -2,7 +2,7 @@ package com.pgis.bus.data.orm;
 
 import java.util.HashMap;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.IStringValuesRepository;
 import com.pgis.bus.data.repositories.orm.impl.StringValuesRepository;
@@ -21,7 +21,7 @@ public class City extends ORMObject implements Cloneable {
 		super();
 	}
 
-	public City(IDBConnectionManager connManager) {
+	public City(IConnectionManager connManager) {
 		super(connManager);
 	}
 
@@ -98,8 +98,16 @@ public class City extends ORMObject implements Cloneable {
 
 	public HashMap<String, StringValue> getName() throws RepositoryException {
 		if (name == null && super.connManager != null) {
-			IStringValuesRepository rep = new StringValuesRepository(super.connManager);
-			this.name = rep.getToHashMap(this.name_key);
+			IStringValuesRepository rep = null;
+			try {
+				rep = new StringValuesRepository(super.connManager);
+				this.name = rep.getToHashMap(this.name_key);
+			} catch (Exception e) {
+			} finally {
+				if (rep != null)
+					rep.dispose();
+			}
+
 		}
 		System.out.println(name.size());
 		return name;

@@ -5,11 +5,11 @@ import com.pgis.bus.net.models.route.RouteWayModel;
 
 public class RouteWayModelFactory {
 
-	RouteWayModel createModel(RouteWay way) {
+	RouteWayModel createModel(RouteWay way) throws Exception {
 		RouteWayModel model = new RouteWayModel();
 		model.setSchedule(ScheduleModelFactory.createModel(way.getSchedule()));
 		model.setId(way.getId());
-		// model.setRelations(way.g);
+		model.setRelations(RouteRelationModelFactory.createModels(way.getRouteRelations()));
 		return model;
 	}
 }

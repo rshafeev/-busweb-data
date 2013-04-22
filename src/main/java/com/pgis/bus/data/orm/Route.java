@@ -2,7 +2,7 @@ package com.pgis.bus.data.orm;
 
 import java.util.Collection;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.IRoutesRepository;
 import com.pgis.bus.data.repositories.orm.IStringValuesRepository;
@@ -24,7 +24,7 @@ public class Route extends ORMObject {
 		super();
 	}
 
-	public Route(IDBConnectionManager connManager) {
+	public Route(IConnectionManager connManager) {
 		super(connManager);
 	}
 
@@ -44,8 +44,15 @@ public class Route extends ORMObject {
 
 	public Collection<StringValue> getNumber() throws RepositoryException {
 		if (number == null && super.connManager != null) {
-			IStringValuesRepository rep = new StringValuesRepository(super.connManager);
-			this.number = rep.get(this.number_key);
+			IStringValuesRepository rep = null;
+			try {
+				rep = new StringValuesRepository(super.connManager);
+				this.number = rep.get(this.number_key);
+			} catch (Exception e) {
+			} finally {
+				if (rep != null)
+					rep.dispose();
+			}
 		}
 		return number;
 	}
@@ -98,8 +105,15 @@ public class Route extends ORMObject {
 
 	public RouteWay getDirectRouteWay() throws RepositoryException {
 		if (this.directRouteWay == null && super.connManager != null) {
-			IRoutesRepository rep = new RoutesRepository(super.connManager);
-			this.directRouteWay = rep.getRouteWay(this.id, false);
+			IRoutesRepository rep = null;
+			try {
+				rep = new RoutesRepository(super.connManager);
+				this.directRouteWay = rep.getRouteWay(this.id, false);
+			} catch (Exception e) {
+			} finally {
+				if (rep != null)
+					rep.dispose();
+			}
 		}
 		return this.directRouteWay;
 	}
@@ -110,8 +124,15 @@ public class Route extends ORMObject {
 
 	public RouteWay getReverseRouteWay() throws RepositoryException {
 		if (this.reverseRouteWay == null && super.connManager != null) {
-			IRoutesRepository rep = new RoutesRepository(super.connManager);
-			this.reverseRouteWay = rep.getRouteWay(this.id, false);
+			IRoutesRepository rep = null;
+			try {
+				rep = new RoutesRepository(super.connManager);
+				this.reverseRouteWay = rep.getRouteWay(this.id, false);
+			} catch (Exception e) {
+			} finally {
+				if (rep != null)
+					rep.dispose();
+			}
 		}
 		return this.reverseRouteWay;
 	}

@@ -1,11 +1,12 @@
 package com.pgis.bus.data.models.factory.route;
 
 import com.pgis.bus.data.orm.Route;
+import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.net.models.route.RouteModel;
 
 public class RouteModelFactory {
 
-	public static RouteModel createModel(Route route, String langID) {
+	public static RouteModel createModel(Route route, String langID) throws RepositoryException {
 		RouteModel model = new RouteModel();
 		model.setCityID(route.getCityID());
 		model.setNumber(route.getNumber(langID));

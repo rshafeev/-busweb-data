@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.orm.User;
 import com.pgis.bus.data.orm.type.AuthenticateResult;
 import com.pgis.bus.data.repositories.Repository;
@@ -18,22 +18,12 @@ import com.pgis.bus.data.repositories.orm.IUsersRepository;
 public class UsersRepository extends Repository implements IUsersRepository {
 	private static final Logger log = LoggerFactory.getLogger(UsersRepository.class);
 
-	public UsersRepository(IDBConnectionManager connManager) {
+	public UsersRepository(IConnectionManager connManager) {
 		super(connManager);
 	}
 
-	public UsersRepository(IDBConnectionManager connManager, boolean isCommited) {
-		super(connManager, isCommited);
-	}
-
-	protected UsersRepository(IDBConnectionManager connManager, Connection c, boolean isClosed, boolean isCommited) {
-		super(connManager, isCommited);
-		super.isClosed = isClosed;
-		super.connection = c;
-	}
-
 	@Override
-	public User get(int id) throws RepositoryException {
+	public User get(int id) throws SQLException {
 		Connection c = super.getConnection();
 		User user = null;
 		try {
@@ -51,15 +41,12 @@ public class UsersRepository extends Repository implements IUsersRepository {
 			user = null;
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 		return user;
 	}
 
 	@Override
-	public AuthenticateResult authenticate(String userRole, String userName, String userPassword)
-			throws RepositoryException {
+	public AuthenticateResult authenticate(String userRole, String userName, String userPassword) throws SQLException {
 		Connection conn = super.getConnection();
 		try {
 			String query = "SELECT bus.authenticate(?,?,?)";
@@ -74,8 +61,6 @@ public class UsersRepository extends Repository implements IUsersRepository {
 		} catch (SQLException e) {
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(conn);
 		}
 		return AuthenticateResult.c_unknown;
 	}

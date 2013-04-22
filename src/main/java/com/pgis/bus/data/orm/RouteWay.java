@@ -3,10 +3,12 @@ package com.pgis.bus.data.orm;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.IRoutesRepository;
+import com.pgis.bus.data.repositories.orm.IScheduleRepository;
 import com.pgis.bus.data.repositories.orm.impl.RoutesRepository;
+import com.pgis.bus.data.repositories.orm.impl.ScheduleRepository;
 
 public class RouteWay extends ORMObject {
 	private int id;
@@ -20,14 +22,22 @@ public class RouteWay extends ORMObject {
 		super();
 	}
 
-	public RouteWay(IDBConnectionManager connManager) {
+	public RouteWay(IConnectionManager connManager) {
 		super(connManager);
 	}
 
 	public Schedule getSchedule() throws RepositoryException {
 		if (schedule == null && super.connManager != null) {
-			IRoutesRepository rep = new RoutesRepository(super.connManager);
-			this.schedule = rep.getSchedule(id);
+			IScheduleRepository rep = null;
+			try {
+				rep = new ScheduleRepository(super.connManager);
+				this.schedule = rep.getByRouteWay(this.id);
+			} catch (Exception e) {
+			} finally {
+
+				if (rep != null)
+					rep.dispose();
+			}
 		}
 		return schedule;
 	}
@@ -71,8 +81,16 @@ public class RouteWay extends ORMObject {
 
 	public Collection<RouteRelation> getRouteRelations() throws RepositoryException {
 		if (route_relations == null && super.connManager != null) {
-			IRoutesRepository rep = new RoutesRepository(super.connManager);
-			this.route_relations = rep.getRouteWayRelations(this.id);
+			IRoutesRepository rep = null;
+			try {
+				rep = new RoutesRepository(super.connManager);
+				this.route_relations = rep.getRouteWayRelations(this.id);
+			} catch (Exception e) {
+			} finally {
+				if (rep != null)
+					rep.dispose();
+			}
+
 		}
 		return route_relations;
 

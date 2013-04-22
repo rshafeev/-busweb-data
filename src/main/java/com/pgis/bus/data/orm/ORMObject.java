@@ -1,20 +1,20 @@
 package com.pgis.bus.data.orm;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 
 public class ORMObject {
 
-	protected IDBConnectionManager connManager;
+	protected IConnectionManager connManager;
 
 	public ORMObject() {
 
 	}
 
-	public ORMObject(IDBConnectionManager connManager) {
+	public ORMObject(IConnectionManager connManager) {
 		this.connManager = connManager;
 	}
 
-	public void setConnManager(IDBConnectionManager connManager) {
+	public void setConnManager(IConnectionManager connManager) {
 		this.connManager = connManager;
 	}
 

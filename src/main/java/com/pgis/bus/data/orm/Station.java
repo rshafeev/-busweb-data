@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.postgis.Point;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.models.factory.geom.PointModelFactory;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.IStringValuesRepository;
@@ -22,7 +22,7 @@ public class Station extends ORMObject implements Cloneable {
 		super();
 	}
 
-	public Station(IDBConnectionManager connManager) {
+	public Station(IConnectionManager connManager) {
 		super(connManager);
 	}
 
@@ -72,12 +72,24 @@ public class Station extends ORMObject implements Cloneable {
 
 	public void setNameKey(int name_key) {
 		this.name_key = name_key;
+		if (this.name != null) {
+			for (StringValue v : this.name) {
+				v.setKeyID(name_key);
+			}
+		}
 	}
 
 	public Collection<StringValue> getName() throws RepositoryException {
 		if (name == null && super.connManager != null) {
-			IStringValuesRepository rep = new StringValuesRepository(super.connManager);
-			this.name = rep.get(this.name_key);
+			IStringValuesRepository rep = null;
+			try {
+				rep = new StringValuesRepository(super.connManager);
+				this.name = rep.get(this.name_key);
+			} catch (Exception e) {
+			} finally {
+				if (rep != null)
+					rep.dispose();
+			}
 		}
 		return this.name;
 	}

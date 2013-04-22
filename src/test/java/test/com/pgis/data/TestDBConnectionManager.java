@@ -7,18 +7,18 @@ import org.postgresql.ds.PGPoolingDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pgis.bus.data.DBConnectionManager;
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.PoolConnectionManager;
 
-public class TestDBConnectionManager implements IDBConnectionManager {
+public class TestDBConnectionManager implements IConnectionManager {
 	private javax.sql.DataSource source = null;
 	private final Logger log = LoggerFactory.getLogger(TestDBConnectionManager.class);
 	private Connection connection = null;
 
-	public static IDBConnectionManager create() {
-		PGPoolingDataSource source = DBConnectionManager.createPGPoolingDataSource("jdbc:postgresql", "localhost",
+	public static IConnectionManager create() {
+		PGPoolingDataSource source = PoolConnectionManager.createPGPoolingDataSource("jdbc:postgresql", "localhost",
 				"bus.test", "postgres", "postgres");
-		IDBConnectionManager dbConnectionManager = new TestDBConnectionManager(source);
+		IConnectionManager dbConnectionManager = new TestDBConnectionManager(source);
 		return dbConnectionManager;
 	}
 
@@ -68,6 +68,31 @@ public class TestDBConnectionManager implements IDBConnectionManager {
 	 * @throws SQLException
 	 */
 	public void free() {
+
+	}
+
+	public javax.sql.DataSource getSource() {
+		return source;
+	}
+
+	@Override
+	public void commit(Connection transactConnection) {
+
+	}
+
+	@Override
+	public void rollback(Connection transactConnection) {
+		try {
+			if (connection != null) {
+				connection.rollback();
+			}
+		} catch (SQLException e) {
+			log.debug(e.toString());
+		}
+	}
+
+	@Override
+	public void dispose() {
 		this.source = null;
 		log.debug("destroy DB-pool: ok");
 
@@ -79,11 +104,11 @@ public class TestDBConnectionManager implements IDBConnectionManager {
 		} catch (SQLException e) {
 			log.debug(e.toString());
 		}
-
 	}
 
-	public javax.sql.DataSource getSource() {
-		return source;
+	@Override
+	public Connection getExternConnection() {
+		return null;
 	}
 
 }

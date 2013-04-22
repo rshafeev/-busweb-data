@@ -11,39 +11,40 @@ import org.junit.Test;
 
 import test.com.pgis.data.TestDBConnectionManager;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.StringValue;
-import com.pgis.bus.data.repositories.orm.ICitiesRepository;
 import com.pgis.bus.data.repositories.orm.impl.CitiesRepository;
 
 public class CitiesRepositoryTest_local {
 
 	@Test
 	public void getAllTest() throws Exception {
-		IDBConnectionManager dbConnMngr = TestDBConnectionManager.create();
-		ICitiesRepository db = new CitiesRepository(dbConnMngr, false);
-		Collection<City> cities = db.getAll();
+		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
+		CitiesRepository rep = new CitiesRepository(dbConnMngr);
+		Collection<City> cities = rep.getAll();
 		System.out.print(cities.size());
-		dbConnMngr.free();
+		rep.rollback();
+		rep.dispose();
+		dbConnMngr.dispose();
 	}
 
 	@Test
 	public void updateTest() throws Exception {
-		IDBConnectionManager dbConnMngr = TestDBConnectionManager.create();
-		ICitiesRepository db = new CitiesRepository(dbConnMngr, false);
+		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
+		CitiesRepository rep = new CitiesRepository(dbConnMngr);
 
-		City city = db.getByName("c_en", "Kharkov");
+		City city = rep.getByName("c_en", "Kharkov");
 		assertNotNull(city);
 		city.setLat(55);
 		city.setLon(55);
-		db.update(city);
+		rep.update(city);
 
 		city.setLat(57);
 		city.setLon(57);
-		db.update(city);
+		rep.update(city);
 
-		City checkCity = db.getByName("c_en", "Kharkov");
+		City checkCity = rep.getByName("c_en", "Kharkov");
 		assertNotNull(checkCity);
 
 		assertEquals(city.getLat(), checkCity.getLat(), 0.0001);
@@ -51,7 +52,9 @@ public class CitiesRepositoryTest_local {
 
 		System.out.print(city.getScale());
 
-		dbConnMngr.free();
+		rep.rollback();
+		rep.dispose();
+		dbConnMngr.dispose();
 	}
 
 	@Test
@@ -77,28 +80,33 @@ public class CitiesRepositoryTest_local {
 		newCity.setName(name);
 		// test
 
-		IDBConnectionManager dbConnMngr = TestDBConnectionManager.create();
-		ICitiesRepository db = new CitiesRepository(dbConnMngr, false);
-		db.insert(newCity);
+		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
+		CitiesRepository rep = new CitiesRepository(dbConnMngr);
+		rep.insert(newCity);
 		assertTrue(newCity.getId() > 0);
 		assertTrue(newCity.getNameKey() > 0);
 		assertTrue(newCity.getName().size() > 0);
-		dbConnMngr.free();
+
+		rep.rollback();
+		rep.dispose();
+		dbConnMngr.dispose();
 
 	}
 
 	@Test
 	public void getByName() throws Exception {
 		// test
-		IDBConnectionManager dbConnMngr = TestDBConnectionManager.create();
-		ICitiesRepository db = new CitiesRepository(dbConnMngr, false);
-		City responceCity = db.getByName("c_en", "Kharkov");
+		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
+		CitiesRepository rep = new CitiesRepository(dbConnMngr);
+		City responceCity = rep.getByName("c_en", "Kharkov");
 		assertNotNull(responceCity);
 		assertTrue(responceCity.getId() > 0);
 		assertTrue(responceCity.getNameKey() > 0);
 		assertTrue(responceCity.getName().size() > 0);
 
-		dbConnMngr.free();
+		rep.rollback();
+		rep.dispose();
+		dbConnMngr.dispose();
 	}
 
 }

@@ -11,7 +11,7 @@ import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.model.ICitiesModelRepository;
 import com.pgis.bus.net.models.city.CityModel;
@@ -21,32 +21,20 @@ import com.pgis.bus.net.models.route.RouteTypeModel;
 public class CitiesModelRepository extends ModelRepository implements ICitiesModelRepository {
 	private static final Logger log = LoggerFactory.getLogger(CitiesModelRepository.class);
 
-	public CitiesModelRepository(Locale locale, IDBConnectionManager connManager) {
+	public CitiesModelRepository(Locale locale, IConnectionManager connManager) {
 		super(locale, connManager);
 	}
 
-	public CitiesModelRepository(Locale locale, IDBConnectionManager connManager, boolean isCommited) {
-		super(locale, connManager, isCommited);
-	}
-
-	public CitiesModelRepository(String langID, IDBConnectionManager connManager) {
+	public CitiesModelRepository(String langID, IConnectionManager connManager) {
 		super(langID, connManager);
 	}
 
-	public CitiesModelRepository(String langID, IDBConnectionManager connManager, boolean isCommited) {
-		super(langID, connManager, isCommited);
-	}
-
-	public CitiesModelRepository(IDBConnectionManager connManager) {
+	public CitiesModelRepository(IConnectionManager connManager) {
 		super(connManager);
 	}
 
-	public CitiesModelRepository(IDBConnectionManager connManager, boolean isCommited) {
-		super(connManager, isCommited);
-	}
-
 	@Override
-	public Collection<CityModel> getAll() throws RepositoryException {
+	public Collection<CityModel> getAll() throws SQLException {
 		Connection c = super.getConnection();
 		Collection<CityModel> cities = null;
 		try {
@@ -77,14 +65,12 @@ public class CitiesModelRepository extends ModelRepository implements ICitiesMod
 			cities = null;
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 		return cities;
 	}
 
 	@Override
-	public CityModel get(int id) throws RepositoryException {
+	public CityModel get(int id) throws SQLException {
 		Connection c = super.getConnection();
 		try {
 			String query = "select key, lat, lon, scale, value as name from bus.cities "
@@ -111,14 +97,12 @@ public class CitiesModelRepository extends ModelRepository implements ICitiesMod
 		} catch (SQLException e) {
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 		return null;
 	}
 
 	@Override
-	public CityModel getByKey(String key) throws RepositoryException {
+	public CityModel getByKey(String key) throws SQLException {
 		Connection c = super.getConnection();
 		try {
 			String query = "select bus.cities.id as id, lat, lon, scale, value as name from bus.cities "
@@ -146,14 +130,12 @@ public class CitiesModelRepository extends ModelRepository implements ICitiesMod
 		} catch (SQLException e) {
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 		return null;
 	}
 
 	@Override
-	public Collection<RouteTypeModel> getRouteTypesByCity(int cityID) throws RepositoryException {
+	public Collection<RouteTypeModel> getRouteTypesByCity(int cityID) throws SQLException {
 		Connection c = super.getConnection();
 		Collection<RouteTypeModel> types = new ArrayList<RouteTypeModel>();
 		try {
@@ -170,8 +152,6 @@ public class CitiesModelRepository extends ModelRepository implements ICitiesMod
 		} catch (SQLException e) {
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 		return types;
 	}

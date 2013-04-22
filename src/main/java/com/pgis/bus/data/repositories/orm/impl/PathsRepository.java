@@ -3,8 +3,8 @@ package com.pgis.bus.data.repositories.orm.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 
 import org.postgis.PGgeometry;
@@ -13,7 +13,7 @@ import org.postgresql.util.PGInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.helpers.DateTimeHelper;
 import com.pgis.bus.data.orm.type.Path_t;
 import com.pgis.bus.data.params.DefaultParameters;
@@ -25,20 +25,14 @@ import com.pgis.bus.net.request.FindPathsRequest;
 public class PathsRepository extends Repository implements IPathsRepository {
 	private static final Logger log = LoggerFactory.getLogger(PathsRepository.class);
 
-	public PathsRepository(IDBConnectionManager connManager) {
+	public PathsRepository(IConnectionManager connManager) {
 		super(connManager);
 	}
 
-	public PathsRepository(IDBConnectionManager connManager, boolean isCommited) {
-		super(connManager, isCommited);
-	}
-
 	@Override
-	public Collection<Path_t> findShortestPaths(FindPathsRequest options) throws RepositoryException {
+	public Collection<Path_t> findShortestPaths(FindPathsRequest options) throws SQLException {
 		Connection c = super.getConnection();
 		Collection<Path_t> paths = null;
-		Calendar calendar = Calendar.getInstance();
-
 		try {
 			String query = "select  * from  bus.find_shortest_paths(" + "?," /* city_id */
 					+ " geography(?)," /* p1 */
@@ -95,15 +89,10 @@ public class PathsRepository extends Repository implements IPathsRepository {
 				pathElem.distance = key.getDouble("distance");
 				paths.add(pathElem);
 			}
-			super.commit(c);
 		} catch (Exception e) {
 			log.error("can not read database", e);
-			super.rollback(c);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
-
 		return paths;
 	}
 }

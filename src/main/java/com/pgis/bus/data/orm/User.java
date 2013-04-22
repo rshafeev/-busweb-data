@@ -1,6 +1,6 @@
 package com.pgis.bus.data.orm;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 
 public class User extends ORMObject {
 	private Integer id;
@@ -11,7 +11,7 @@ public class User extends ORMObject {
 		super();
 	}
 
-	public User(IDBConnectionManager connManager) {
+	public User(IConnectionManager connManager) {
 		super(connManager);
 	}
 

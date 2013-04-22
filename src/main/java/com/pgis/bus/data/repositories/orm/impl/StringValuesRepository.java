@@ -11,7 +11,7 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.repositories.Repository;
 import com.pgis.bus.data.repositories.RepositoryException;
@@ -20,23 +20,12 @@ import com.pgis.bus.data.repositories.orm.IStringValuesRepository;
 public class StringValuesRepository extends Repository implements IStringValuesRepository {
 	private static final Logger log = LoggerFactory.getLogger(StringValuesRepository.class);
 
-	public StringValuesRepository(IDBConnectionManager connManager) {
+	public StringValuesRepository(IConnectionManager connManager) {
 		super(connManager);
 	}
 
-	public StringValuesRepository(IDBConnectionManager connManager, boolean isCommited) {
-		super(connManager, isCommited);
-	}
-
-	protected StringValuesRepository(IDBConnectionManager connManager, Connection c, boolean isClosed,
-			boolean isCommited) {
-		super(connManager, isCommited);
-		super.isClosed = isClosed;
-		super.connection = c;
-	}
-
 	@Override
-	public Collection<StringValue> get(int string_key) throws RepositoryException {
+	public Collection<StringValue> get(int string_key) throws SQLException {
 		ArrayList<StringValue> values = null;
 		Connection c = super.getConnection();
 
@@ -59,17 +48,15 @@ public class StringValuesRepository extends Repository implements IStringValuesR
 
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 
 		return values;
 	}
 
 	@Override
-	public HashMap<String, StringValue> getToHashMap(int string_key) throws RepositoryException {
+	public HashMap<String, StringValue> getToHashMap(int string_key) throws SQLException {
 		HashMap<String, StringValue> map = new HashMap<String, StringValue>();
-		Collection<StringValue> arr = get(string_key);
+		Collection<StringValue> arr = this.get(string_key);
 		for (StringValue s : arr) {
 			map.put(s.getLangID(), s);
 		}
@@ -77,7 +64,7 @@ public class StringValuesRepository extends Repository implements IStringValuesR
 	}
 
 	@Override
-	public void remove(int string_key) throws RepositoryException {
+	public void remove(int string_key) throws SQLException {
 
 		Connection c = super.getConnection();
 		try {
@@ -86,19 +73,15 @@ public class StringValuesRepository extends Repository implements IStringValuesR
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, string_key);
 			ps.execute();
-			super.commit(c);
 		} catch (SQLException e) {
-			super.rollback(c);
 			log.error("deleteStringValues() exception: ", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 
 	}
 
 	@Override
-	public void insert(StringValue value) throws RepositoryException {
+	public void insert(StringValue value) throws SQLException {
 		Connection c = super.getConnection();
 		try {
 			String query = "INSERT INTO bus.string_values (key_id,lang_id,value) VALUES(?,bus.lang_enum(?),?) RETURNING id;";
@@ -111,35 +94,25 @@ public class StringValuesRepository extends Repository implements IStringValuesR
 			if (key.next()) {
 				value.setId(key.getInt(1));
 			}
-			super.commit(c);
 		} catch (SQLException e) {
-			super.rollback(c);
 			log.error("insertStringValue() exception: ", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 	}
 
 	@Override
-	public void update(int string_key, Collection<StringValue> values) throws RepositoryException {
-		Connection c = super.getConnection();
+	public void update(int string_key, Collection<StringValue> values) throws SQLException {
 		try {
-			StringValuesRepository rep = new StringValuesRepository(super.connManager, c, false, false);
-			rep.remove(string_key);
+			this.remove(string_key);
 			for (StringValue v : values) {
 				// Если значение новое, то key_id может быть пустым
 				v.setKeyID(string_key);
-				rep.insert(v);
+				this.insert(v);
 			}
-			super.commit(c);
 
-		} catch (SQLException | RepositoryException e) {
-			super.rollback(c);
+		} catch (SQLException e) {
 			log.error("updateStringValues() exception: ", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 
 	}

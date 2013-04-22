@@ -10,16 +10,14 @@ public class DateTimeHelper {
 	public static int toSeconds(Time time) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(time);
-		int secs = c.get(Calendar.HOUR_OF_DAY) * 60 * 60
-				+ c.get(Calendar.MINUTE) * 60 + c.get(Calendar.SECOND);
+		int secs = c.get(Calendar.HOUR_OF_DAY) * 60 * 60 + c.get(Calendar.MINUTE) * 60 + c.get(Calendar.SECOND);
 		return secs;
 	}
-	
+
 	public static int toSeconds(PGInterval interval) {
-		if(interval == null)
+		if (interval == null)
 			return 0;
-		int secs = interval.getHours() * 60 * 60 + interval.getMinutes() * 60
-				+ (int) interval.getSeconds();
+		int secs = interval.getHours() * 60 * 60 + interval.getMinutes() * 60 + (int) interval.getSeconds();
 		return secs;
 	}
 
@@ -39,16 +37,14 @@ public class DateTimeHelper {
 		return interval;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static Time getTimeFromSeconds(long secs) {
 		Calendar c = Calendar.getInstance();
 
 		int h = (int) secs / 60 / 60;
 		int m = (int) (secs - h * 60 * 60) / 60;
 		int s = (int) secs - h * 60 * 60 - m * 60;
-		c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH),
-				c.get(Calendar.DATE), h, m, s);
-	
+		c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), h, m, s);
+
 		return new Time(c.getTime().getTime());
 	}
 }

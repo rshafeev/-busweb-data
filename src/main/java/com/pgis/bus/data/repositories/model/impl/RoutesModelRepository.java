@@ -3,13 +3,14 @@ package com.pgis.bus.data.repositories.model.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.model.IRoutesModelRepository;
 import com.pgis.bus.net.models.route.RouteModel;
@@ -22,39 +23,20 @@ public class RoutesModelRepository extends ModelRepository implements IRoutesMod
 
 	private static final Logger log = LoggerFactory.getLogger(RoutesModelRepository.class);
 
-	public RoutesModelRepository(Locale locale, IDBConnectionManager connManager) {
+	public RoutesModelRepository(Locale locale, IConnectionManager connManager) {
 		super(locale, connManager);
 	}
 
-	public RoutesModelRepository(Locale locale, IDBConnectionManager connManager, boolean isCommited) {
-		super(locale, connManager, isCommited);
-	}
-
-	public RoutesModelRepository(String langID, IDBConnectionManager connManager) {
+	public RoutesModelRepository(String langID, IConnectionManager connManager) {
 		super(langID, connManager);
 	}
 
-	public RoutesModelRepository(String langID, IDBConnectionManager connManager, boolean isCommited) {
-		super(langID, connManager, isCommited);
-	}
-
-	public RoutesModelRepository(IDBConnectionManager connManager) {
+	public RoutesModelRepository(IConnectionManager connManager) {
 		super(connManager);
 	}
 
-	public RoutesModelRepository(IDBConnectionManager connManager, boolean isCommited) {
-		super(connManager, isCommited);
-	}
-
-	protected RoutesModelRepository(String langID, IDBConnectionManager connManager, Connection c, boolean isClosed,
-			boolean isCommited) {
-		super(langID, connManager, isCommited);
-		super.isClosed = isClosed;
-		super.connection = c;
-	}
-
 	@Override
-	public RouteModel get(int routeID) throws RepositoryException {
+	public RouteModel get(int routeID) throws SQLException {
 		Connection c = super.getConnection();
 		RouteModel route = null;
 		try {
@@ -80,40 +62,38 @@ public class RoutesModelRepository extends ModelRepository implements IRoutesMod
 			route = null;
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 		return route;
 	}
 
 	@Override
-	public RoutesListModel getRoutesList(int cityID, String routeTypeID, String langID) throws RepositoryException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Collection<RouteRelationModel> getRouteRelations(int routeID, boolean directType, String langID)
-			throws RepositoryException {
+			throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Collection<RouteRelationModel> getRouteRelations(int routeID, boolean directType, String langID,
-			int startInd, int finishInd) throws RepositoryException {
+			int startInd, int finishInd) throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ScheduleModel getSchedule(int routeWayID) throws RepositoryException {
+	public ScheduleModel getSchedule(int routeWayID) throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public RouteWayModel getRouteWay(int routeID, boolean directType) throws RepositoryException {
+	public RouteWayModel getRouteWay(int routeID, boolean directType) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RoutesListModel getRoutesList(int cityID, String routeTypeID) throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
 	}

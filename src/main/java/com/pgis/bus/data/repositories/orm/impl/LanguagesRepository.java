@@ -10,7 +10,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.orm.Language;
 import com.pgis.bus.data.repositories.Repository;
 import com.pgis.bus.data.repositories.RepositoryException;
@@ -19,15 +19,11 @@ import com.pgis.bus.data.repositories.orm.ILanguagesRepository;
 public class LanguagesRepository extends Repository implements ILanguagesRepository {
 	private static final Logger log = LoggerFactory.getLogger(LanguagesRepository.class);
 
-	public LanguagesRepository(IDBConnectionManager connManager) {
+	public LanguagesRepository(IConnectionManager connManager) {
 		super(connManager);
 	}
 
-	public LanguagesRepository(IDBConnectionManager connManager, boolean isCommited) {
-		super(connManager, isCommited);
-	}
-
-	public Collection<Language> getAll() throws RepositoryException {
+	public Collection<Language> getAll() throws SQLException {
 		Collection<Language> langs = null;
 		Connection c = super.getConnection();
 		try {
@@ -47,8 +43,6 @@ public class LanguagesRepository extends Repository implements ILanguagesReposit
 			langs = null;
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 		return langs;
 	}

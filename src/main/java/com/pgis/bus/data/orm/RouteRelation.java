@@ -3,7 +3,7 @@ package com.pgis.bus.data.orm;
 import org.postgis.LineString;
 import org.postgresql.util.PGInterval;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.IStationsRepository;
 import com.pgis.bus.data.repositories.orm.impl.StationsRepository;
@@ -25,7 +25,7 @@ public class RouteRelation extends ORMObject {
 		super();
 	}
 
-	public RouteRelation(IDBConnectionManager connManager) {
+	public RouteRelation(IConnectionManager connManager) {
 		super(connManager);
 	}
 
@@ -63,16 +63,30 @@ public class RouteRelation extends ORMObject {
 
 	public Station getStationA() throws RepositoryException {
 		if (stationA == null && super.connManager != null) {
-			IStationsRepository rep = new StationsRepository(super.connManager);
-			this.stationA = rep.get(station_a_id);
+			IStationsRepository rep = null;
+			try {
+				rep = new StationsRepository(super.connManager);
+				this.stationA = rep.get(station_a_id);
+			} catch (Exception e) {
+			} finally {
+				if (rep != null)
+					rep.dispose();
+			}
 		}
 		return stationA;
 	}
 
 	public Station getStationB() throws RepositoryException {
 		if (stationB == null && super.connManager != null) {
-			IStationsRepository rep = new StationsRepository(super.connManager);
-			this.stationB = rep.get(station_b_id);
+			IStationsRepository rep = null;
+			try {
+				rep = new StationsRepository(super.connManager);
+				this.stationB = rep.get(station_b_id);
+			} catch (Exception e) {
+			} finally {
+				if (rep != null)
+					rep.dispose();
+			}
 		}
 		return stationB;
 	}

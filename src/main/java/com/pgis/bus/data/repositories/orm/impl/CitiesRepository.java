@@ -10,27 +10,22 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.repositories.Repository;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.ICitiesRepository;
-import com.pgis.bus.data.repositories.orm.IStringValuesRepository;
 
 public class CitiesRepository extends Repository implements ICitiesRepository {
 	private static final Logger log = LoggerFactory.getLogger(CitiesRepository.class);
 
-	public CitiesRepository(IDBConnectionManager connManager) {
+	public CitiesRepository(IConnectionManager connManager) {
 		super(connManager);
 	}
 
-	public CitiesRepository(IDBConnectionManager connManager, boolean isCommited) {
-		super(connManager, isCommited);
-	}
-
 	@Override
-	public Collection<City> getAll() throws RepositoryException {
+	public Collection<City> getAll() throws SQLException {
 		Connection c = super.getConnection();
 		Collection<City> cities = null;
 		try {
@@ -60,14 +55,12 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			cities = null;
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 		return cities;
 	}
 
 	@Override
-	public City get(int id) throws RepositoryException {
+	public City get(int id) throws SQLException {
 		Connection c = super.getConnection();
 		try {
 			String query = "SELECT * FROM bus.cities WHERE id = ?";
@@ -94,14 +87,12 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		} catch (SQLException e) {
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 		return null;
 	}
 
 	@Override
-	public City getByKey(String key) throws RepositoryException {
+	public City getByKey(String key) throws SQLException {
 		Connection c = super.getConnection();
 		try {
 			String query = "select * from bus.cities where key = ?";
@@ -128,14 +119,12 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		} catch (SQLException e) {
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 		return null;
 	}
 
 	@Override
-	public City getByName(String langID, String name) throws RepositoryException {
+	public City getByName(String langID, String name) throws SQLException {
 		Connection c = super.getConnection();
 
 		try {
@@ -171,14 +160,12 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 		} catch (SQLException e) {
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 		return null;
 	}
 
 	@Override
-	public void insert(City city) throws RepositoryException {
+	public void insert(City city) throws SQLException {
 		Connection c = super.getConnection();
 		try {
 			city.setConnManager(connManager);
@@ -193,41 +180,37 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			if (key.next()) {
 				city.setId(key.getInt("id"));
 				city.setNameKey(key.getInt("name_key"));
+
+				StringValuesRepository strValuesRep = new StringValuesRepository(super.connManager);
+				strValuesRep.setRepositoryExternConnection(c);
+				for (StringValue v : city.getName().values()) {
+					strValuesRep.insert(v);
+				}
+
 			}
-			IStringValuesRepository strValuesRep = new StringValuesRepository(super.connManager, c, false, false);
-			for (StringValue v : city.getName().values()) {
-				strValuesRep.insert(v);
-			}
-			super.commit(c);
+
 		} catch (SQLException e) {
 			log.error("updateCity() exception: ", e);
-			super.rollback(c);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 	}
 
 	@Override
-	public void remove(int city_id) throws RepositoryException {
+	public void remove(int city_id) throws SQLException {
 		Connection c = super.getConnection();
 		try {
 			String query = "DELETE FROM bus.cities WHERE id=?;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, city_id);
 			ps.execute();
-			super.commit(c);
 		} catch (SQLException e) {
 			log.error("deleteCity() exception: ", e);
-			super.rollback(c);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 	}
 
 	@Override
-	public void update(City city) throws RepositoryException {
+	public void update(City city) throws SQLException {
 		Connection c = super.getConnection();
 		try {
 			String query = "UPDATE bus.cities SET lat=?, lon=? , scale=?, name_key=?,is_show=? where id=?";
@@ -240,17 +223,15 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			ps.setInt(6, city.getId());
 			ps.execute();
 			city.setConnManager(connManager);
-			IStringValuesRepository stringValuesRepository = new StringValuesRepository(super.connManager, c, false,
-					false);
+
+			StringValuesRepository stringValuesRepository = new StringValuesRepository(super.connManager);
+			stringValuesRepository.setRepositoryExternConnection(c);
 			stringValuesRepository.update(city.getNameKey(), city.getName().values());
-			super.commit(c);
 
 		} catch (SQLException e) {
 			log.error("updateCity() exception: ", e);
-			super.rollback(c);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
 		} finally {
-			super.closeConnection(c);
 		}
 	}
 

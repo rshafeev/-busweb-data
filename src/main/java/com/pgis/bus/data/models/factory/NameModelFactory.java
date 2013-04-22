@@ -8,18 +8,18 @@ import com.pgis.bus.net.models.NameModel;
 
 public class NameModelFactory {
 
-	public static NameModel createModel(StringValue value){
+	public static NameModel createModel(StringValue value) {
 		NameModel model = new NameModel();
-		model.setId(value.id);
-		model.setLangID(value.lang_id);
-		model.setName(value.value);
+		model.setId(value.getId());
+		model.setLangID(value.getLangID());
+		model.setName(value.getValue());
 		return model;
 	}
-	
-	public static Collection<NameModel> createModels(Collection<StringValue> arr){
+
+	public static Collection<NameModel> createModels(Collection<StringValue> arr) {
 		Collection<NameModel> model = new ArrayList<NameModel>();
-		for(StringValue v : arr){
-			model.add(createModel(v) );
+		for (StringValue v : arr) {
+			model.add(createModel(v));
 		}
 		return model;
 	}

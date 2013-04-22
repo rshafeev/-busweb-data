@@ -1,14 +1,17 @@
 package com.pgis.bus.data.service.impl;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import java.sql.SQLException;
+
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.repositories.orm.ICitiesRepository;
+import com.pgis.bus.data.repositories.orm.IJsonRouteObjectsRepository;
 import com.pgis.bus.data.repositories.orm.ILanguagesRepository;
-import com.pgis.bus.data.repositories.orm.IObjectsRepository;
 import com.pgis.bus.data.repositories.orm.IPathsRepository;
 import com.pgis.bus.data.repositories.orm.IRoutesRepository;
 import com.pgis.bus.data.repositories.orm.IStationsRepository;
 import com.pgis.bus.data.repositories.orm.IUsersRepository;
 import com.pgis.bus.data.repositories.orm.impl.CitiesRepository;
+import com.pgis.bus.data.repositories.orm.impl.JsonRouteObjectsRepository;
 import com.pgis.bus.data.repositories.orm.impl.LanguagesRepository;
 import com.pgis.bus.data.repositories.orm.impl.PathsRepository;
 import com.pgis.bus.data.repositories.orm.impl.RoutesRepository;
@@ -16,57 +19,25 @@ import com.pgis.bus.data.repositories.orm.impl.StationsRepository;
 import com.pgis.bus.data.repositories.orm.impl.UsersRepository;
 import com.pgis.bus.data.service.IDataBaseService;
 
-public class DataBaseService implements IDataBaseService {
-	protected IDBConnectionManager connectionManager = null;
+public class DataBaseService extends DataService implements IDataBaseService {
 
-	protected IUsersRepository usersRepotitory = null;
-	protected ICitiesRepository citiesRepotitory = null;
-	protected ILanguagesRepository langsRepository = null;
-	protected IStationsRepository stationsRepository = null;
-	protected IPathsRepository pathsRepository = null;
-	protected IRoutesRepository routesRepository = null;
-	protected IObjectsRepository importRepository = null;
+	protected UsersRepository usersRepotitory = null;
+	protected CitiesRepository citiesRepotitory = null;
+	protected LanguagesRepository langsRepository = null;
+	protected StationsRepository stationsRepository = null;
+	protected PathsRepository pathsRepository = null;
+	protected RoutesRepository routesRepository = null;
+	protected JsonRouteObjectsRepository objectsRepository = null;
 
-	public void setUsersRepotitory(IUsersRepository usersRepotitory) {
-		this.usersRepotitory = usersRepotitory;
-	}
-
-	public void setCitiesRepotitory(ICitiesRepository citiesRepotitory) {
-		this.citiesRepotitory = citiesRepotitory;
-	}
-
-	public void setLangsRepository(ILanguagesRepository langsRepository) {
-		this.langsRepository = langsRepository;
-	}
-
-	public void setStationsRepository(IStationsRepository stationsRepository) {
-		this.stationsRepository = stationsRepository;
-	}
-
-	public void setPathsRepository(IPathsRepository pathsRepository) {
-		this.pathsRepository = pathsRepository;
-	}
-
-	public void setRoutesRepository(IRoutesRepository routesRepository) {
-		this.routesRepository = routesRepository;
-	}
-
-	public void setImportRepository(IObjectsRepository importRepository) {
-		this.importRepository = importRepository;
-	}
-
-	public void setConnectionManager(IDBConnectionManager connectionManager) {
-		this.connectionManager = connectionManager;
-	}
-
-	public DataBaseService(IDBConnectionManager connectionManager) {
-		this.connectionManager = connectionManager;
+	public DataBaseService(IConnectionManager rootConnectionManager) throws SQLException {
+		super(rootConnectionManager);
 	}
 
 	@Override
 	public IUsersRepository Users() {
-		if (usersRepotitory == null && connectionManager != null) {
+		if (usersRepotitory == null) {
 			usersRepotitory = new UsersRepository(connectionManager);
+			usersRepotitory.useOnlyExternConnection(true);
 		}
 
 		return usersRepotitory;
@@ -74,8 +45,9 @@ public class DataBaseService implements IDataBaseService {
 
 	@Override
 	public ICitiesRepository Cities() {
-		if (citiesRepotitory == null && connectionManager != null) {
+		if (citiesRepotitory == null) {
 			citiesRepotitory = new CitiesRepository(connectionManager);
+			citiesRepotitory.useOnlyExternConnection(true);
 		}
 
 		return citiesRepotitory;
@@ -83,40 +55,51 @@ public class DataBaseService implements IDataBaseService {
 
 	@Override
 	public ILanguagesRepository Langs() {
-		if (langsRepository == null && connectionManager != null) {
+		if (langsRepository == null) {
 			langsRepository = new LanguagesRepository(connectionManager);
+			langsRepository.useOnlyExternConnection(true);
 		}
 		return langsRepository;
 	}
 
 	@Override
 	public IStationsRepository Stations() {
-		if (stationsRepository == null && connectionManager != null) {
+		if (stationsRepository == null) {
 			stationsRepository = new StationsRepository(connectionManager);
+			stationsRepository.useOnlyExternConnection(true);
+
 		}
 		return stationsRepository;
 	}
 
 	@Override
 	public IPathsRepository Paths() {
-		if (pathsRepository == null && connectionManager != null) {
+		if (pathsRepository == null) {
 			pathsRepository = new PathsRepository(connectionManager);
+			pathsRepository.useOnlyExternConnection(true);
+
 		}
 		return pathsRepository;
 	}
 
 	@Override
 	public IRoutesRepository Routes() {
-		if (routesRepository == null && connectionManager != null) {
+		if (routesRepository == null) {
 			routesRepository = new RoutesRepository(connectionManager);
-		}
+			routesRepository.useOnlyExternConnection(true);
 
+		}
 		return routesRepository;
 	}
 
 	@Override
-	public IObjectsRepository ImportObjects() {
-		return importRepository;
+	public IJsonRouteObjectsRepository JsonRouteObjects() {
+		if (objectsRepository == null) {
+			objectsRepository = new JsonRouteObjectsRepository(connectionManager);
+			objectsRepository.useOnlyExternConnection(true);
+
+		}
+		return objectsRepository;
 	}
 
 }

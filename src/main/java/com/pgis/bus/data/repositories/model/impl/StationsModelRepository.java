@@ -14,7 +14,7 @@ import org.postgis.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pgis.bus.data.IDBConnectionManager;
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.models.factory.geom.PointModelFactory;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.model.IStationsModelRepository;
@@ -25,46 +25,27 @@ public class StationsModelRepository extends ModelRepository implements IStation
 
 	private static final Logger log = LoggerFactory.getLogger(StationsModelRepository.class);
 
-	public StationsModelRepository(Locale locale, IDBConnectionManager connManager) {
+	public StationsModelRepository(Locale locale, IConnectionManager connManager) {
 		super(locale, connManager);
 	}
 
-	public StationsModelRepository(Locale locale, IDBConnectionManager connManager, boolean isCommited) {
-		super(locale, connManager, isCommited);
-	}
-
-	public StationsModelRepository(String langID, IDBConnectionManager connManager) {
+	public StationsModelRepository(String langID, IConnectionManager connManager) {
 		super(langID, connManager);
 	}
 
-	public StationsModelRepository(String langID, IDBConnectionManager connManager, boolean isCommited) {
-		super(langID, connManager, isCommited);
-	}
-
-	public StationsModelRepository(IDBConnectionManager connManager) {
+	public StationsModelRepository(IConnectionManager connManager) {
 		super(connManager);
 	}
 
-	public StationsModelRepository(IDBConnectionManager connManager, boolean isCommited) {
-		super(connManager, isCommited);
-	}
-
-	protected StationsModelRepository(String langID, IDBConnectionManager connManager, Connection c, boolean isClosed,
-			boolean isCommited) {
-		super(langID, connManager, isCommited);
-		super.isClosed = isClosed;
-		super.connection = c;
-	}
-
 	@Override
-	public Collection<StationModel> getStationsList(int cityID) throws RepositoryException {
+	public Collection<StationModel> getStationsList(int cityID) throws SQLException {
 		Connection c = super.getConnection();
 		Collection<StationModel> stations = null;
 
 		try {
 			String query = "select bus.stations.id as id, value as name from bus.stations "
-					+ "join bus.string_values on string_values.key_id = stations.name_key "
-					+ "where city_id = ? and lang_id = bus.lang_enum(?)";
+					+ "left join bus.string_values on string_values.key_id = stations.name_key "
+					+ "where city_id = ? and (lang_id = bus.lang_enum(?) or lang_id is null)";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, cityID);
 			ps.setString(2, langID);
@@ -81,15 +62,13 @@ public class StationsModelRepository extends ModelRepository implements IStation
 			stations = null;
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 		return stations;
 
 	}
 
 	@Override
-	public Collection<StationModel> getStationsFromBox(int cityID, Point p1, Point p2) throws RepositoryException {
+	public Collection<StationModel> getStationsFromBox(int cityID, Point p1, Point p2) throws SQLException {
 		Connection c = super.getConnection();
 		Collection<StationModel> stations = null;
 		PGbox3d box = new org.postgis.PGbox3d(p1, p2);
@@ -123,14 +102,12 @@ public class StationsModelRepository extends ModelRepository implements IStation
 			stations = null;
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 		return stations;
 	}
 
 	@Override
-	public Collection<StationModel> find(String phrase, int cityID, int limitCount) throws RepositoryException {
+	public Collection<StationModel> find(String phrase, int cityID, int limitCount) throws SQLException {
 		Connection c = super.getConnection();
 		Collection<StationModel> stations = null;
 
@@ -172,8 +149,6 @@ public class StationsModelRepository extends ModelRepository implements IStation
 			stations = null;
 			log.error("can not read database", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
-		} finally {
-			super.closeConnection(c);
 		}
 		return stations;
 	}

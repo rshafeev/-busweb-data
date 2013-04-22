@@ -9,8 +9,7 @@ import org.junit.Test;
 
 import test.com.pgis.data.TestDBConnectionManager;
 
-import com.pgis.bus.data.IDBConnectionManager;
-import com.pgis.bus.data.repositories.model.ICitiesModelRepository;
+import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.repositories.model.impl.CitiesModelRepository;
 import com.pgis.bus.net.models.city.CityModel;
 import com.pgis.bus.net.models.route.RouteTypeModel;
@@ -19,19 +18,21 @@ public class CitiesModelRepositoryTest_local {
 
 	@Test
 	public void getAllTest() throws Exception {
-		IDBConnectionManager dbConnMngr = TestDBConnectionManager.create();
-		ICitiesModelRepository db = new CitiesModelRepository(dbConnMngr, false);
-		Collection<CityModel> cities = db.getAll("c_en");
+		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
+		CitiesModelRepository rep = new CitiesModelRepository("c_en", dbConnMngr);
+		Collection<CityModel> cities = rep.getAll();
 		System.out.print(cities.size());
-		dbConnMngr.free();
+		rep.rollback();
+		rep.dispose();
+		dbConnMngr.dispose();
 	}
 
 	@Test
 	public void getByKeyTest() throws Exception {
 		// test
-		IDBConnectionManager dbConnMngr = TestDBConnectionManager.create();
-		ICitiesModelRepository db = new CitiesModelRepository(dbConnMngr, false);
-		CityModel city = db.getByKey("kharkiv", "c_en");
+		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
+		CitiesModelRepository rep = new CitiesModelRepository("c_en", dbConnMngr);
+		CityModel city = rep.getByKey("kharkiv");
 		assertNotNull(city);
 		assertTrue(city.getId() > 0);
 		assertTrue(city.getName().length() > 0);
@@ -40,19 +41,23 @@ public class CitiesModelRepositoryTest_local {
 		assertTrue(city.getLocation().getLat() > 0);
 		assertTrue(city.getLocation().getLon() > 0);
 		assertTrue(city.getScale() > 0);
-		dbConnMngr.free();
+		rep.rollback();
+		rep.dispose();
+		dbConnMngr.dispose();
 	}
 
 	@Test
 	public void getRouteTypesByCity() throws Exception {
 		// test
-		IDBConnectionManager dbConnMngr = TestDBConnectionManager.create();
-		ICitiesModelRepository db = new CitiesModelRepository(dbConnMngr, false);
-		CityModel city = db.getByKey("kharkiv", "c_en");
-		Collection<RouteTypeModel> routeTypes = db.getRouteTypesByCity(city.getId());
+		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
+		CitiesModelRepository rep = new CitiesModelRepository("c_en", dbConnMngr);
+		CityModel city = rep.getByKey("kharkiv");
+		Collection<RouteTypeModel> routeTypes = rep.getRouteTypesByCity(city.getId());
 		assertNotNull(routeTypes);
 		assertTrue(routeTypes.size() > 0);
-		dbConnMngr.free();
+		rep.rollback();
+		rep.dispose();
+		dbConnMngr.dispose();
 	}
 
 }

@@ -12,9 +12,10 @@ import com.pgis.bus.data.orm.ScheduleGroup;
 import com.pgis.bus.data.orm.ScheduleGroupDay;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.Timetable;
+import com.pgis.bus.net.models.geom.PolyLineModel;
 import com.pgis.bus.net.orm.DayEnum;
 
-public class ImportRouteModel {
+public class JsonRouteObjectModel {
 
 	private String cityKey;
 	private int cityID;
@@ -45,11 +46,11 @@ public class ImportRouteModel {
 
 	private Station directStations[];
 
-	private GsonLineString directRelations[];
+	private PolyLineModel directRelations[];
 
 	private Station reverseStations[];
 
-	private GsonLineString reverseRelations[];
+	private PolyLineModel reverseRelations[];
 
 	public String getCityKey() {
 		return cityKey;
@@ -107,11 +108,11 @@ public class ImportRouteModel {
 		this.directStations = directStations;
 	}
 
-	public GsonLineString[] getDirectRelations() {
+	public PolyLineModel[] getDirectRelations() {
 		return directRelations;
 	}
 
-	public void setDirectRelations(GsonLineString[] directRelations) {
+	public void setDirectRelations(PolyLineModel[] directRelations) {
 		this.directRelations = directRelations;
 	}
 
@@ -123,11 +124,11 @@ public class ImportRouteModel {
 		this.reverseStations = reverseStations;
 	}
 
-	public GsonLineString[] getReverseRelations() {
+	public PolyLineModel[] getReverseRelations() {
 		return reverseRelations;
 	}
 
-	public void setReverseRelations(GsonLineString[] reverseRelations) {
+	public void setReverseRelations(PolyLineModel[] reverseRelations) {
 		this.reverseRelations = reverseRelations;
 	}
 
