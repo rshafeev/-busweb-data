@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.StringValue;
+import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.Repository;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.ICitiesRepository;
@@ -124,7 +125,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 	}
 
 	@Override
-	public City getByName(String langID, String name) throws SQLException {
+	public City getByName(LangEnum langID, String name) throws SQLException {
 		Connection c = super.getConnection();
 
 		try {
@@ -136,7 +137,7 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 					+ "bus.string_keys.id = bus.string_values.key_id WHERE value=? and lang_id=bus.lang_enum(?)";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setString(1, name);
-			ps.setString(2, langID);
+			ps.setString(2, langID.name());
 
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {

@@ -1,12 +1,36 @@
 package com.pgis.bus.data.orm;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
-public class Schedule {
+import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.net.models.route.ScheduleModel;
+import com.pgis.bus.net.models.route.schedule.ScheduleGroupModel;
+
+public class Schedule extends ORMObject {
 
 	private int id;
-	private int directRouteId;
+	private int rway_id;
 	private Collection<ScheduleGroup> scheduleGroups;
+
+	public Schedule() {
+		super();
+	}
+
+	public Schedule(IConnectionManager connManager) {
+		super(connManager);
+	}
+
+	public Schedule(ScheduleModel model) {
+		super();
+		this.setId(model.getId());
+		this.setRouteWayId(model.getRouteWayID());
+
+		scheduleGroups = new ArrayList<ScheduleGroup>();
+		for (ScheduleGroupModel grp : model.getGroups()) {
+			scheduleGroups.add(new ScheduleGroup(grp, model.getId()));
+		}
+	}
 
 	public int getId() {
 		return id;
@@ -21,12 +45,12 @@ public class Schedule {
 		}
 	}
 
-	public int getDirectRouteId() {
-		return directRouteId;
+	public int getRouteWayId() {
+		return rway_id;
 	}
 
-	public void setDirectRouteId(int direct_route_id) {
-		this.directRouteId = direct_route_id;
+	public void setRouteWayId(int rwayId) {
+		this.rway_id = rwayId;
 	}
 
 	public Collection<ScheduleGroup> getScheduleGroups() {
@@ -37,10 +61,33 @@ public class Schedule {
 		this.scheduleGroups = scheduleGroups;
 	}
 
+	public void addScheduleGroup(ScheduleGroup grp) {
+		if (this.scheduleGroups == null)
+			this.scheduleGroups = new ArrayList<ScheduleGroup>();
+		this.scheduleGroups.add(grp);
+	}
+
 	@Override
 	public String toString() {
-		return "Schedule [id=" + id + ", direct_route_id=" + directRouteId
-				+ ", scheduleGroups=" + scheduleGroups + "]";
+		return "Schedule [id=" + id + ", rway_id=" + rway_id + ", scheduleGroups=" + scheduleGroups + "]";
+	}
+
+	public static ScheduleModel createModel(Schedule schedule) {
+		if (schedule == null)
+			return null;
+		ScheduleModel model = new ScheduleModel();
+		Collection<ScheduleGroupModel> groups = new ArrayList<ScheduleGroupModel>();
+		for (ScheduleGroup grp : schedule.getScheduleGroups()) {
+			groups.add(grp.toModel());
+		}
+		model.setId(schedule.getId());
+		model.setRouteWayID(schedule.getRouteWayId());
+		model.setGroups(groups);
+		return model;
+	}
+
+	public ScheduleModel toModel() {
+		return createModel(this);
 	}
 
 }

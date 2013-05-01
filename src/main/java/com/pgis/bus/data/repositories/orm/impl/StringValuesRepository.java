@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.orm.StringValue;
+import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.Repository;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.IStringValuesRepository;
@@ -54,8 +55,8 @@ public class StringValuesRepository extends Repository implements IStringValuesR
 	}
 
 	@Override
-	public HashMap<String, StringValue> getToHashMap(int string_key) throws SQLException {
-		HashMap<String, StringValue> map = new HashMap<String, StringValue>();
+	public HashMap<LangEnum, StringValue> getToHashMap(int string_key) throws SQLException {
+		HashMap<LangEnum, StringValue> map = new HashMap<LangEnum, StringValue>();
 		Collection<StringValue> arr = this.get(string_key);
 		for (StringValue s : arr) {
 			map.put(s.getLangID(), s);
@@ -87,7 +88,7 @@ public class StringValuesRepository extends Repository implements IStringValuesR
 			String query = "INSERT INTO bus.string_values (key_id,lang_id,value) VALUES(?,bus.lang_enum(?),?) RETURNING id;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, value.getKeyID());
-			ps.setString(2, value.getLangID());
+			ps.setString(2, value.getLangID().name());
 			ps.setString(3, value.getValue());
 			ResultSet key = ps.executeQuery();
 

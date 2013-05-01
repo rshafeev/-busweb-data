@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.model.ICitiesModelRepository;
 import com.pgis.bus.net.models.city.CityModel;
@@ -25,7 +26,7 @@ public class CitiesModelRepository extends ModelRepository implements ICitiesMod
 		super(locale, connManager);
 	}
 
-	public CitiesModelRepository(String langID, IConnectionManager connManager) {
+	public CitiesModelRepository(LangEnum langID, IConnectionManager connManager) {
 		super(langID, connManager);
 	}
 

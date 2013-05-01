@@ -1,20 +1,21 @@
 package com.pgis.bus.data.orm;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 import org.postgis.Point;
 
 import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.helpers.GeoObjectsHelper;
 import com.pgis.bus.data.models.factory.geom.PointModelFactory;
-import com.pgis.bus.data.repositories.RepositoryException;
-import com.pgis.bus.data.repositories.orm.IStringValuesRepository;
+import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.orm.impl.StringValuesRepository;
-import com.pgis.bus.net.models.geom.PointModel;
+import com.pgis.bus.net.models.station.StationModel;
 
 public class Station extends ORMObject implements Cloneable {
 	private Integer id;
 	private int city_id;
-	private PointModel location;
+	private Point location;
 	private int name_key;
 	private Collection<StringValue> name; // key - language id, value -
 
@@ -39,23 +40,16 @@ public class Station extends ORMObject implements Cloneable {
 		this.city_id = city_id;
 	}
 
-	public PointModel getLocation() {
+	public Point getLocation() {
 		return location;
 	}
 
-	// name
-
-	// NodeTransports
 	public void setLocation(Point location) {
-		this.location = PointModelFactory.createModel(location);
-	}
-
-	public void setLocation(PointModel location) {
 		this.location = location;
 	}
 
 	public void setLocation(double lat, double lon) {
-		location = new PointModel(lat, lon);
+		location = GeoObjectsHelper.createPoint(lat, lon);
 	}
 
 	public Integer getId() {
@@ -79,13 +73,12 @@ public class Station extends ORMObject implements Cloneable {
 		}
 	}
 
-	public Collection<StringValue> getName() throws RepositoryException {
+	public Collection<StringValue> getName() throws SQLException {
 		if (name == null && super.connManager != null) {
-			IStringValuesRepository rep = null;
+			StringValuesRepository rep = null;
 			try {
 				rep = new StringValuesRepository(super.connManager);
 				this.name = rep.get(this.name_key);
-			} catch (Exception e) {
 			} finally {
 				if (rep != null)
 					rep.dispose();
@@ -98,7 +91,16 @@ public class Station extends ORMObject implements Cloneable {
 		this.name = name;
 	}
 
-	public StringValue getNameByLang(String langID) throws RepositoryException {
+	public String getName(LangEnum langID) throws SQLException {
+		Collection<StringValue> name = this.getName();
+		for (StringValue v : name) {
+			if (v.getLangID().equals(langID) == true)
+				return v.getValue();
+		}
+		return null;
+	}
+
+	public StringValue getValName(LangEnum langID) throws SQLException {
 		Collection<StringValue> name = this.getName();
 		for (StringValue v : name) {
 			if (v.getLangID().equals(langID) == true)
@@ -119,7 +121,7 @@ public class Station extends ORMObject implements Cloneable {
 			this.name = from.name;
 
 		if (from.location != null) {
-			this.location = new PointModel(from.location);
+			this.location = GeoObjectsHelper.createPoint(from.location.x, from.location.y);
 		}
 	}
 
@@ -139,6 +141,19 @@ public class Station extends ORMObject implements Cloneable {
 	public String toString() {
 		return "Station [id=" + id + ", city_id=" + city_id + ", location=" + location + ", name_key=" + name_key
 				+ ", names=" + name + "]";
+	}
+
+	public static StationModel createModel(Station st, LangEnum langID) throws SQLException {
+		StationModel model = new StationModel();
+		model.setId(st.id);
+		model.setLocation(PointModelFactory.createModel(st.location));
+		model.setName(st.getName(langID));
+		return model;
+	}
+
+	public StationModel toModel(LangEnum langID) throws SQLException {
+		return createModel(this, langID);
+
 	}
 
 }

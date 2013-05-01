@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.models.factory.geom.PointModelFactory;
+import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.model.IStationsModelRepository;
 import com.pgis.bus.net.models.geom.PointModel;
@@ -29,7 +30,7 @@ public class StationsModelRepository extends ModelRepository implements IStation
 		super(locale, connManager);
 	}
 
-	public StationsModelRepository(String langID, IConnectionManager connManager) {
+	public StationsModelRepository(LangEnum langID, IConnectionManager connManager) {
 		super(langID, connManager);
 	}
 

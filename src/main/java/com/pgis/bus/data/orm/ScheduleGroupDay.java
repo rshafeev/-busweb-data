@@ -1,22 +1,27 @@
 package com.pgis.bus.data.orm;
 
-import com.pgis.bus.net.orm.DayEnum;
+import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.orm.type.DayEnum;
 
-
-public class ScheduleGroupDay {
+public class ScheduleGroupDay extends ORMObject {
 
 	private int id;
 	private int scheduleGroupID;
 	private DayEnum day_id;
 
-	public ScheduleGroupDay(){
-		
+	public ScheduleGroupDay() {
+		super();
 	}
-	public ScheduleGroupDay(DayEnum day){
-		this.day_id = day;
-		this.scheduleGroupID = -1;
-		this.id = -1;
+
+	public ScheduleGroupDay(DayEnum day_id) {
+		super();
+		this.day_id = day_id;
 	}
+
+	public ScheduleGroupDay(IConnectionManager connManager) {
+		super(connManager);
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -43,8 +48,7 @@ public class ScheduleGroupDay {
 
 	@Override
 	public String toString() {
-		return "ScheduleGroupDay [id=" + id + ", schedule_group_id="
-				+ scheduleGroupID + ", day_id=" + day_id + "]";
+		return "ScheduleGroupDay [id=" + id + ", schedule_group_id=" + scheduleGroupID + ", day_id=" + day_id + "]";
 	}
 
 }

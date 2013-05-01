@@ -47,7 +47,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 				String routeTypeID = key.getString("route_type_id");
 				int number_key = key.getInt("number_key");
 				double cost = key.getDouble("cost");
-				route = new Route();
+				route = new Route(this.connManager);
 				route.setId(id);
 				route.setCost(cost);
 				route.setNumberKey(number_key);
@@ -77,7 +77,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 			ResultSet key = ps.executeQuery();
 			if (key.next()) {
 				int id = key.getInt("id");
-				routeWay = new RouteWay();
+				routeWay = new RouteWay(this.connManager);
 				routeWay.setId(id);
 				routeWay.setDirect(directType);
 				routeWay.setRouteID(routeID);
@@ -166,7 +166,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		ps.setInt(1, r.getRouteWayID());
 		ps.setInt(2, r.getStationAId());
 		ps.setInt(3, r.getStationBId());
-		ps.setInt(4, r.getPosition_index());
+		ps.setInt(4, r.getPositionIndex());
 
 		PGgeometry geom = null;
 		if (r.getGeom() != null) {
@@ -339,9 +339,9 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 				relation.setRouteWayID(routeWayID);
 				relation.setStationAId(station_a_id);
 				relation.setStationBId(station_b_id);
-				relation.setPosition_index(position_index);
+				relation.setPositionIndex(position_index);
 				relation.setDistance(distance);
-				relation.setEv_time(ev_time);
+				relation.setMoveTime(ev_time);
 				if (geom != null)
 					relation.setGeom((LineString) geom.getGeometry());
 				relations.add(relation);

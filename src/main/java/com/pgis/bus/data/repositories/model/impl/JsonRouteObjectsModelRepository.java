@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.models.JsonRouteObjectModel;
 import com.pgis.bus.data.models.JsonRouteObjectsListModel;
+import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.IRepository;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.model.IJsonRouteObjectsModelRepository;
@@ -29,7 +30,7 @@ public class JsonRouteObjectsModelRepository extends ModelRepository implements 
 		super(locale, connManager);
 	}
 
-	public JsonRouteObjectsModelRepository(String langID, ServiceConnectionManager connManager) {
+	public JsonRouteObjectsModelRepository(LangEnum langID, ServiceConnectionManager connManager) {
 		super(langID, connManager);
 	}
 

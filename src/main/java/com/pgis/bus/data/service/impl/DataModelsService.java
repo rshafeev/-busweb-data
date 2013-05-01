@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.Locale;
 
 import com.pgis.bus.data.IConnectionManager;
-import com.pgis.bus.data.helpers.LocaleHelper;
+import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.model.ICitiesModelRepository;
 import com.pgis.bus.data.repositories.model.IJsonRouteObjectsModelRepository;
 import com.pgis.bus.data.repositories.model.IRoutesModelRepository;
@@ -16,7 +16,7 @@ import com.pgis.bus.data.repositories.model.impl.StationsModelRepository;
 import com.pgis.bus.data.service.IDataModelsService;
 
 public class DataModelsService extends DataService implements IDataModelsService {
-	protected String langID = null;
+	protected LangEnum langID = null;
 	protected CitiesModelRepository citiesRepotitory = null;
 	protected StationsModelRepository stationsRepository = null;
 	protected RoutesModelRepository routesRepository = null;
@@ -27,7 +27,7 @@ public class DataModelsService extends DataService implements IDataModelsService
 		this.setLocale(locale);
 	}
 
-	public DataModelsService(String langID, IConnectionManager rootConnectionManager) throws SQLException {
+	public DataModelsService(LangEnum langID, IConnectionManager rootConnectionManager) throws SQLException {
 		super(rootConnectionManager);
 		this.setLocale(langID);
 	}
@@ -70,13 +70,11 @@ public class DataModelsService extends DataService implements IDataModelsService
 
 	@Override
 	public void setLocale(Locale locale) {
-		String langID = LocaleHelper.getDataBaseLanguage(locale);
-		;
-		this.setLocale(langID);
+		this.setLocale(LangEnum.valueOf(locale));
 	}
 
 	@Override
-	public void setLocale(String langID) {
+	public void setLocale(LangEnum langID) {
 		this.langID = langID;
 
 		if (routesRepository != null) {

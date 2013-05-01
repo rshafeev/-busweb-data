@@ -28,4 +28,6 @@ public interface IRepositoryConnection {
 	 *            подключений
 	 */
 	void useOnlyExternConnection(boolean val);
+
+	void dispose();
 }

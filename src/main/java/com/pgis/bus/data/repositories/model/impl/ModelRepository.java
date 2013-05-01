@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.helpers.LocaleHelper;
+import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.Repository;
 
 public class ModelRepository extends Repository {
@@ -16,9 +17,9 @@ public class ModelRepository extends Repository {
 		this.setLocale(locale);
 	}
 
-	public ModelRepository(String langID, IConnectionManager connManager) {
+	public ModelRepository(LangEnum langID, IConnectionManager connManager) {
 		super(connManager);
-		this.langID = langID;
+		this.langID = langID.name();
 	}
 
 	public ModelRepository(IConnectionManager connManager) {
@@ -29,8 +30,8 @@ public class ModelRepository extends Repository {
 		return langID;
 	}
 
-	public void setLocale(String langID) {
-		this.langID = langID;
+	public void setLocale(LangEnum langID) {
+		this.langID = langID.name();
 	}
 
 	public void setLocale(Locale locale) {

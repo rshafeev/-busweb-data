@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
-import com.pgis.bus.data.geo.GeoObjectsFactory;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.repositories.Repository;
@@ -35,7 +34,7 @@ public class StationsRepository extends Repository implements IStationsRepositor
 
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, station.getCityID());
-			ps.setObject(2, new PGgeometry(GeoObjectsFactory.createPoint(station.getLocation())));
+			ps.setObject(2, new PGgeometry(station.getLocation()));
 			ResultSet key = ps.executeQuery();
 
 			if (key.next()) {
@@ -69,7 +68,7 @@ public class StationsRepository extends Repository implements IStationsRepositor
 			String query = "UPDATE  bus.stations SET city_id=?, location=? WHERE id=?; ";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, station.getCityID());
-			ps.setObject(2, new PGgeometry(GeoObjectsFactory.createPoint(station.getLocation())));
+			ps.setObject(2, new PGgeometry(station.getLocation()));
 			ps.setInt(3, station.getId());
 			ps.execute();
 
@@ -145,7 +144,7 @@ public class StationsRepository extends Repository implements IStationsRepositor
 
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setObject(1, new PGgeometry(location));
-			ps.setString(2, name.getLangID());
+			ps.setString(2, name.getLangID().name());
 			ps.setString(3, name.getValue());
 			ResultSet key = ps.executeQuery();
 

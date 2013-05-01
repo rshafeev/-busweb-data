@@ -8,6 +8,7 @@ import com.pgis.bus.data.repositories.orm.IJsonRouteObjectsRepository;
 import com.pgis.bus.data.repositories.orm.ILanguagesRepository;
 import com.pgis.bus.data.repositories.orm.IPathsRepository;
 import com.pgis.bus.data.repositories.orm.IRoutesRepository;
+import com.pgis.bus.data.repositories.orm.IScheduleRepository;
 import com.pgis.bus.data.repositories.orm.IStationsRepository;
 import com.pgis.bus.data.repositories.orm.IUsersRepository;
 import com.pgis.bus.data.repositories.orm.impl.CitiesRepository;
@@ -15,6 +16,7 @@ import com.pgis.bus.data.repositories.orm.impl.JsonRouteObjectsRepository;
 import com.pgis.bus.data.repositories.orm.impl.LanguagesRepository;
 import com.pgis.bus.data.repositories.orm.impl.PathsRepository;
 import com.pgis.bus.data.repositories.orm.impl.RoutesRepository;
+import com.pgis.bus.data.repositories.orm.impl.ScheduleRepository;
 import com.pgis.bus.data.repositories.orm.impl.StationsRepository;
 import com.pgis.bus.data.repositories.orm.impl.UsersRepository;
 import com.pgis.bus.data.service.IDataBaseService;
@@ -28,6 +30,7 @@ public class DataBaseService extends DataService implements IDataBaseService {
 	protected PathsRepository pathsRepository = null;
 	protected RoutesRepository routesRepository = null;
 	protected JsonRouteObjectsRepository objectsRepository = null;
+	protected ScheduleRepository scheduleRepository = null;
 
 	public DataBaseService(IConnectionManager rootConnectionManager) throws SQLException {
 		super(rootConnectionManager);
@@ -100,6 +103,16 @@ public class DataBaseService extends DataService implements IDataBaseService {
 
 		}
 		return objectsRepository;
+	}
+
+	@Override
+	public IScheduleRepository Schedule() {
+		if (scheduleRepository == null) {
+			scheduleRepository = new ScheduleRepository(connectionManager);
+			scheduleRepository.useOnlyExternConnection(true);
+
+		}
+		return scheduleRepository;
 	}
 
 }

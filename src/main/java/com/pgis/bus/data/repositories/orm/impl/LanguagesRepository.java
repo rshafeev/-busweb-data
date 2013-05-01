@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.orm.Language;
+import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.Repository;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.ILanguagesRepository;
@@ -35,7 +36,7 @@ public class LanguagesRepository extends Repository implements ILanguagesReposit
 
 			while (key.next()) {
 				Language lang = new Language();
-				lang.id = key.getString("id");
+				lang.id = LangEnum.valueOf(key.getString("id"));
 				lang.name = key.getString("name");
 				langs.add(lang);
 			}

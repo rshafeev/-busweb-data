@@ -1,14 +1,22 @@
 package com.pgis.bus.data.orm;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.postgis.LineString;
 import org.postgresql.util.PGInterval;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
-import com.pgis.bus.data.repositories.RepositoryException;
-import com.pgis.bus.data.repositories.orm.IStationsRepository;
+import com.pgis.bus.data.models.factory.TimeIntervalModelFactory;
+import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.orm.impl.StationsRepository;
+import com.pgis.bus.net.models.route.RouteRelationModel;
 
 public class RouteRelation extends ORMObject {
+	private static final Logger log = LoggerFactory.getLogger(RouteRelation.class);
 
 	private int id;
 	private int rway_id;
@@ -61,13 +69,12 @@ public class RouteRelation extends ORMObject {
 		this.rway_id = rway_id;
 	}
 
-	public Station getStationA() throws RepositoryException {
+	public Station getStationA() throws SQLException {
 		if (stationA == null && super.connManager != null) {
-			IStationsRepository rep = null;
+			StationsRepository rep = null;
 			try {
 				rep = new StationsRepository(super.connManager);
 				this.stationA = rep.get(station_a_id);
-			} catch (Exception e) {
 			} finally {
 				if (rep != null)
 					rep.dispose();
@@ -76,13 +83,12 @@ public class RouteRelation extends ORMObject {
 		return stationA;
 	}
 
-	public Station getStationB() throws RepositoryException {
+	public Station getStationB() throws SQLException {
 		if (stationB == null && super.connManager != null) {
-			IStationsRepository rep = null;
+			StationsRepository rep = null;
 			try {
 				rep = new StationsRepository(super.connManager);
 				this.stationB = rep.get(station_b_id);
-			} catch (Exception e) {
 			} finally {
 				if (rep != null)
 					rep.dispose();
@@ -103,11 +109,11 @@ public class RouteRelation extends ORMObject {
 		this.stationB = stationB;
 	}
 
-	public int getPosition_index() {
+	public int getPositionIndex() {
 		return position_index;
 	}
 
-	public void setPosition_index(int position_index) {
+	public void setPositionIndex(int position_index) {
 		this.position_index = position_index;
 	}
 
@@ -119,11 +125,11 @@ public class RouteRelation extends ORMObject {
 		this.distance = distance;
 	}
 
-	public PGInterval getEv_time() {
+	public PGInterval getMoveTime() {
 		return ev_time;
 	}
 
-	public void setEv_time(PGInterval ev_time) {
+	public void setMoveTime(PGInterval ev_time) {
 		this.ev_time = ev_time;
 	}
 
@@ -140,6 +146,28 @@ public class RouteRelation extends ORMObject {
 		return "RouteRelation [id=" + id + ", rway_id=" + rway_id + ", station_a_id=" + station_a_id
 				+ ", station_b_id=" + station_b_id + ", position_index=" + position_index + ", distance=" + distance
 				+ ", ev_time=" + ev_time + ", geom=" + geom + ", stationB=" + stationB + "]";
+	}
+
+	static public RouteRelationModel createModel(RouteRelation r, LangEnum langID) throws SQLException {
+		RouteRelationModel model = new RouteRelationModel();
+		model.setDistance(r.getDistance());
+		model.setId(r.getId());
+		model.setMoveTime(TimeIntervalModelFactory.createModel(r.getMoveTime()));
+		model.setCurrStation(r.getStationB().toModel(langID));
+		return model;
+	}
+
+	static public Collection<RouteRelationModel> createModels(Collection<RouteRelation> arr, LangEnum langID)
+			throws SQLException {
+		Collection<RouteRelationModel> models = new ArrayList<RouteRelationModel>();
+		for (RouteRelation r : arr) {
+			models.add(createModel(r, langID));
+		}
+		return models;
+	}
+
+	RouteRelationModel toModel(LangEnum langID) throws Exception {
+		return createModel(this, langID);
 	}
 
 }

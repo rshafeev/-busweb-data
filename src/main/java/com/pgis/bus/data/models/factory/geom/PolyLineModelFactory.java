@@ -18,11 +18,11 @@ public class PolyLineModelFactory {
 		return new PolyLineModel(points);
 	}
 
-	public static PolyLineModel createModel(Geometry geometry) throws Exception {
+	public static PolyLineModel createModel(Geometry geometry) {
 		if (geometry instanceof LineString) {
 			return createModel((LineString) geometry);
 		} else
-			throw new Exception("can not convert Geometry object to  LineString type.");
+			throw new ClassCastException("can not convert Geometry object to  LineString type.");
 	}
 
 }

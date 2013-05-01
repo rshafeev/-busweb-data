@@ -8,19 +8,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.postgis.PGgeometry;
-import org.postgis.Point;
 import org.postgresql.util.PGInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
-import com.pgis.bus.data.helpers.DateTimeHelper;
+import com.pgis.bus.data.helpers.GeoObjectsHelper;
 import com.pgis.bus.data.orm.type.Path_t;
-import com.pgis.bus.data.params.DefaultParameters;
+import com.pgis.bus.data.params.FindPathsParams;
 import com.pgis.bus.data.repositories.Repository;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.IPathsRepository;
-import com.pgis.bus.net.request.FindPathsRequest;
 
 public class PathsRepository extends Repository implements IPathsRepository {
 	private static final Logger log = LoggerFactory.getLogger(PathsRepository.class);
@@ -30,7 +28,7 @@ public class PathsRepository extends Repository implements IPathsRepository {
 	}
 
 	@Override
-	public Collection<Path_t> findShortestPaths(FindPathsRequest options) throws SQLException {
+	public Collection<Path_t> findShortestPaths(FindPathsParams params) throws SQLException {
 		Connection c = super.getConnection();
 		Collection<Path_t> paths = null;
 		try {
@@ -46,24 +44,18 @@ public class PathsRepository extends Repository implements IPathsRepository {
 					+ " bus.alg_strategy(?)," /* alg_strategy */
 					+ " bus.lang_enum(?)) ORDER BY path_id,index;";
 
-			Point p1 = new Point(options.getP1().getLat(), options.getP1().getLon());
-			p1.setSrid(DefaultParameters.GEOMETRY_SRID);
-			Point p2 = new Point(options.getP2().getLat(), options.getP2().getLon());
-			p2.setSrid(DefaultParameters.GEOMETRY_SRID);
-
 			PreparedStatement ps = c.prepareStatement(query);
-			ps.setInt(1, options.getCityID());
-
-			ps.setObject(2, new PGgeometry(p1));
-			ps.setObject(3, new PGgeometry(p2));
-			ps.setString(4, options.getOutTime().getDayID().name());
-			ps.setTime(5, DateTimeHelper.getTimeFromSeconds(options.getOutTime().getTimeStartSecs()));
-			ps.setDouble(6, options.getMaxDistance());
-			ps.setArray(7, c.createArrayOf("text", options.getRouteTypeArr()));
-			ps.setBoolean(8, options.isTransitions());
-			ps.setArray(9, c.createArrayOf("float", options.getDiscountArr()));
-			ps.setString(10, options.getAlgStrategy().name());
-			ps.setString(11, options.getLangID());
+			ps.setInt(1, params.getCityID());
+			ps.setObject(2, new PGgeometry(GeoObjectsHelper.createPoint(params.getP1())));
+			ps.setObject(3, new PGgeometry(GeoObjectsHelper.createPoint(params.getP2())));
+			ps.setString(4, params.getDayID().name());
+			ps.setTime(5, params.getTimeStart());
+			ps.setDouble(6, params.getMaxDistance());
+			ps.setArray(7, c.createArrayOf("text", params.getRouteTypes()));
+			ps.setBoolean(8, params.isTransitions());
+			ps.setArray(9, c.createArrayOf("float", params.getDiscounts()));
+			ps.setString(10, params.getAlgStrategy().name());
+			ps.setString(11, params.getLangID().name());
 
 			ResultSet key = ps.executeQuery();
 			paths = new ArrayList<Path_t>();

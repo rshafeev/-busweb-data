@@ -17,10 +17,10 @@ import com.pgis.bus.data.orm.Schedule;
 import com.pgis.bus.data.orm.ScheduleGroup;
 import com.pgis.bus.data.orm.ScheduleGroupDay;
 import com.pgis.bus.data.orm.Timetable;
+import com.pgis.bus.data.orm.type.DayEnum;
 import com.pgis.bus.data.repositories.Repository;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.IScheduleRepository;
-import com.pgis.bus.net.orm.DayEnum;
 
 public class ScheduleRepository extends Repository implements IScheduleRepository {
 	private static final Logger log = LoggerFactory.getLogger(ScheduleRepository.class);
@@ -41,8 +41,8 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 			ResultSet key = ps.executeQuery();
 			if (key.next()) {
 				int routeWayID = key.getInt("rway_id");
-				schedule = new Schedule();
-				schedule.setDirectRouteId(routeWayID);
+				schedule = new Schedule(this.connManager);
+				schedule.setRouteWayId(routeWayID);
 				schedule.setId(id);
 				schedule.setScheduleGroups(this.getScheduleGroups(schedule.getId()));
 			}
@@ -66,8 +66,8 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 			ResultSet key = ps.executeQuery();
 			if (key.next()) {
 				int id = key.getInt("id");
-				schedule = new Schedule();
-				schedule.setDirectRouteId(routeWayID);
+				schedule = new Schedule(this.connManager);
+				schedule.setRouteWayId(routeWayID);
 				schedule.setId(id);
 				schedule.setScheduleGroups(this.getScheduleGroups(schedule.getId()));
 			}
@@ -95,13 +95,12 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 				Time time_A = (Time) key.getObject("time_A");
 				Time time_B = (Time) key.getObject("time_B");
 				PGInterval frequency = (PGInterval) key.getObject("frequency");
-
 				Timetable timetable = new Timetable();
 				timetable.setId(id);
-				timetable.setSchedule_group_id(scheduleGroupId);
-				timetable.setTime_A(time_A);
-				timetable.setTime_B(time_B);
-				timetable.setFrequancy(frequency);
+				timetable.setScheduleGroupID(scheduleGroupId);
+				timetable.setTimeA(time_A);
+				timetable.setTimeB(time_B);
+				timetable.setFrequency(frequency);
 				timeTables.add(timetable);
 			}
 		} catch (Exception e) {
@@ -171,7 +170,7 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 		Connection c = super.getConnection();
 		String query = "INSERT INTO bus.schedule (rway_id) " + "VALUES(?) RETURNING id;";
 		PreparedStatement ps = c.prepareStatement(query);
-		ps.setInt(1, schedule.getDirectRouteId());
+		ps.setInt(1, schedule.getRouteWayId());
 		ResultSet key = ps.executeQuery();
 		if (key.next()) {
 			int id = key.getInt("id");
@@ -231,10 +230,10 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 				+ "VALUES(?,?,?,?) RETURNING id;";
 		PreparedStatement ps = c.prepareStatement(query);
 
-		ps.setInt(1, t.getSchedule_group_id());
-		ps.setTime(2, t.getTimeAObj());
-		ps.setTime(3, t.getTimeBObj());
-		ps.setObject(4, t.getFrequancyObj());
+		ps.setInt(1, t.getScheduleGroupID());
+		ps.setTime(2, t.getTimeA());
+		ps.setTime(3, t.getTimeB());
+		ps.setObject(4, t.getFrequency());
 		ResultSet key = ps.executeQuery();
 		if (key.next()) {
 			int id = key.getInt("id");

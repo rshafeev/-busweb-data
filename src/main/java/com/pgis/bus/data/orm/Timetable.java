@@ -1,27 +1,51 @@
 package com.pgis.bus.data.orm;
 
 import java.sql.Time;
-import org.postgresql.util.PGInterval;
-import com.pgis.bus.data.helpers.DateTimeHelper;
+import java.util.ArrayList;
+import java.util.Collection;
 
-public class Timetable {
+import org.postgresql.util.PGInterval;
+
+import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.helpers.PGIntervalHelper;
+import com.pgis.bus.data.helpers.TimeHelper;
+import com.pgis.bus.net.models.route.schedule.TimetableModel;
+
+public class Timetable extends ORMObject {
 	private int id;
 	private int schedule_group_id;
 
 	/**
 	 * Стартовое время, сек
 	 */
-	private int time_A;
+	private Time timeA;
 
 	/**
 	 * Конечное время, сек
 	 */
-	private int time_B;
+	private Time timeB;
 
 	/**
 	 * Интервал между выездами передвижных средств, сек
 	 */
-	private int frequency;
+	private PGInterval frequency;
+
+	public Timetable() {
+		super();
+	}
+
+	public Timetable(IConnectionManager connManager) {
+		super(connManager);
+	}
+
+	public Timetable(TimetableModel model, int scheduleGroupID) {
+		super();
+		this.setScheduleGroupID(scheduleGroupID);
+		this.setId(-1);
+		this.setTimeA(TimeHelper.fromSeconds(model.getTimeA()));
+		this.setTimeB(TimeHelper.fromSeconds(model.getTimeB()));
+		this.setFrequency(PGIntervalHelper.fromSeconds(model.getFreq()));
+	}
 
 	public int getId() {
 		return id;
@@ -31,62 +55,59 @@ public class Timetable {
 		this.id = id;
 	}
 
-	public int getSchedule_group_id() {
+	public int getScheduleGroupID() {
 		return schedule_group_id;
 	}
 
-	public void setSchedule_group_id(int schedule_group_id) {
-		this.schedule_group_id = schedule_group_id;
+	public void setScheduleGroupID(int scheduleGroupID) {
+		this.schedule_group_id = scheduleGroupID;
 	}
 
-	public int getTime_A() {
-		return time_A;
+	public Time getTimeA() {
+		return timeA;
 	}
 
-	public void setTime_A(int time_A) {
-		this.time_A = time_A;
+	public void setTimeA(Time timeA) {
+		this.timeA = timeA;
 	}
 
-	public int getTime_B() {
-		return time_B;
+	public Time getTimeB() {
+		return timeB;
 	}
 
-	public Time getTimeAObj() {
-		return DateTimeHelper.getTimeFromSeconds(this.time_A);
+	public void setTimeB(Time timeB) {
+		this.timeB = timeB;
 	}
 
-	public void setTime_B(int time_B) {
-		this.time_B = time_B;
-	}
-
-	public Time getTimeBObj() {
-		
-		return DateTimeHelper.getTimeFromSeconds(this.time_B);
-	}
-
-	public int getFrequancy() {
+	public PGInterval getFrequency() {
 		return frequency;
 	}
 
-	public PGInterval getFrequancyObj() {
-
-		return DateTimeHelper.getIntervalFromSeconds(this.frequency);
+	public void setFrequency(PGInterval frequency) {
+		this.frequency = frequency;
 	}
 
-	public void setFrequancy(int frequancy) {
-		this.frequency = frequancy;
+	public static TimetableModel createModel(Timetable timetable) {
+		if (timetable == null)
+			return null;
+		TimetableModel model = new TimetableModel();
+		model.setTimeA(TimeHelper.toSeconds(timetable.getTimeA()));
+		model.setTimeB(TimeHelper.toSeconds(timetable.getTimeB()));
+		model.setFreq(PGIntervalHelper.toSeconds(timetable.getFrequency()));
+		return model;
 	}
 
-	public void setTime_A(Time time_A) {
-		this.time_A = DateTimeHelper.toSeconds(time_A);
+	public static Collection<TimetableModel> createModels(Collection<Timetable> timetable) {
+		if (timetable == null)
+			return null;
+		Collection<TimetableModel> models = new ArrayList<TimetableModel>();
+		for (Timetable t : timetable) {
+			models.add(createModel(t));
+		}
+		return models;
 	}
 
-	public void setTime_B(Time time_B) {
-		this.time_B = DateTimeHelper.toSeconds(time_B);
-	}
-
-	public void setFrequancy(PGInterval frequency) {
-		this.frequency = DateTimeHelper.toSeconds(frequency);
-
+	public TimetableModel toModel() {
+		return createModel(this);
 	}
 }

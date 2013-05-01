@@ -2,6 +2,7 @@ package com.pgis.bus.data.service;
 
 import java.util.Locale;
 
+import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.model.ICitiesModelRepository;
 import com.pgis.bus.data.repositories.model.IJsonRouteObjectsModelRepository;
 import com.pgis.bus.data.repositories.model.IRoutesModelRepository;
@@ -19,6 +20,6 @@ public interface IDataModelsService extends IDataService {
 
 	void setLocale(Locale locale);
 
-	void setLocale(String langID);
+	void setLocale(LangEnum langID);
 
 }

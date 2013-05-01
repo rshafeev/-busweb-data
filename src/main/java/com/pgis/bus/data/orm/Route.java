@@ -1,15 +1,20 @@
 package com.pgis.bus.data.orm;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.pgis.bus.data.IConnectionManager;
-import com.pgis.bus.data.repositories.RepositoryException;
-import com.pgis.bus.data.repositories.orm.IRoutesRepository;
-import com.pgis.bus.data.repositories.orm.IStringValuesRepository;
+import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.orm.impl.RoutesRepository;
 import com.pgis.bus.data.repositories.orm.impl.StringValuesRepository;
+import com.pgis.bus.net.models.route.RouteModel;
 
 public class Route extends ORMObject {
+	private static final Logger log = LoggerFactory.getLogger(Route.class);
+
 	private int id;
 	private int city_id;
 	private double cost;
@@ -42,13 +47,12 @@ public class Route extends ORMObject {
 		}
 	}
 
-	public Collection<StringValue> getNumber() throws RepositoryException {
+	public Collection<StringValue> getNumber() throws SQLException {
 		if (number == null && super.connManager != null) {
-			IStringValuesRepository rep = null;
+			StringValuesRepository rep = null;
 			try {
 				rep = new StringValuesRepository(super.connManager);
 				this.number = rep.get(this.number_key);
-			} catch (Exception e) {
 			} finally {
 				if (rep != null)
 					rep.dispose();
@@ -57,14 +61,24 @@ public class Route extends ORMObject {
 		return number;
 	}
 
-	public String getNumber(String langID) throws RepositoryException {
+	public String getNumber(LangEnum langID) throws SQLException {
 		this.number = this.getNumber();
 		for (StringValue s : this.number) {
-			if (s.getLangID().equals(langID) == true) {
+			if (s.getLangID().equals(langID)) {
 				return s.getValue();
 			}
 		}
-		return "";
+		return null;
+	}
+
+	public StringValue getValNumber(LangEnum langID) throws SQLException {
+		this.number = this.getNumber();
+		for (StringValue s : this.number) {
+			if (s.getLangID().equals(langID)) {
+				return s;
+			}
+		}
+		return null;
 	}
 
 	public int getCityID() {
@@ -103,13 +117,12 @@ public class Route extends ORMObject {
 		this.number = number;
 	}
 
-	public RouteWay getDirectRouteWay() throws RepositoryException {
+	public RouteWay getDirectRouteWay() throws SQLException {
 		if (this.directRouteWay == null && super.connManager != null) {
-			IRoutesRepository rep = null;
+			RoutesRepository rep = null;
 			try {
 				rep = new RoutesRepository(super.connManager);
-				this.directRouteWay = rep.getRouteWay(this.id, false);
-			} catch (Exception e) {
+				this.directRouteWay = rep.getRouteWay(this.id, true);
 			} finally {
 				if (rep != null)
 					rep.dispose();
@@ -122,13 +135,12 @@ public class Route extends ORMObject {
 		this.directRouteWay = directRouteWay;
 	}
 
-	public RouteWay getReverseRouteWay() throws RepositoryException {
+	public RouteWay getReverseRouteWay() throws SQLException {
 		if (this.reverseRouteWay == null && super.connManager != null) {
-			IRoutesRepository rep = null;
+			RoutesRepository rep = null;
 			try {
 				rep = new RoutesRepository(super.connManager);
 				this.reverseRouteWay = rep.getRouteWay(this.id, false);
-			} catch (Exception e) {
 			} finally {
 				if (rep != null)
 					rep.dispose();
@@ -139,6 +151,28 @@ public class Route extends ORMObject {
 
 	public void setReverseRouteWay(RouteWay reverseRouteWay) {
 		this.reverseRouteWay = reverseRouteWay;
+	}
+
+	public static RouteModel createModel(Route route, LangEnum langID) throws SQLException {
+		RouteModel model = new RouteModel();
+		model.setCityID(route.getCityID());
+		model.setNumber(route.getNumber(langID));
+		model.setId(route.getId());
+		model.setRouteTypeID(route.getRouteTypeID());
+		model.setCost(route.getCost());
+		model.setId(route.getId());
+		return model;
+	}
+
+	public RouteModel toModel(LangEnum langID) throws SQLException {
+		return createModel(this, langID);
+	}
+
+	@Override
+	public String toString() {
+		return "Route [id=" + id + ", city_id=" + city_id + ", cost=" + cost + ", route_type_id=" + route_type_id
+				+ ", number_key=" + number_key + ", number=" + number + ", directRouteWay=" + directRouteWay
+				+ ", reverseRouteWay=" + reverseRouteWay + "]";
 	}
 
 }

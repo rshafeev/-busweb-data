@@ -1,13 +1,20 @@
 package com.pgis.bus.data.orm;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.pgis.bus.data.IConnectionManager;
-import com.pgis.bus.data.repositories.RepositoryException;
-import com.pgis.bus.data.repositories.orm.IStringValuesRepository;
+import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.orm.impl.StringValuesRepository;
+import com.pgis.bus.net.models.city.CityModel;
+import com.pgis.bus.net.models.geom.PointModel;
 
 public class City extends ORMObject implements Cloneable {
+	private static final Logger log = LoggerFactory.getLogger(City.class);
+
 	private Integer id;
 	private String key;
 	private double lat;
@@ -15,7 +22,7 @@ public class City extends ORMObject implements Cloneable {
 	private int scale;
 	private boolean isShow;
 	private int name_key;
-	private HashMap<String, StringValue> name;
+	private HashMap<LangEnum, StringValue> name;
 
 	public City() {
 		super();
@@ -25,7 +32,7 @@ public class City extends ORMObject implements Cloneable {
 		super(connManager);
 	}
 
-	public String getNameByLang(String langID) throws RepositoryException {
+	public String getName(LangEnum langID) throws SQLException {
 		if (this.name == null) {
 			this.name = getName();
 		}
@@ -96,13 +103,12 @@ public class City extends ORMObject implements Cloneable {
 		}
 	}
 
-	public HashMap<String, StringValue> getName() throws RepositoryException {
+	public HashMap<LangEnum, StringValue> getName() throws SQLException {
 		if (name == null && super.connManager != null) {
-			IStringValuesRepository rep = null;
+			StringValuesRepository rep = null;
 			try {
 				rep = new StringValuesRepository(super.connManager);
 				this.name = rep.getToHashMap(this.name_key);
-			} catch (Exception e) {
 			} finally {
 				if (rep != null)
 					rep.dispose();
@@ -113,15 +119,15 @@ public class City extends ORMObject implements Cloneable {
 		return name;
 	}
 
-	public void setName(HashMap<String, StringValue> name) {
+	public void setName(HashMap<LangEnum, StringValue> name) {
 		this.name = name;
 	}
 
 	public City clone() {
+		City city = null;
 		try {
-			City city;
 			city = (City) super.clone();
-			city.name = new HashMap<String, StringValue>(this.name);
+			city.name = new HashMap<LangEnum, StringValue>(this.name);
 			city.id = this.id;
 			city.lat = this.lat;
 			city.lon = this.lon;
@@ -129,10 +135,29 @@ public class City extends ORMObject implements Cloneable {
 			city.name_key = this.name_key;
 			city.isShow = this.isShow;
 			city.key = this.key;
-			return city;
 		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
+			log.error("Clone city error.", e);
 		}
-		return null;
+		return city;
+	}
+
+	@Override
+	public String toString() {
+		return "City [id=" + id + ", key=" + key + ", lat=" + lat + ", lon=" + lon + ", scale=" + scale + ", isShow="
+				+ isShow + ", name_key=" + name_key + ", name=" + name + "]";
+	}
+
+	public static CityModel createModel(City city, LangEnum langID) throws SQLException {
+		CityModel cityModel = new CityModel();
+		cityModel.setId(city.getId());
+		cityModel.setLocation(new PointModel(city.getLat(), city.getLon()));
+		cityModel.setScale(city.getScale());
+		cityModel.setKey(city.getKey());
+		cityModel.setName(city.getName(langID));
+		return cityModel;
+	}
+
+	public CityModel toModel(LangEnum langID) throws SQLException {
+		return createModel(this, langID);
 	}
 }

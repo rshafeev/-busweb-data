@@ -1,31 +1,29 @@
 package com.pgis.bus.data.orm;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import com.pgis.bus.net.models.StringValueModel;
+import com.pgis.bus.data.orm.type.LangEnum;
 
 public class StringValue {
 	private Integer id;
 	private Integer key_id;
-	private String lang_id;
+	private LangEnum lang_id;
 	private String value;
 
 	public StringValue() {
 
 	}
 
-	public StringValue(String lang_id, String value) {
+	public StringValue(LangEnum lang_id, String value) {
 		this.lang_id = lang_id;
 		this.value = value;
 
 	}
 
-	public StringValue(int keyID, StringValueModel v) {
-		this.key_id = keyID;
-		this.id = v.getId();
-		this.lang_id = v.getLang();
-		this.value = v.getValue();
+	public StringValue(Integer id, Integer key_id, LangEnum lang_id, String value) {
+		this.lang_id = lang_id;
+		this.id = id;
+		this.key_id = key_id;
+		this.value = value;
+
 	}
 
 	public Integer getId() {
@@ -44,12 +42,16 @@ public class StringValue {
 		this.key_id = key_id;
 	}
 
-	public String getLangID() {
+	public LangEnum getLangID() {
 		return lang_id;
 	}
 
-	public void setLangID(String lang_id) {
+	public void setLangID(LangEnum lang_id) {
 		this.lang_id = lang_id;
+	}
+
+	public void setLangID(String lang_id) {
+		this.lang_id = LangEnum.valueOf(lang_id);
 	}
 
 	public String getValue() {
@@ -63,15 +65,6 @@ public class StringValue {
 	@Override
 	public String toString() {
 		return "StringValue [id=" + id + ", key_id=" + key_id + ", lang_id=" + lang_id + ", value=" + value + "]";
-	}
-
-	public static Collection<StringValue> createCollection(int keyID, Collection<StringValueModel> arr) {
-		Collection<StringValue> coll = new ArrayList<StringValue>();
-		for (StringValueModel v : arr) {
-			coll.add(new StringValue(keyID, v));
-		}
-
-		return coll;
 	}
 
 }

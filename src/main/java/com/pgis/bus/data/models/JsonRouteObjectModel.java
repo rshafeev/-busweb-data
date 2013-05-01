@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import com.pgis.bus.data.helpers.PGIntervalHelper;
+import com.pgis.bus.data.helpers.TimeHelper;
 import com.pgis.bus.data.orm.Route;
 import com.pgis.bus.data.orm.RouteRelation;
 import com.pgis.bus.data.orm.RouteWay;
@@ -12,8 +14,8 @@ import com.pgis.bus.data.orm.ScheduleGroup;
 import com.pgis.bus.data.orm.ScheduleGroupDay;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.Timetable;
+import com.pgis.bus.data.orm.type.DayEnum;
 import com.pgis.bus.net.models.geom.PolyLineModel;
-import com.pgis.bus.net.orm.DayEnum;
 
 public class JsonRouteObjectModel {
 
@@ -178,80 +180,80 @@ public class JsonRouteObjectModel {
 
 			if (xS <= x7 && xF >= x19) {
 				Timetable timetable1 = new Timetable();
-				timetable1.setTime_A(xS);
-				timetable1.setTime_B(x7);
-				timetable1.setFrequancy(intervalMax);
+				timetable1.setTimeA(TimeHelper.fromSeconds(xS));
+				timetable1.setTimeB(TimeHelper.fromSeconds(x7));
+				timetable1.setFrequency(PGIntervalHelper.fromSeconds(intervalMax));
 				timeTables.add(timetable1);
 
 				Timetable timetable2 = new Timetable();
-				timetable2.setTime_A(x7);
-				timetable2.setTime_B(x11);
-				timetable2.setFrequancy(intervalMin);
+				timetable2.setTimeA(TimeHelper.fromSeconds(x7));
+				timetable2.setTimeB(TimeHelper.fromSeconds(x11));
+				timetable2.setFrequency(PGIntervalHelper.fromSeconds(intervalMin));
 				timeTables.add(timetable2);
 
 				Timetable timetable3 = new Timetable();
-				timetable3.setTime_A(x11);
-				timetable3.setTime_B(x16);
-				timetable3.setFrequancy(intervalMax);
+				timetable3.setTimeA(TimeHelper.fromSeconds(x11));
+				timetable3.setTimeB(TimeHelper.fromSeconds(x16));
+				timetable3.setFrequency(PGIntervalHelper.fromSeconds(intervalMax));
 				timeTables.add(timetable3);
 
 				Timetable timetable4 = new Timetable();
-				timetable4.setTime_A(x16);
-				timetable4.setTime_B(x19);
-				timetable4.setFrequancy(intervalMin);
+				timetable4.setTimeA(TimeHelper.fromSeconds(x16));
+				timetable4.setTimeB(TimeHelper.fromSeconds(x19));
+				timetable4.setFrequency(PGIntervalHelper.fromSeconds(intervalMin));
 				timeTables.add(timetable4);
 
 				Timetable timetable5 = new Timetable();
-				timetable5.setTime_A(x19);
-				timetable5.setTime_B(xF);
-				timetable5.setFrequancy(intervalMax);
+				timetable5.setTimeA(TimeHelper.fromSeconds(x19));
+				timetable5.setTimeB(TimeHelper.fromSeconds(xF));
+				timetable5.setFrequency(PGIntervalHelper.fromSeconds(intervalMax));
 				timeTables.add(timetable5);
 
 			} else if (xF - xS > 6 * 60 * 60) {
 				// Если время работы больше 6-ти часов, тогда разбиваем
 				// на 4-е интервала
 				Timetable timetable1 = new Timetable();
-				timetable1.setTime_A(xS);
-				timetable1.setTime_B(xS + 3 * 60 * 60);
-				timetable1.setFrequancy(intervalMin);
+				timetable1.setTimeA(TimeHelper.fromSeconds(xS));
+				timetable1.setTimeB(TimeHelper.fromSeconds(xS + 3 * 60 * 60));
+				timetable1.setFrequency(PGIntervalHelper.fromSeconds(intervalMin));
 				timeTables.add(timetable1);
 
 				Timetable timetable2 = new Timetable();
-				timetable2.setTime_A(xS + 3 * 60 * 60);
-				timetable2.setTime_B(xF - 3 * 60 * 60);
-				timetable2.setFrequancy(intervalMax);
+				timetable2.setTimeA(TimeHelper.fromSeconds(xS + 3 * 60 * 60));
+				timetable2.setTimeB(TimeHelper.fromSeconds(xF - 3 * 60 * 60));
+				timetable2.setFrequency(PGIntervalHelper.fromSeconds(intervalMax));
 				timeTables.add(timetable2);
 
 				Timetable timetable3 = new Timetable();
-				timetable3.setTime_A(xF - 3 * 60 * 60);
-				timetable3.setTime_B(xF - 1 * 60 * 60);
-				timetable3.setFrequancy(intervalMin);
+				timetable3.setTimeA(TimeHelper.fromSeconds(xF - 3 * 60 * 60));
+				timetable3.setTimeB(TimeHelper.fromSeconds(xF - 1 * 60 * 60));
+				timetable3.setFrequency(PGIntervalHelper.fromSeconds(intervalMin));
 				timeTables.add(timetable3);
 
 				Timetable timetable4 = new Timetable();
-				timetable4.setTime_A(xF - 1 * 60 * 60);
-				timetable4.setTime_B(xF);
-				timetable4.setFrequancy(intervalMax);
+				timetable4.setTimeA(TimeHelper.fromSeconds(xF - 1 * 60 * 60));
+				timetable4.setTimeB(TimeHelper.fromSeconds(xF));
+				timetable4.setFrequency(PGIntervalHelper.fromSeconds(intervalMax));
 				timeTables.add(timetable4);
 			} else {
 				Timetable timetable1 = new Timetable();
-				timetable1.setTime_A(xS);
-				timetable1.setTime_B((xS + xF) / 2);
-				timetable1.setFrequancy(intervalMin);
+				timetable1.setTimeA(TimeHelper.fromSeconds(xS));
+				timetable1.setTimeB(TimeHelper.fromSeconds((xS + xF) / 2));
+				timetable1.setFrequency(PGIntervalHelper.fromSeconds(intervalMin));
 				timeTables.add(timetable1);
 
 				Timetable timetable2 = new Timetable();
-				timetable2.setTime_A((xS + xF) / 2);
-				timetable2.setTime_B(xF);
-				timetable2.setFrequancy(intervalMax);
+				timetable2.setTimeA(TimeHelper.fromSeconds((xS + xF) / 2));
+				timetable2.setTimeB(TimeHelper.fromSeconds(xF));
+				timetable2.setFrequency(PGIntervalHelper.fromSeconds(intervalMax));
 				timeTables.add(timetable2);
 			}
 
 		} else {
 			Timetable timetable1 = new Timetable();
-			timetable1.setTime_A(this.timeStart);
-			timetable1.setTime_B(this.timeFinish);
-			timetable1.setFrequancy(intervalMin);
+			timetable1.setTimeA(TimeHelper.fromSeconds(this.timeStart));
+			timetable1.setTimeB(TimeHelper.fromSeconds(this.timeFinish));
+			timetable1.setFrequency(PGIntervalHelper.fromSeconds(intervalMin));
 			timeTables.add(timetable1);
 
 		}

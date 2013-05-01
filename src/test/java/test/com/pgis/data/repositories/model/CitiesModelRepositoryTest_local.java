@@ -10,6 +10,7 @@ import org.junit.Test;
 import test.com.pgis.data.TestDBConnectionManager;
 
 import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.model.impl.CitiesModelRepository;
 import com.pgis.bus.net.models.city.CityModel;
 import com.pgis.bus.net.models.route.RouteTypeModel;
@@ -19,7 +20,7 @@ public class CitiesModelRepositoryTest_local {
 	@Test
 	public void getAllTest() throws Exception {
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
-		CitiesModelRepository rep = new CitiesModelRepository("c_en", dbConnMngr);
+		CitiesModelRepository rep = new CitiesModelRepository(LangEnum.c_en, dbConnMngr);
 		Collection<CityModel> cities = rep.getAll();
 		System.out.print(cities.size());
 		rep.rollback();
@@ -31,7 +32,7 @@ public class CitiesModelRepositoryTest_local {
 	public void getByKeyTest() throws Exception {
 		// test
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
-		CitiesModelRepository rep = new CitiesModelRepository("c_en", dbConnMngr);
+		CitiesModelRepository rep = new CitiesModelRepository(LangEnum.c_en, dbConnMngr);
 		CityModel city = rep.getByKey("kharkiv");
 		assertNotNull(city);
 		assertTrue(city.getId() > 0);
@@ -50,7 +51,7 @@ public class CitiesModelRepositoryTest_local {
 	public void getRouteTypesByCity() throws Exception {
 		// test
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
-		CitiesModelRepository rep = new CitiesModelRepository("c_en", dbConnMngr);
+		CitiesModelRepository rep = new CitiesModelRepository(LangEnum.c_en, dbConnMngr);
 		CityModel city = rep.getByKey("kharkiv");
 		Collection<RouteTypeModel> routeTypes = rep.getRouteTypesByCity(city.getId());
 		assertNotNull(routeTypes);

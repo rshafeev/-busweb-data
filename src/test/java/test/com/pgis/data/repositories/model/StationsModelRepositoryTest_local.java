@@ -11,6 +11,7 @@ import test.com.pgis.data.TestDBConnectionManager;
 
 import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.orm.City;
+import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.model.impl.StationsModelRepository;
 import com.pgis.bus.data.repositories.orm.impl.CitiesRepository;
 import com.pgis.bus.data.service.IDataBaseService;
@@ -26,14 +27,14 @@ public class StationsModelRepositoryTest_local {
 	public void getStationsListTest() throws Exception {
 		System.out.println("getStationsListTest()");
 		// get city
-		String langID = "c_en";
+		LangEnum langID = LangEnum.c_en;
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
 		CitiesRepository cityRep = new CitiesRepository(dbConnMngr);
 		City city = cityRep.getByName(langID, "Kyiv");
 		assertNotNull(city);
 
 		// get stations
-		StationsModelRepository stationsRep = new StationsModelRepository("c_en", dbConnMngr);
+		StationsModelRepository stationsRep = new StationsModelRepository(langID, dbConnMngr);
 		Collection<StationModel> stations = stationsRep.getStationsList(city.getId());
 		System.out.println(stations.size());
 		stationsRep.rollback();
@@ -49,7 +50,7 @@ public class StationsModelRepositoryTest_local {
 	public void getStationsListServiceTest() throws Exception {
 		System.out.println("getStationsListServiceTest()");
 		// init
-		String langID = "c_en";
+		LangEnum langID = LangEnum.c_en;
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
 		IDataBaseService dbService = new DataBaseService(dbConnMngr);
 		City city = dbService.Cities().getByName(langID, "Kyiv");
@@ -73,7 +74,7 @@ public class StationsModelRepositoryTest_local {
 		// get city
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
 		CitiesRepository cityRep = new CitiesRepository(dbConnMngr);
-		City city = cityRep.getByName("c_en", "Kyiv");
+		City city = cityRep.getByName(LangEnum.c_en, "Kyiv");
 		assertNotNull(city);
 
 		// get stations

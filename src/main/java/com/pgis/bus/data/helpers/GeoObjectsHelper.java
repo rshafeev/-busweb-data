@@ -1,19 +1,28 @@
-package com.pgis.bus.data.geo;
+package com.pgis.bus.data.helpers;
 
 import org.postgis.LineString;
 import org.postgis.Point;
 
-import com.pgis.bus.data.params.DefaultParameters;
 import com.pgis.bus.net.models.geom.PointModel;
 import com.pgis.bus.net.models.geom.PolyLineModel;
 
-public class GeoObjectsFactory {
+public class GeoObjectsHelper {
+
+	public final static int GEOMETRY_SRID = 4326;
 
 	public static Point createPoint(PointModel m) {
 		Point p = new Point();
 		p.setX(m.getLat());
 		p.setY(m.getLon());
-		p.setSrid(DefaultParameters.GEOMETRY_SRID);
+		p.setSrid(GEOMETRY_SRID);
+		return p;
+	}
+
+	public static Point createPoint(double lat, double lon) {
+		Point p = new Point();
+		p.setX(lat);
+		p.setY(lon);
+		p.setSrid(GEOMETRY_SRID);
 		return p;
 	}
 
@@ -21,7 +30,7 @@ public class GeoObjectsFactory {
 		Point p = new Point();
 		p.setX(xy[0]);
 		p.setY(xy[1]);
-		p.setSrid(DefaultParameters.GEOMETRY_SRID);
+		p.setSrid(GEOMETRY_SRID);
 		return p;
 	}
 
@@ -31,7 +40,7 @@ public class GeoObjectsFactory {
 			points[i] = createPoint(m.getPoint(i));
 		}
 		LineString line = new LineString(points);
-		line.setSrid(DefaultParameters.GEOMETRY_SRID);
+		line.setSrid(GEOMETRY_SRID);
 		return line;
 	}
 }

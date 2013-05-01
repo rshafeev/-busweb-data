@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 import com.pgis.bus.data.orm.City;
+import com.pgis.bus.data.orm.type.LangEnum;
 
 public interface ICitiesRepository {
 	City get(int id) throws SQLException;
@@ -18,6 +19,6 @@ public interface ICitiesRepository {
 
 	City getByKey(String key) throws SQLException;
 
-	City getByName(String langID, String name) throws SQLException;
+	City getByName(LangEnum langID, String name) throws SQLException;
 
 }
