@@ -1,6 +1,8 @@
 package com.pgis.bus.data.repositories;
 
-public class RepositoryException extends Exception {
+import java.sql.SQLException;
+
+public class RepositoryException extends SQLException {
 
 	private static final long serialVersionUID = -7853309755220159118L;
 	private err_enum errCode;
@@ -35,12 +37,13 @@ public class RepositoryException extends Exception {
 		super(err.getMessage());
 		this.errCode = err;
 	}
-	public RepositoryException(RepositoryException.err_enum err,String text) {
+
+	public RepositoryException(RepositoryException.err_enum err, String text) {
 		super(err.getMessage() + "\ntext: " + text);
 		this.errCode = err;
 	}
 
-	public err_enum getErrorCode() {
+	public err_enum getCode() {
 		return errCode;
 	}
 

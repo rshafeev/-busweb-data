@@ -8,7 +8,7 @@ public class Path_t implements Cloneable {
 
 	public int path_id; // is not null
 	public int index; // is not null
-	public Integer direct_route_id; // is not null
+	public Integer rway_id; // is not null
 	public String route_type; // is not null
 	public String route_name;
 	public Integer relation_index_a; // is not null
@@ -24,7 +24,7 @@ public class Path_t implements Cloneable {
 	@Override
 	public String toString() {
 		return "Path_t [path_id=" + path_id + ", index=" + index
-				+ ", direct_route_id=" + direct_route_id + ", route_type="
+				+ ", direct_route_id=" + rway_id + ", route_type="
 				+ route_type + ", route_name=" + route_name
 				+ ", relation_index_a=" + relation_index_a
 				+ ", relation_index_b=" + relation_index_b
@@ -37,7 +37,7 @@ public class Path_t implements Cloneable {
 	public Path_t clone() throws CloneNotSupportedException {
 		Path_t clone = (Path_t) super.clone();
 		clone.cost = cost;
-		clone.direct_route_id = direct_route_id;
+		clone.rway_id = rway_id;
 		clone.distance = distance;
 		clone.index = index;
 		clone.path_id = path_id;

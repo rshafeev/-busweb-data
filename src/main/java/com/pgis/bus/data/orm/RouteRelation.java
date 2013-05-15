@@ -1,35 +1,55 @@
 package com.pgis.bus.data.orm;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.postgis.LineString;
 import org.postgresql.util.PGInterval;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.pgis.bus.data.models.GsonLineString;
+import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.models.factory.TimeIntervalModelFactory;
+import com.pgis.bus.data.orm.type.LangEnum;
+import com.pgis.bus.data.repositories.orm.impl.StationsRepository;
+import com.pgis.bus.net.models.route.RouteRelationModel;
 
-public class RouteRelation {
+public class RouteRelation extends ORMObject {
+	private static final Logger log = LoggerFactory.getLogger(RouteRelation.class);
 
 	private int id;
-	private int direct_route_id;
+	private int rway_id;
 	private int station_a_id;
 	private int station_b_id;
 	private int position_index;
 	private double distance;
 	private PGInterval ev_time;
-	private GsonLineString geom;
-
+	private LineString geom;
+	private Station stationA;
 	private Station stationB;
 
-	public int getStation_a_id() {
+	public RouteRelation() {
+		super();
+	}
+
+	public RouteRelation(IConnectionManager connManager) {
+		super(connManager);
+	}
+
+	public int getStationAId() {
 		return station_a_id;
 	}
 
-	public void setStation_a_id(int station_a_id) {
+	public void setStationAId(int station_a_id) {
 		this.station_a_id = station_a_id;
 	}
 
-	public int getStation_b_id() {
+	public int getStationBId() {
 		return station_b_id;
 	}
 
-	public void setStation_b_id(int station_b_id) {
+	public void setStationBId(int station_b_id) {
 		this.station_b_id = station_b_id;
 	}
 
@@ -41,16 +61,46 @@ public class RouteRelation {
 		this.id = id;
 	}
 
-	public int getDirect_route_id() {
-		return direct_route_id;
+	public int getRouteWayID() {
+		return rway_id;
 	}
 
-	public void setDirect_route_id(int direct_route_id) {
-		this.direct_route_id = direct_route_id;
+	public void setRouteWayID(int rway_id) {
+		this.rway_id = rway_id;
 	}
 
-	public Station getStationB() {
+	public Station getStationA() throws SQLException {
+		if (stationA == null && super.connManager != null && station_a_id > 0) {
+			StationsRepository rep = null;
+			try {
+				rep = new StationsRepository(super.connManager);
+				this.stationA = rep.get(station_a_id);
+			} finally {
+				if (rep != null)
+					rep.dispose();
+			}
+		}
+		return stationA;
+	}
+
+	public Station getStationB() throws SQLException {
+		if (stationB == null && super.connManager != null && station_b_id > 0) {
+			StationsRepository rep = null;
+			try {
+				rep = new StationsRepository(super.connManager);
+				this.stationB = rep.get(station_b_id);
+			} finally {
+				if (rep != null)
+					rep.dispose();
+			}
+		}
 		return stationB;
+	}
+
+	public void setStationA(Station stationA) {
+		if (stationA != null && stationA.getId() != null)
+			this.station_a_id = stationA.getId();
+		this.stationA = stationA;
 	}
 
 	public void setStationB(Station stationB) {
@@ -59,11 +109,11 @@ public class RouteRelation {
 		this.stationB = stationB;
 	}
 
-	public int getPosition_index() {
+	public int getPositionIndex() {
 		return position_index;
 	}
 
-	public void setPosition_index(int position_index) {
+	public void setPositionIndex(int position_index) {
 		this.position_index = position_index;
 	}
 
@@ -75,34 +125,49 @@ public class RouteRelation {
 		this.distance = distance;
 	}
 
-	public PGInterval getEv_time() {
+	public PGInterval getMoveTime() {
 		return ev_time;
 	}
 
-	public void setEv_time(PGInterval ev_time) {
+	public void setMoveTime(PGInterval ev_time) {
 		this.ev_time = ev_time;
 	}
 
-	public GsonLineString getGeom() {
+	public LineString getGeom() {
 		return geom;
 	}
 
-	public void setGeom(GsonLineString geom) {
+	public void setGeom(LineString geom) {
 		this.geom = geom;
-	}
-
-	public void optimizePoints() {
-		if (this.geom != null)
-			this.geom.optimizePoints();
 	}
 
 	@Override
 	public String toString() {
-		return "RouteRelation [id=" + id + ", direct_route_id="
-				+ direct_route_id + ", station_a_id=" + station_a_id
-				+ ", station_b_id=" + station_b_id + ", position_index="
-				+ position_index + ", distance=" + distance + ", ev_time="
-				+ ev_time + ", geom=" + geom + ", stationB=" + stationB + "]";
+		return "RouteRelation [id=" + id + ", rway_id=" + rway_id + ", station_a_id=" + station_a_id
+				+ ", station_b_id=" + station_b_id + ", position_index=" + position_index + ", distance=" + distance
+				+ ", ev_time=" + ev_time + ", geom=" + geom + ", stationB=" + stationB + "]";
+	}
+
+	static public RouteRelationModel createModel(RouteRelation r, LangEnum langID) throws SQLException {
+		RouteRelationModel model = new RouteRelationModel();
+		model.setDistance(r.getDistance());
+		model.setId(r.getId());
+		model.setMoveTime(TimeIntervalModelFactory.createModel(r.getMoveTime()));
+		model.setCurrStation(r.getStationB().toModel(langID));
+		return model;
+	}
+
+	static public Collection<RouteRelationModel> createModels(Collection<RouteRelation> arr, LangEnum langID)
+			throws SQLException {
+		Collection<RouteRelationModel> models = new ArrayList<RouteRelationModel>();
+		for (RouteRelation r : arr) {
+			models.add(createModel(r, langID));
+		}
+		return models;
+	}
+
+	RouteRelationModel toModel(LangEnum langID) throws Exception {
+		return createModel(this, langID);
 	}
 
 }
