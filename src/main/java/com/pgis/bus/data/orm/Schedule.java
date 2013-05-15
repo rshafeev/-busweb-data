@@ -23,6 +23,8 @@ public class Schedule extends ORMObject {
 
 	public Schedule(ScheduleModel model) {
 		super();
+		if (model == null)
+			return;
 		this.setId(model.getId());
 		this.setRouteWayId(model.getRouteWayID());
 
@@ -76,13 +78,20 @@ public class Schedule extends ORMObject {
 		if (schedule == null)
 			return null;
 		ScheduleModel model = new ScheduleModel();
-		Collection<ScheduleGroupModel> groups = new ArrayList<ScheduleGroupModel>();
-		for (ScheduleGroup grp : schedule.getScheduleGroups()) {
-			groups.add(grp.toModel());
+		if (schedule.getScheduleGroups() != null) {
+
 		}
+		Collection<ScheduleGroupModel> groups = new ArrayList<ScheduleGroupModel>();
+		if (schedule.getScheduleGroups() != null) {
+			for (ScheduleGroup grp : schedule.getScheduleGroups()) {
+
+				groups.add(grp.toModel());
+			}
+			model.setGroups(groups);
+		}
+
 		model.setId(schedule.getId());
 		model.setRouteWayID(schedule.getRouteWayId());
-		model.setGroups(groups);
 		return model;
 	}
 

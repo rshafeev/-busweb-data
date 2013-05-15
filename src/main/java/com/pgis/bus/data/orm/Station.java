@@ -14,9 +14,9 @@ import com.pgis.bus.net.models.station.StationModel;
 
 public class Station extends ORMObject implements Cloneable {
 	private Integer id;
-	private int city_id;
+	private Integer city_id;
 	private Point location;
-	private int name_key;
+	private Integer name_key;
 	private Collection<StringValue> name; // key - language id, value -
 
 	public Station() {
@@ -32,11 +32,11 @@ public class Station extends ORMObject implements Cloneable {
 		this.copy(s);
 	}
 
-	public int getCityID() {
+	public Integer getCityID() {
 		return city_id;
 	}
 
-	public void setCityID(int city_id) {
+	public void setCityID(Integer city_id) {
 		this.city_id = city_id;
 	}
 
@@ -60,11 +60,11 @@ public class Station extends ORMObject implements Cloneable {
 		this.id = id;
 	}
 
-	public int getNameKey() {
+	public Integer getNameKey() {
 		return name_key;
 	}
 
-	public void setNameKey(int name_key) {
+	public void setNameKey(Integer name_key) {
 		this.name_key = name_key;
 		if (this.name != null) {
 			for (StringValue v : this.name) {

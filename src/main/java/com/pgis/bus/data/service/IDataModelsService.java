@@ -7,6 +7,7 @@ import com.pgis.bus.data.repositories.model.ICitiesModelRepository;
 import com.pgis.bus.data.repositories.model.IJsonRouteObjectsModelRepository;
 import com.pgis.bus.data.repositories.model.IRoutesModelRepository;
 import com.pgis.bus.data.repositories.model.IStationsModelRepository;
+import com.pgis.bus.net.models.LangEnumModel;
 
 public interface IDataModelsService extends IDataService {
 
@@ -21,5 +22,7 @@ public interface IDataModelsService extends IDataService {
 	void setLocale(Locale locale);
 
 	void setLocale(LangEnum langID);
+
+	void setLocale(LangEnumModel langID);
 
 }

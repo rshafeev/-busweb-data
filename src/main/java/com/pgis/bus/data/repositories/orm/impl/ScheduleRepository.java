@@ -245,8 +245,16 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 
 	@Override
 	public void update(Schedule s) throws SQLException {
-		this.remove(s.getId());
-		this.insert(s);
+
+		if (s == null)
+			return;
+		try {
+			s.setConnManager(null);
+			this.remove(s.getId());
+			this.insert(s);
+		} finally {
+			s.setConnManager(this.connManager);
+		}
 	}
 
 	@Override

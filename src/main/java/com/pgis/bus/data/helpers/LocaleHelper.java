@@ -2,6 +2,9 @@ package com.pgis.bus.data.helpers;
 
 import java.util.Locale;
 
+import com.pgis.bus.data.orm.type.LangEnum;
+import com.pgis.bus.net.models.LangEnumModel;
+
 public class LocaleHelper {
 
 	/**
@@ -16,6 +19,16 @@ public class LocaleHelper {
 			return "c_ru";
 
 		return "c_" + locale.getLanguage();
+	}
+
+	/**
+	 * Преобразует идентификатор языка ru, en, uk в c_ru, c_en, c_uk
+	 * 
+	 * @param langID Идентификатор языка. Возможные значения ru, en, uk
+	 * @return Идентификатор языка, используемый на уровне БД
+	 */
+	public static LangEnum getDataBaseLanguage(LangEnumModel langID) {
+		return LangEnum.valueOf(langID);
 	}
 
 	public static String getLangID(Locale locale) {

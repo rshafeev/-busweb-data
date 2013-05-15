@@ -61,10 +61,11 @@ public class StationsRepository extends Repository implements IStationsRepositor
 
 	@Override
 	public void update(Station station) throws SQLException {
+		if (station == null)
+			return;
 		Connection c = super.getConnection();
-
 		try {
-			station.setConnManager(connManager);
+			station.setConnManager(null);
 			String query = "UPDATE  bus.stations SET city_id=?, location=? WHERE id=?; ";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, station.getCityID());
@@ -80,6 +81,8 @@ public class StationsRepository extends Repository implements IStationsRepositor
 		} catch (SQLException e) {
 			log.error("updateStation() exception: ", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} finally {
+			station.setConnManager(connManager);
 		}
 	}
 

@@ -115,7 +115,6 @@ public class City extends ORMObject implements Cloneable {
 			}
 
 		}
-		System.out.println(name.size());
 		return name;
 	}
 

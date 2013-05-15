@@ -14,6 +14,7 @@ import com.pgis.bus.data.repositories.model.impl.JsonRouteObjectsModelRepository
 import com.pgis.bus.data.repositories.model.impl.RoutesModelRepository;
 import com.pgis.bus.data.repositories.model.impl.StationsModelRepository;
 import com.pgis.bus.data.service.IDataModelsService;
+import com.pgis.bus.net.models.LangEnumModel;
 
 public class DataModelsService extends DataService implements IDataModelsService {
 	protected LangEnum langID = null;
@@ -86,6 +87,12 @@ public class DataModelsService extends DataService implements IDataModelsService
 		if (citiesRepotitory != null) {
 			citiesRepotitory.setLocale(langID);
 		}
+	}
+
+	@Override
+	public void setLocale(LangEnumModel langID) {
+		this.setLocale(LangEnum.valueOf(langID));
+
 	}
 
 }

@@ -1,9 +1,5 @@
 package com.pgis.bus.data.orm;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.pgis.bus.data.models.JsonRouteObjectModel;
-
 public class JsonRouteObject {
 	public int id;
 	public String city_key;
@@ -15,14 +11,44 @@ public class JsonRouteObject {
 
 	}
 
-	public JsonRouteObject(String cityKey, JsonRouteObjectModel model) {
-		this.city_key = cityKey;
-		this.route_number = model.getNumber();
-		this.route_type = model.getRouteType();
-		obj = (new Gson()).toJson(model);
+	public int getId() {
+		return id;
 	}
 
-	public JsonRouteObjectModel ObjToModel() throws JsonSyntaxException {
-		return (new Gson()).fromJson(this.obj, JsonRouteObjectModel.class);
+	public void setId(int id) {
+		this.id = id;
 	}
+
+	public String getCity_key() {
+		return city_key;
+	}
+
+	public void setCity_key(String city_key) {
+		this.city_key = city_key;
+	}
+
+	public String getRoute_type() {
+		return route_type;
+	}
+
+	public void setRoute_type(String route_type) {
+		this.route_type = route_type;
+	}
+
+	public String getRoute_number() {
+		return route_number;
+	}
+
+	public void setRoute_number(String route_number) {
+		this.route_number = route_number;
+	}
+
+	public String getObj() {
+		return obj;
+	}
+
+	public void setObj(String obj) {
+		this.obj = obj;
+	}
+
 }

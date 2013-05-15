@@ -70,7 +70,7 @@ public class RouteRelation extends ORMObject {
 	}
 
 	public Station getStationA() throws SQLException {
-		if (stationA == null && super.connManager != null) {
+		if (stationA == null && super.connManager != null && station_a_id > 0) {
 			StationsRepository rep = null;
 			try {
 				rep = new StationsRepository(super.connManager);
@@ -84,7 +84,7 @@ public class RouteRelation extends ORMObject {
 	}
 
 	public Station getStationB() throws SQLException {
-		if (stationB == null && super.connManager != null) {
+		if (stationB == null && super.connManager != null && station_b_id > 0) {
 			StationsRepository rep = null;
 			try {
 				rep = new StationsRepository(super.connManager);
