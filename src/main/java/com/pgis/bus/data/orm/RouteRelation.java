@@ -15,7 +15,7 @@ import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.orm.impl.StationsRepository;
 import com.pgis.bus.net.models.route.RouteRelationModel;
 
-public class RouteRelation extends ORMObject {
+public class RouteRelation extends ORMObject implements Cloneable {
 	private static final Logger log = LoggerFactory.getLogger(RouteRelation.class);
 
 	private int id;
@@ -170,4 +170,9 @@ public class RouteRelation extends ORMObject {
 		return createModel(this, langID);
 	}
 
+	@Override
+	public RouteRelation clone() throws CloneNotSupportedException {
+		RouteRelation relation = (RouteRelation) super.clone();
+		return relation;
+	}
 }
