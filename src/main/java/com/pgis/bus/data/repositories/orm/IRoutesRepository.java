@@ -23,7 +23,7 @@ public interface IRoutesRepository extends IRepository {
 
 	void update(RouteWay routeWay) throws SQLException;
 
-	void updateNumber(int numberKey, Collection<StringValue> number) throws SQLException;
+	void updateNumber(Integer numberKey, Collection<StringValue> number) throws SQLException;
 
 	Collection<RouteRelation> getRouteWayRelations(int routeWayID) throws SQLException;
 

@@ -35,6 +35,8 @@ public class GeoObjectsHelper {
 	}
 
 	public static LineString createLine(PolyLineModel m) {
+		if (m == null)
+			return null;
 		Point[] points = new Point[m.getPointsCount()];
 		for (int i = 0; i < m.getPointsCount(); i++) {
 			points[i] = createPoint(m.getPoint(i));

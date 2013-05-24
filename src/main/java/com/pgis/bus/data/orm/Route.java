@@ -15,11 +15,11 @@ import com.pgis.bus.net.models.route.RouteModel;
 public class Route extends ORMObject {
 	private static final Logger log = LoggerFactory.getLogger(Route.class);
 
-	private int id;
+	private Integer id;
 	private int city_id;
 	private double cost;
 	private String route_type_id;
-	private int number_key;
+	private Integer number_key;
 
 	private Collection<StringValue> number; // key - language id, value -
 	private RouteWay directRouteWay;
@@ -33,11 +33,11 @@ public class Route extends ORMObject {
 		super(connManager);
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 		if (directRouteWay != null) {
 			directRouteWay.setRouteID(id);
@@ -105,11 +105,11 @@ public class Route extends ORMObject {
 		this.route_type_id = route_type_id;
 	}
 
-	public int getNumberKey() {
+	public Integer getNumberKey() {
 		return number_key;
 	}
 
-	public void setNumberKey(int number_key) {
+	public void setNumberKey(Integer number_key) {
 		this.number_key = number_key;
 	}
 
@@ -173,6 +173,19 @@ public class Route extends ORMObject {
 		return "Route [id=" + id + ", city_id=" + city_id + ", cost=" + cost + ", route_type_id=" + route_type_id
 				+ ", number_key=" + number_key + ", number=" + number + ", directRouteWay=" + directRouteWay
 				+ ", reverseRouteWay=" + reverseRouteWay + "]";
+	}
+
+	/**
+	 * Создает обратный путь из прямого пути
+	 */
+	public void makeReverseFromDirect() {
+		try {
+			RouteWay reverseWay = new RouteWay();
+			Schedule reverseSchedule = this.directRouteWay.getSchedule();
+		} catch (Exception e) {
+
+		}
+
 	}
 
 }

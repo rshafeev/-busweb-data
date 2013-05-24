@@ -1,11 +1,14 @@
 package test.com.pgis.data.repositories.model;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Collection;
 
 import org.junit.Test;
 import org.postgis.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import test.com.pgis.data.TestDBConnectionManager;
 
@@ -20,75 +23,90 @@ import com.pgis.bus.data.service.impl.DataBaseService;
 import com.pgis.bus.data.service.impl.DataModelsService;
 import com.pgis.bus.net.models.station.StationModel;
 
-//import com.pgis.bus.data.repositories.UsersRepository;
 public class StationsModelRepositoryTest_local {
+	private static final Logger log = LoggerFactory.getLogger(StationsModelRepositoryTest_local.class);
 
 	@Test
 	public void getStationsListTest() throws Exception {
-		System.out.println("getStationsListTest()");
+		log.debug("getStationsListTest()");
 		// get city
 		LangEnum langID = LangEnum.c_en;
-		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
-		CitiesRepository cityRep = new CitiesRepository(dbConnMngr);
-		City city = cityRep.getByName(langID, "Kyiv");
-		assertNotNull(city);
+		StationsModelRepository stationsRep = null;
+		IConnectionManager dbConnMngr = null;
+		CitiesRepository cityRep = null;
+		try {
+			dbConnMngr = TestDBConnectionManager.create();
+			cityRep = new CitiesRepository(dbConnMngr);
+			City city = cityRep.getByName(langID, "Kyiv");
+			assertNotNull(city);
 
-		// get stations
-		StationsModelRepository stationsRep = new StationsModelRepository(langID, dbConnMngr);
-		Collection<StationModel> stations = stationsRep.getStationsList(city.getId());
-		System.out.println(stations.size());
-		stationsRep.rollback();
-		stationsRep.dispose();
-		cityRep.rollback();
-		cityRep.dispose();
-
-		dbConnMngr.dispose();
-
+			// get stations
+			stationsRep = new StationsModelRepository(langID, dbConnMngr);
+			Collection<StationModel> stations = stationsRep.getStationsList(city.getId());
+			System.out.println(stations.size());
+		} finally {
+			stationsRep.rollback();
+			stationsRep.dispose();
+			cityRep.rollback();
+			cityRep.dispose();
+			assertEquals(0, ((TestDBConnectionManager) dbConnMngr).getInitialConnections());
+			dbConnMngr.dispose();
+		}
 	}
 
 	@Test
 	public void getStationsListServiceTest() throws Exception {
-		System.out.println("getStationsListServiceTest()");
+		log.debug("getStationsListServiceTest()");
 		// init
 		LangEnum langID = LangEnum.c_en;
-		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
-		IDataBaseService dbService = new DataBaseService(dbConnMngr);
-		City city = dbService.Cities().getByName(langID, "Kyiv");
-		dbService.dispose();
-		assertNotNull(city);
+		IDataBaseService dbService = null;
+		IConnectionManager dbConnMngr = null;
+		IDataModelsService dbModel = null;
+		try {
+			dbConnMngr = TestDBConnectionManager.create();
+			dbService = new DataBaseService(dbConnMngr);
+			City city = dbService.Cities().getByName(langID, "Kyiv");
+			assertNotNull(city);
 
-		// get stations list
-		IDataModelsService dbModel = new DataModelsService(langID, dbConnMngr);
-		Collection<StationModel> stations = dbModel.Stations().getStationsList(city.getId());
-		System.out.println(stations.size());
-		dbModel.dispose();
+			// get stations list
+			dbModel = new DataModelsService(langID, dbConnMngr);
+			Collection<StationModel> stations = dbModel.Stations().getStationsList(city.getId());
+			System.out.println(stations.size());
 
-		// clear resources
-		dbConnMngr.dispose();
+		} finally {
+			dbService.dispose();
+			dbModel.dispose();
+			assertEquals(0, ((TestDBConnectionManager) dbConnMngr).getInitialConnections());
+			dbConnMngr.dispose();
+		}
 
 	}
 
 	@Test
 	public void getStationsFromBoxTest() throws Exception {
-		System.out.println("getStationsFromBoxTest()");
+		log.debug("getStationsFromBoxTest()");
 		// get city
-		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
-		CitiesRepository cityRep = new CitiesRepository(dbConnMngr);
-		City city = cityRep.getByName(LangEnum.c_en, "Kyiv");
-		assertNotNull(city);
+		StationsModelRepository stationsRep = null;
+		IConnectionManager dbConnMngr = null;
+		CitiesRepository cityRep = null;
+		try {
+			dbConnMngr = TestDBConnectionManager.create();
+			cityRep = new CitiesRepository(dbConnMngr);
+			City city = cityRep.getByName(LangEnum.c_en, "Kyiv");
+			assertNotNull(city);
 
-		// get stations
-		StationsModelRepository stationsRep = new StationsModelRepository(dbConnMngr);
-		Collection<StationModel> stations = stationsRep.getStationsFromBox(city.getId(), new Point(49, 35), new Point(
-				51, 37));
-		System.out.println(stations.size());
-		stationsRep.rollback();
-		stationsRep.dispose();
-		cityRep.rollback();
-		cityRep.dispose();
-
-		dbConnMngr.dispose();
-
+			// get stations
+			stationsRep = new StationsModelRepository(dbConnMngr);
+			Collection<StationModel> stations = stationsRep.getStationsFromBox(city.getId(), new Point(49, 35),
+					new Point(51, 37));
+			log.debug("Stations count: {}", stations.size());
+		} finally {
+			stationsRep.dispose();
+			cityRep.rollback();
+			cityRep.dispose();
+			assertEquals(0, ((TestDBConnectionManager) dbConnMngr).getInitialConnections());
+			dbConnMngr.dispose();
+		}
 	}
 
 }

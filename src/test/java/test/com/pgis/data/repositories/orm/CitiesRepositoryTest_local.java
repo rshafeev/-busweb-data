@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import test.com.pgis.data.TestDBConnectionManager;
 
@@ -18,9 +20,11 @@ import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.orm.impl.CitiesRepository;
 
 public class CitiesRepositoryTest_local {
+	private static final Logger log = LoggerFactory.getLogger(CitiesRepositoryTest_local.class);
 
 	@Test
 	public void getAllTest() throws Exception {
+		log.debug("getAllTest()");
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
 		CitiesRepository rep = new CitiesRepository(dbConnMngr);
 		try {
@@ -29,12 +33,14 @@ public class CitiesRepositoryTest_local {
 		} finally {
 			rep.rollback();
 			rep.dispose();
+			assertEquals(0, ((TestDBConnectionManager) dbConnMngr).getInitialConnections());
 			dbConnMngr.dispose();
 		}
 	}
 
 	@Test
 	public void updateTest() throws Exception {
+		log.debug("updateTest()");
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
 		CitiesRepository rep = new CitiesRepository(dbConnMngr);
 		try {
@@ -59,12 +65,14 @@ public class CitiesRepositoryTest_local {
 		} finally {
 			rep.rollback();
 			rep.dispose();
+			assertEquals(0, ((TestDBConnectionManager) dbConnMngr).getInitialConnections());
 			dbConnMngr.dispose();
 		}
 	}
 
 	@Test
 	public void insertTest() throws Exception {
+		log.debug("insertTest()");
 		// prepare data
 		City newCity = new City();
 		newCity.setLat(6);
@@ -96,12 +104,14 @@ public class CitiesRepositoryTest_local {
 		} finally {
 			rep.rollback();
 			rep.dispose();
+			assertEquals(0, ((TestDBConnectionManager) dbConnMngr).getInitialConnections());
 			dbConnMngr.dispose();
 		}
 	}
 
 	@Test
 	public void getByName() throws Exception {
+		log.debug("getByName()");
 		// test
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
 		CitiesRepository rep = new CitiesRepository(dbConnMngr);
@@ -114,6 +124,7 @@ public class CitiesRepositoryTest_local {
 		} finally {
 			rep.rollback();
 			rep.dispose();
+			assertEquals(0, ((TestDBConnectionManager) dbConnMngr).getInitialConnections());
 			dbConnMngr.dispose();
 		}
 	}

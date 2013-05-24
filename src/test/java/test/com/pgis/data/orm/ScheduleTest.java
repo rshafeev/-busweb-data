@@ -27,7 +27,7 @@ public class ScheduleTest {
 		grp2.setScheduleID(100);
 		schedule.addScheduleGroup(grp2);
 
-		assertEquals(10, schedule.getId());
+		assertEquals(10, schedule.getId().intValue());
 		assertEquals(100, schedule.getRouteWayId());
 		assertEquals(2, schedule.getScheduleGroups().size());
 	}
@@ -53,7 +53,7 @@ public class ScheduleTest {
 
 		// test
 		Schedule schedule2 = new Schedule(model);
-		assertEquals(10, schedule2.getId());
+		assertEquals(10, schedule2.getId().intValue());
 		assertEquals(100, schedule2.getRouteWayId());
 		assertEquals(2, schedule2.getScheduleGroups().size());
 	}

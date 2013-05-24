@@ -11,7 +11,7 @@ import com.pgis.bus.data.repositories.orm.impl.ScheduleRepository;
 import com.pgis.bus.net.models.route.RouteWayModel;
 
 public class RouteWay extends ORMObject {
-	private int id;
+	private Integer id;
 	private int routeID;
 	private boolean direct;
 
@@ -45,11 +45,11 @@ public class RouteWay extends ORMObject {
 		this.schedule = schedule;
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 		if (schedule != null) {
 			schedule.setRouteWayId(id);

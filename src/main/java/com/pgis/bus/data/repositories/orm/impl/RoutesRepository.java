@@ -91,17 +91,19 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 	@Override
 	public void insert(Route route) throws SQLException {
+		if (route == null)
+			return;
 		Connection c = super.getConnection();
 		try {
+			route.setConnManager(null);
 			// validate
 			if (route.getDirectRouteWay() == null) {
 				throw new RepositoryException(RepositoryException.err_enum.c_route_data);
 			}
-			if (route.getReverseRouteWay() != null) {
-				throw new RepositoryException(RepositoryException.err_enum.c_route_data);
+			if (route.getReverseRouteWay() == null) {
+				route.makeReverseFromDirect();
 			}
 			this.insertStationsForRoute(route);
-			// route.updateIDs();
 			String query = "INSERT INTO bus.routes (city_id,cost,route_type_id) "
 					+ "VALUES(?,?,bus.route_type_enum(?)) RETURNING id,number_key; ";
 			PreparedStatement ps = c.prepareStatement(query);
@@ -131,6 +133,8 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		} catch (Exception e) {
 			log.error("insertRoute() exception: ", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} finally {
+			route.setConnManager(super.connManager);
 		}
 	}
 
@@ -207,12 +211,12 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 						r.setStationB(s);
 
 						for (RouteRelation rr : route.getDirectRouteWay().getRouteRelations()) {
-							if (rr.getStationB().getId() == id)
+							if (rr.getStationB() != null && rr.getStationB().getId() == id)
 								rr.setStationB(s);
 						}
 						if (route.getReverseRouteWay() != null) {
 							for (RouteRelation rr : route.getReverseRouteWay().getRouteRelations()) {
-								if (rr.getStationB().getId() == id)
+								if (rr.getStationB() != null && rr.getStationB().getId() == id)
 									rr.setStationB(s);
 							}
 						}
@@ -271,21 +275,20 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		Connection c = super.getConnection();
 		try {
 			route.setConnManager(null);
-			String query = "UPDATE bus.routes SET city_id = ?, cost = ?, "
-					+ "route_type_id = bus.route_type_enum(?) WHERE id = ? ;";
-			PreparedStatement ps = c.prepareStatement(query);
-			ps.setInt(1, route.getCityID());
-			ps.setDouble(2, route.getCost());
-			ps.setString(3, route.getRouteTypeID());
-			ps.setInt(4, route.getId());
-			ps.execute();
+			if (route.getId() != null) {
+				String query = "UPDATE bus.routes SET city_id = ?, cost = ?, "
+						+ "route_type_id = bus.route_type_enum(?) WHERE id = ? ;";
+				PreparedStatement ps = c.prepareStatement(query);
+				ps.setInt(1, route.getCityID());
+				ps.setDouble(2, route.getCost());
+				ps.setString(3, route.getRouteTypeID());
+				ps.setInt(4, route.getId());
+				ps.execute();
+			}
 			this.insertStationsForRoute(route);
-			RoutesRepository rep = new RoutesRepository(this.connManager);
-			rep.setRepositoryExternConnection(c);
-			rep.updateNumber(route.getNumberKey(), route.getNumber());
-			rep.update(route.getDirectRouteWay());
-			rep.update(route.getReverseRouteWay());
-
+			this.updateNumber(route.getNumberKey(), route.getNumber());
+			this.update(route.getDirectRouteWay());
+			this.update(route.getReverseRouteWay());
 		} catch (Exception e) {
 			log.error("updateRoute() exception: ", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
@@ -295,8 +298,8 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 	}
 
 	@Override
-	public void updateNumber(int numberKey, Collection<StringValue> number) throws SQLException {
-		if (number == null || numberKey <= 0)
+	public void updateNumber(Integer numberKey, Collection<StringValue> number) throws SQLException {
+		if (number == null || numberKey == null || numberKey <= 0)
 			return;
 		Connection c = super.getConnection();
 		try {
@@ -317,8 +320,8 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		ps.execute();
 	}
 
-	private void updateRouteRelations(int routeWayID, Collection<RouteRelation> relations) throws SQLException {
-		if (relations == null || routeWayID <= 0)
+	private void updateRouteRelations(Integer routeWayID, Collection<RouteRelation> relations) throws SQLException {
+		if (relations == null || routeWayID == null || routeWayID <= 0)
 			return;
 		Connection c = super.getConnection();
 		StationsRepository stationsRepository = new StationsRepository(this.connManager);
@@ -326,16 +329,9 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 		this.removeRouteRelations(routeWayID);
 		for (RouteRelation r : relations) {
+			log.debug("insert relation");
 			r.setConnManager(null);
-
 			try {
-				System.out.println(r.toString());
-				if (r.getStationA() != null) {
-					stationsRepository.update(r.getStationA());
-				}
-				if (r.getStationB() != null) {
-					stationsRepository.update(r.getStationB());
-				}
 				this.insertRouteRelation(r);
 			} finally {
 				r.setConnManager(this.connManager);
@@ -351,11 +347,12 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		try {
 			routeWay.setConnManager(null);
 			this.updateRouteRelations(routeWay.getId(), routeWay.getRouteRelations());
-
-			Connection c = super.getConnection();
-			ScheduleRepository scheduleRep = new ScheduleRepository(this.connManager);
-			scheduleRep.setRepositoryExternConnection(c);
-			scheduleRep.update(routeWay.getSchedule());
+			if (routeWay.getSchedule() != null) {
+				Connection c = super.getConnection();
+				ScheduleRepository scheduleRep = new ScheduleRepository(this.connManager);
+				scheduleRep.setRepositoryExternConnection(c);
+				scheduleRep.update(routeWay.getSchedule());
+			}
 		} finally {
 			routeWay.setConnManager(this.connManager);
 		}

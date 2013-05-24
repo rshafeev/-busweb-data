@@ -175,9 +175,7 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 		if (key.next()) {
 			int id = key.getInt("id");
 			schedule.setId(id);
-
 		} else {
-
 			throw new RepositoryException(RepositoryException.err_enum.c_id_notFind);
 		}
 		for (ScheduleGroup g : schedule.getScheduleGroups()) {
@@ -250,7 +248,7 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 			return;
 		try {
 			s.setConnManager(null);
-			this.remove(s.getId());
+			this.removeByRouteWay(s.getRouteWayId());
 			this.insert(s);
 		} finally {
 			s.setConnManager(this.connManager);
