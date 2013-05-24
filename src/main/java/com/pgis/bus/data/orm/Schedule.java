@@ -9,7 +9,7 @@ import com.pgis.bus.net.models.route.schedule.ScheduleGroupModel;
 
 public class Schedule extends ORMObject {
 
-	private int id;
+	private Integer id;
 	private int rway_id;
 	private Collection<ScheduleGroup> scheduleGroups;
 
@@ -34,11 +34,11 @@ public class Schedule extends ORMObject {
 		}
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 		if (scheduleGroups == null)
 			return;

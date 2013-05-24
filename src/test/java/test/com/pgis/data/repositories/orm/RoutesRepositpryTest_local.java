@@ -7,6 +7,9 @@ import static org.junit.Assert.assertTrue;
 import java.sql.SQLException;
 
 import org.junit.Test;
+import org.postgresql.ds.PGPoolingDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import test.com.pgis.data.TestDBConnectionManager;
 
@@ -22,10 +25,11 @@ import com.pgis.bus.data.service.impl.DataModelsService;
 import com.pgis.bus.net.models.route.RoutesListModel;
 
 public class RoutesRepositpryTest_local {
+	private static final Logger log = LoggerFactory.getLogger(RoutesRepositpryTest_local.class);
 
 	@Test
 	public void getTest() throws SQLException {
-		System.out.println("getTest()");
+		log.debug("getTest()");
 
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
 		IDataBaseService db = null;
@@ -65,7 +69,7 @@ public class RoutesRepositpryTest_local {
 
 	@Test
 	public void updateTest() throws SQLException {
-		System.out.println("updateTest()");
+		log.debug("updateTest()");
 
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
 		IDataBaseService db = null;
@@ -104,15 +108,17 @@ public class RoutesRepositpryTest_local {
 			assertEquals(expRouteType, actualRoute.getRouteTypeID());
 
 		} finally {
+			dbModels.dispose();
 			db.rollback();
 			db.dispose();
+			assertTrue(((TestDBConnectionManager) dbConnMngr).getInitialConnections() <= 0);
 			dbConnMngr.dispose();
 		}
 	}
 
 	@Test
 	public void insertTest() throws SQLException {
-		System.out.println("insertTest()");
+		log.debug("insertTest()");
 
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
 		IDataBaseService db = null;
@@ -155,6 +161,7 @@ public class RoutesRepositpryTest_local {
 		} finally {
 			db.rollback();
 			db.dispose();
+			assertTrue(((TestDBConnectionManager) dbConnMngr).getInitialConnections() <= 0);
 			dbConnMngr.dispose();
 		}
 	}

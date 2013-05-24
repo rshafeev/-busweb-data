@@ -51,7 +51,7 @@ public class Repository implements IRepository, IRepositoryConnection {
 			}
 			return mangerExternConnection;
 		}
-		// Если можно использовать только внешние подключения, то выбрасываем подключение
+		// Если можно использовать только внешние подключения, то выбрасываем исключение
 		if (userOnlyExternConnection == true)
 			throw new TransactConnectionException(TransactConnectionException.err_enum.c_received_connect);
 

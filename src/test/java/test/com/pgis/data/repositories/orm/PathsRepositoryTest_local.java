@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import test.com.pgis.data.TestDBConnectionManager;
 
@@ -22,9 +24,11 @@ import com.pgis.bus.net.request.data.OutTimeModel;
 import com.pgis.bus.net.request.data.RouteTypeDiscount;
 
 public class PathsRepositoryTest_local {
+	private static final Logger log = LoggerFactory.getLogger(PathsRepositoryTest_local.class);
 
 	@Test
 	public void getShortestPaths1_Test() throws Exception {
+		log.debug("getShortestPaths1_Test()");
 		// prepare data
 		PointModel p1 = new PointModel(50.026350246659, 36.3360857963562);
 		PointModel p2 = new PointModel(50.0355169337227, 36.2198925018311);
@@ -64,6 +68,7 @@ public class PathsRepositoryTest_local {
 
 	@Test
 	public void getShortestPaths2_Test() throws Exception {
+		log.debug("getShortestPaths2_Test()");
 		// prepare data
 		PointModel p1 = new PointModel(50.01303427698978, 36.22690200805664);
 		PointModel p2 = new PointModel(50.00365685169585, 36.30380630493164);

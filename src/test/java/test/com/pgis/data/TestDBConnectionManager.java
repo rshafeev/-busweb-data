@@ -14,6 +14,11 @@ public class TestDBConnectionManager implements IConnectionManager {
 	private javax.sql.DataSource source = null;
 	private final Logger log = LoggerFactory.getLogger(TestDBConnectionManager.class);
 	private Connection connection = null;
+	private int useConnections = 0;
+
+	public int getInitialConnections() {
+		return useConnections;
+	}
 
 	public static IConnectionManager create() {
 		PGPoolingDataSource source = PoolConnectionManager.createPGPoolingDataSource("jdbc:postgresql", "localhost",
@@ -27,6 +32,10 @@ public class TestDBConnectionManager implements IConnectionManager {
 
 	}
 
+	public void setSource(javax.sql.DataSource source) {
+		this.source = source;
+	}
+
 	/**
 	 * Извлечь подключение из пула Обратите внимание! После окончания работы с подключением, нужно обязательно вызвать
 	 * функцию DBConnectionFactory::closeConnection(c)
@@ -34,6 +43,8 @@ public class TestDBConnectionManager implements IConnectionManager {
 	 * @return Connection
 	 */
 	public Connection getConnection() {
+		useConnections++;
+		log.debug("create new connection");
 		if (connection != null)
 			return connection;
 		if (source == null) {
@@ -43,6 +54,7 @@ public class TestDBConnectionManager implements IConnectionManager {
 		do {
 			try {
 				connection = this.source.getConnection();
+
 				connection.setAutoCommit(false);
 				return connection;
 
@@ -60,6 +72,8 @@ public class TestDBConnectionManager implements IConnectionManager {
 	 * @param c - объект подключения
 	 */
 	public void closeConnection(Connection c) {
+		log.debug("close connection");
+		useConnections--;
 	}
 
 	/**
@@ -95,7 +109,8 @@ public class TestDBConnectionManager implements IConnectionManager {
 	public void dispose() {
 		this.source = null;
 		log.debug("destroy DB-pool: ok");
-
+		if (useConnections > 0)
+			log.error("Uses connections: {}", useConnections);
 		try {
 			if (connection != null) {
 				connection.rollback();

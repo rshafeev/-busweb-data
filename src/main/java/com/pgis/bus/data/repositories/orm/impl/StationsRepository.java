@@ -40,7 +40,7 @@ public class StationsRepository extends Repository implements IStationsRepositor
 			if (key.next()) {
 				int id = key.getInt("id");
 				int name_key = key.getInt("name_key");
-				station.setConnManager(connManager);
+				station.setConnManager(null);
 				station.setId(id);
 				station.setNameKey(name_key);
 
@@ -55,6 +55,8 @@ public class StationsRepository extends Repository implements IStationsRepositor
 		} catch (SQLException e) {
 			log.error("insertStation() exception: ", e);
 			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} finally {
+			station.setConnManager(super.connManager);
 		}
 
 	}

@@ -24,6 +24,8 @@ public class PGIntervalHelper {
 	}
 
 	public static PGInterval fromModel(TimeIntervalModel model) {
+		if (model == null)
+			return null;
 		int secs = (int) model.getTime();
 		int h = secs / 60 / 60;
 		int m = (secs - h * 60 * 60) / 60;

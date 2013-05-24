@@ -10,7 +10,7 @@ import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.PoolConnectionManager;
 
 public class ServiceConnectionManager implements IConnectionManager {
-	private final Logger log = LoggerFactory.getLogger(PoolConnectionManager.class);
+	private final Logger log = LoggerFactory.getLogger(ServiceConnectionManager.class);
 	private Connection externConnection = null;
 	private boolean disposedExternConnection = false;
 	private IConnectionManager rootConnectionManager = null;
