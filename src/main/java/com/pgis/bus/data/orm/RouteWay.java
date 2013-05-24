@@ -10,7 +10,7 @@ import com.pgis.bus.data.repositories.orm.impl.RoutesRepository;
 import com.pgis.bus.data.repositories.orm.impl.ScheduleRepository;
 import com.pgis.bus.net.models.route.RouteWayModel;
 
-public class RouteWay extends ORMObject {
+public class RouteWay extends ORMObject implements Cloneable {
 	private Integer id;
 	private int routeID;
 	private boolean direct;
@@ -164,4 +164,17 @@ public class RouteWay extends ORMObject {
 		return createModel(this, langID);
 	}
 
+	@Override
+	public RouteWay clone() throws CloneNotSupportedException {
+		Collection<RouteRelation> wayRelations = new ArrayList<RouteRelation>();
+		for (RouteRelation r : this.route_relations) {
+			wayRelations.add(r.clone());
+		}
+		RouteWay way = (RouteWay) super.clone();
+		way.direct = this.direct;
+		way.id = this.id;
+		way.routeID = this.routeID;
+		way.setRouteRelations(wayRelations);
+		return way;
+	}
 }
