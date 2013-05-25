@@ -1,6 +1,7 @@
 package com.pgis.bus.data.orm;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.slf4j.Logger;
@@ -12,7 +13,7 @@ import com.pgis.bus.data.repositories.orm.impl.RoutesRepository;
 import com.pgis.bus.data.repositories.orm.impl.StringValuesRepository;
 import com.pgis.bus.net.models.route.RouteModel;
 
-public class Route extends ORMObject {
+public class Route extends ORMObject implements Cloneable   {
 	private static final Logger log = LoggerFactory.getLogger(Route.class);
 
 	private Integer id;
@@ -187,5 +188,35 @@ public class Route extends ORMObject {
 		}
 
 	}
-
+	
+	@Override
+	public Route clone() throws CloneNotSupportedException {
+		Route route = (Route) super.clone();
+		Collection<StringValue> numb = new ArrayList<StringValue>();
+		if (this.number != null)
+		{
+		for (StringValue n : this.number) {
+			numb.add(n.clone());
+		}
+		}
+		route.id = this.id;
+		route.city_id = this.city_id;
+		route.cost = this.cost;
+		if (this.route_type_id != null)
+		{
+		route.route_type_id = new String(this.route_type_id);
+		}
+		route.number_key = this.number_key;
+		route.number = numb;
+		if(this.directRouteWay != null)
+		{
+		route.directRouteWay = this.directRouteWay.clone();
+		}
+		if(this.reverseRouteWay != null)
+		{
+		route.reverseRouteWay = this.reverseRouteWay.clone();
+		}
+		return route;
+	}
+	
 }

@@ -1,8 +1,11 @@
 package com.pgis.bus.data.orm;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.pgis.bus.data.orm.type.LangEnum;
 
-public class StringValue {
+public class StringValue implements Cloneable {
 	private Integer id;
 	private Integer key_id;
 	private LangEnum lang_id;
@@ -66,5 +69,14 @@ public class StringValue {
 	public String toString() {
 		return "StringValue [id=" + id + ", key_id=" + key_id + ", lang_id=" + lang_id + ", value=" + value + "]";
 	}
-
+	
+	@Override
+	public StringValue clone() throws CloneNotSupportedException {
+		StringValue stringValue = (StringValue) super.clone();
+		stringValue.id = this.id;
+		stringValue.key_id = this.key_id;
+		stringValue.lang_id = this.lang_id;
+		stringValue.value = this.value;
+		return stringValue;
+	}
 }

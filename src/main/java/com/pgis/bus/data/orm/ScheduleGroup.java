@@ -9,7 +9,7 @@ import com.pgis.bus.net.models.DayEnumModel;
 import com.pgis.bus.net.models.route.schedule.ScheduleGroupModel;
 import com.pgis.bus.net.models.route.schedule.TimetableModel;
 
-public class ScheduleGroup extends ORMObject {
+public class ScheduleGroup extends ORMObject implements Cloneable {
 	private int id;
 	private int scheduleID;
 	private Collection<ScheduleGroupDay> days;
@@ -117,4 +117,28 @@ public class ScheduleGroup extends ORMObject {
 		model.setDays(days);
 		return model;
 	}
+
+	@Override
+	public ScheduleGroup clone() throws CloneNotSupportedException {
+		ScheduleGroup scheduleGroup = (ScheduleGroup) super.clone();
+		Collection<ScheduleGroupDay> scheduleGroupDay = new ArrayList<ScheduleGroupDay>();
+		if (days != null) {
+			for (ScheduleGroupDay sgd : this.days) {
+				scheduleGroupDay.add(sgd.clone());
+			}
+		}
+		
+		Collection<Timetable> timetable = new ArrayList<Timetable>();
+		if (timetables != null) {
+		for (Timetable t : this.timetables) {
+			timetable.add(t.clone());
+		}
+		}
+		scheduleGroup.id = this.id;
+		scheduleGroup.scheduleID = this.scheduleID;
+		scheduleGroup.days = scheduleGroupDay;
+		scheduleGroup.timetables = timetable;
+		return scheduleGroup;
+	}
+
 }

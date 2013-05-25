@@ -45,4 +45,19 @@ public class GeoObjectsHelper {
 		line.setSrid(GEOMETRY_SRID);
 		return line;
 	}
+	
+	public static LineString clone(LineString line){
+		if (line == null)
+			return null;
+		if(line.isEmpty())
+			return new LineString();
+		Point[] points = line.getPoints();
+		Point[] copiedPoints = new Point[points.length];
+		for(int i=0;i < points.length; i++ ){
+			copiedPoints[i] = new Point(points[i].x, points[i].y);
+		}
+		LineString copy = new LineString(copiedPoints);
+		copy.srid = line.srid;
+		return copy;
+	}
 }
