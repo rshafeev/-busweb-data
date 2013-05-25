@@ -4,7 +4,6 @@ import java.util.Locale;
 
 import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.model.ICitiesModelRepository;
-import com.pgis.bus.data.repositories.model.IJsonRouteObjectsModelRepository;
 import com.pgis.bus.data.repositories.model.IRoutesModelRepository;
 import com.pgis.bus.data.repositories.model.IStationsModelRepository;
 import com.pgis.bus.net.models.LangEnumModel;
@@ -16,8 +15,6 @@ public interface IDataModelsService extends IDataService {
 	IStationsModelRepository Stations();
 
 	IRoutesModelRepository Routes();
-
-	IJsonRouteObjectsModelRepository JsonRouteObjects();
 
 	void setLocale(Locale locale);
 

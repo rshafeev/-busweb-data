@@ -6,11 +6,9 @@ import java.util.Locale;
 import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.orm.type.LangEnum;
 import com.pgis.bus.data.repositories.model.ICitiesModelRepository;
-import com.pgis.bus.data.repositories.model.IJsonRouteObjectsModelRepository;
 import com.pgis.bus.data.repositories.model.IRoutesModelRepository;
 import com.pgis.bus.data.repositories.model.IStationsModelRepository;
 import com.pgis.bus.data.repositories.model.impl.CitiesModelRepository;
-import com.pgis.bus.data.repositories.model.impl.JsonRouteObjectsModelRepository;
 import com.pgis.bus.data.repositories.model.impl.RoutesModelRepository;
 import com.pgis.bus.data.repositories.model.impl.StationsModelRepository;
 import com.pgis.bus.data.service.IDataModelsService;
@@ -21,7 +19,6 @@ public class DataModelsService extends DataService implements IDataModelsService
 	protected CitiesModelRepository citiesRepotitory = null;
 	protected StationsModelRepository stationsRepository = null;
 	protected RoutesModelRepository routesRepository = null;
-	protected JsonRouteObjectsModelRepository objectsRepository = null;
 
 	public DataModelsService(Locale locale, IConnectionManager rootConnectionManager) throws SQLException {
 		super(rootConnectionManager);
@@ -61,15 +58,6 @@ public class DataModelsService extends DataService implements IDataModelsService
 	}
 
 	@Override
-	public IJsonRouteObjectsModelRepository JsonRouteObjects() {
-		if (objectsRepository == null) {
-			objectsRepository = new JsonRouteObjectsModelRepository(langID, connectionManager);
-			objectsRepository.useOnlyExternConnection(true);
-		}
-		return objectsRepository;
-	}
-
-	@Override
 	public void setLocale(Locale locale) {
 		this.setLocale(LangEnum.valueOf(locale));
 	}
@@ -81,9 +69,7 @@ public class DataModelsService extends DataService implements IDataModelsService
 		if (routesRepository != null) {
 			routesRepository.setLocale(langID);
 		}
-		if (objectsRepository != null) {
-			objectsRepository.setLocale(langID);
-		}
+
 		if (citiesRepotitory != null) {
 			citiesRepotitory.setLocale(langID);
 		}

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.models.factory.TimeIntervalModelFactory;
 import com.pgis.bus.data.orm.type.LangEnum;
+import com.pgis.bus.data.orm.type.LineStringEx;
 import com.pgis.bus.data.repositories.orm.impl.StationsRepository;
 import com.pgis.bus.net.models.route.RouteRelationModel;
 
@@ -25,7 +26,7 @@ public class RouteRelation extends ORMObject implements Cloneable {
 	private int position_index;
 	private double distance;
 	private PGInterval ev_time;
-	private LineString geom;
+	private LineStringEx geom;
 	private Station stationA;
 	private Station stationB;
 
@@ -133,11 +134,11 @@ public class RouteRelation extends ORMObject implements Cloneable {
 		this.ev_time = ev_time;
 	}
 
-	public LineString getGeom() {
+	public LineStringEx getGeom() {
 		return geom;
 	}
 
-	public void setGeom(LineString geom) {
+	public void setGeom(LineStringEx geom) {
 		this.geom = geom;
 	}
 

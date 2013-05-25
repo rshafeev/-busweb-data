@@ -1,11 +1,12 @@
-package com.pgis.bus.data.models;
+package com.pgis.bus.data.models.route.serialized.v1;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import com.pgis.bus.data.helpers.PGIntervalHelper;
-import com.pgis.bus.data.helpers.TimeHelper;
+import com.pgis.bus.data.helpers.GeoObjectsHelper;
+import com.pgis.bus.data.models.route.serialized.SerializedRouteObjectModel;
 import com.pgis.bus.data.orm.Route;
 import com.pgis.bus.data.orm.RouteRelation;
 import com.pgis.bus.data.orm.RouteWay;
@@ -13,13 +14,15 @@ import com.pgis.bus.data.orm.Schedule;
 import com.pgis.bus.data.orm.ScheduleGroup;
 import com.pgis.bus.data.orm.ScheduleGroupDay;
 import com.pgis.bus.data.orm.Station;
+import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.orm.Timetable;
 import com.pgis.bus.data.orm.type.DayEnum;
-import com.pgis.bus.net.models.geom.PolyLineModel;
+import com.pgis.bus.data.orm.type.LangEnum;
 
-public class JsonRouteObjectModel {
+public class JsonRouteObjectModel implements SerializedRouteObjectModel, Serializable {
 
-	private String cityKey;
+	private static final long serialVersionUID = 1L;
+
 	private int cityID;
 
 	private int routeID;
@@ -48,19 +51,11 @@ public class JsonRouteObjectModel {
 
 	private Station directStations[];
 
-	private PolyLineModel directRelations[];
+	private GsonLineString directRelations[];
 
 	private Station reverseStations[];
 
-	private PolyLineModel reverseRelations[];
-
-	public String getCityKey() {
-		return cityKey;
-	}
-
-	public void setCityKey(String cityKey) {
-		this.cityKey = cityKey;
-	}
+	private GsonLineString reverseRelations[];
 
 	public int getCityID() {
 		return cityID;
@@ -110,11 +105,11 @@ public class JsonRouteObjectModel {
 		this.directStations = directStations;
 	}
 
-	public PolyLineModel[] getDirectRelations() {
+	public GsonLineString[] getDirectRelations() {
 		return directRelations;
 	}
 
-	public void setDirectRelations(PolyLineModel[] directRelations) {
+	public void setDirectRelations(GsonLineString[] directRelations) {
 		this.directRelations = directRelations;
 	}
 
@@ -126,11 +121,11 @@ public class JsonRouteObjectModel {
 		this.reverseStations = reverseStations;
 	}
 
-	public PolyLineModel[] getReverseRelations() {
+	public GsonLineString[] getReverseRelations() {
 		return reverseRelations;
 	}
 
-	public void setReverseRelations(PolyLineModel[] reverseRelations) {
+	public void setReverseRelations(GsonLineString[] reverseRelations) {
 		this.reverseRelations = reverseRelations;
 	}
 
@@ -167,7 +162,7 @@ public class JsonRouteObjectModel {
 		this.intervalMax = intervalMax;
 	}
 
-	public Route toRoute() {
+	private Schedule makeSchedule() {
 		// create timetables
 		Collection<Timetable> timeTables = new ArrayList<Timetable>();
 		if (this.intervalMin != this.intervalMax) {
@@ -180,80 +175,80 @@ public class JsonRouteObjectModel {
 
 			if (xS <= x7 && xF >= x19) {
 				Timetable timetable1 = new Timetable();
-				timetable1.setTimeA(TimeHelper.fromSeconds(xS));
-				timetable1.setTimeB(TimeHelper.fromSeconds(x7));
-				timetable1.setFrequency(PGIntervalHelper.fromSeconds(intervalMax));
+				timetable1.setTimeA(xS);
+				timetable1.setTimeB(x7);
+				timetable1.setFrequency(intervalMax);
 				timeTables.add(timetable1);
 
 				Timetable timetable2 = new Timetable();
-				timetable2.setTimeA(TimeHelper.fromSeconds(x7));
-				timetable2.setTimeB(TimeHelper.fromSeconds(x11));
-				timetable2.setFrequency(PGIntervalHelper.fromSeconds(intervalMin));
+				timetable2.setTimeA(x7);
+				timetable2.setTimeB(x11);
+				timetable2.setFrequency(intervalMin);
 				timeTables.add(timetable2);
 
 				Timetable timetable3 = new Timetable();
-				timetable3.setTimeA(TimeHelper.fromSeconds(x11));
-				timetable3.setTimeB(TimeHelper.fromSeconds(x16));
-				timetable3.setFrequency(PGIntervalHelper.fromSeconds(intervalMax));
+				timetable3.setTimeA(x11);
+				timetable3.setTimeB(x16);
+				timetable3.setFrequency(intervalMax);
 				timeTables.add(timetable3);
 
 				Timetable timetable4 = new Timetable();
-				timetable4.setTimeA(TimeHelper.fromSeconds(x16));
-				timetable4.setTimeB(TimeHelper.fromSeconds(x19));
-				timetable4.setFrequency(PGIntervalHelper.fromSeconds(intervalMin));
+				timetable4.setTimeA(x16);
+				timetable4.setTimeB(x19);
+				timetable4.setFrequency(intervalMin);
 				timeTables.add(timetable4);
 
 				Timetable timetable5 = new Timetable();
-				timetable5.setTimeA(TimeHelper.fromSeconds(x19));
-				timetable5.setTimeB(TimeHelper.fromSeconds(xF));
-				timetable5.setFrequency(PGIntervalHelper.fromSeconds(intervalMax));
+				timetable5.setTimeA(x19);
+				timetable5.setTimeB(xF);
+				timetable5.setFrequency(intervalMax);
 				timeTables.add(timetable5);
 
 			} else if (xF - xS > 6 * 60 * 60) {
 				// Если время работы больше 6-ти часов, тогда разбиваем
 				// на 4-е интервала
 				Timetable timetable1 = new Timetable();
-				timetable1.setTimeA(TimeHelper.fromSeconds(xS));
-				timetable1.setTimeB(TimeHelper.fromSeconds(xS + 3 * 60 * 60));
-				timetable1.setFrequency(PGIntervalHelper.fromSeconds(intervalMin));
+				timetable1.setTimeA(xS);
+				timetable1.setTimeB(xS + 3 * 60 * 60);
+				timetable1.setFrequency(intervalMin);
 				timeTables.add(timetable1);
 
 				Timetable timetable2 = new Timetable();
-				timetable2.setTimeA(TimeHelper.fromSeconds(xS + 3 * 60 * 60));
-				timetable2.setTimeB(TimeHelper.fromSeconds(xF - 3 * 60 * 60));
-				timetable2.setFrequency(PGIntervalHelper.fromSeconds(intervalMax));
+				timetable2.setTimeA(xS + 3 * 60 * 60);
+				timetable2.setTimeB(xF - 3 * 60 * 60);
+				timetable2.setFrequency(intervalMax);
 				timeTables.add(timetable2);
 
 				Timetable timetable3 = new Timetable();
-				timetable3.setTimeA(TimeHelper.fromSeconds(xF - 3 * 60 * 60));
-				timetable3.setTimeB(TimeHelper.fromSeconds(xF - 1 * 60 * 60));
-				timetable3.setFrequency(PGIntervalHelper.fromSeconds(intervalMin));
+				timetable3.setTimeA(xF - 3 * 60 * 60);
+				timetable3.setTimeB(xF - 1 * 60 * 60);
+				timetable3.setFrequency(intervalMin);
 				timeTables.add(timetable3);
 
 				Timetable timetable4 = new Timetable();
-				timetable4.setTimeA(TimeHelper.fromSeconds(xF - 1 * 60 * 60));
-				timetable4.setTimeB(TimeHelper.fromSeconds(xF));
-				timetable4.setFrequency(PGIntervalHelper.fromSeconds(intervalMax));
+				timetable4.setTimeA(xF - 1 * 60 * 60);
+				timetable4.setTimeB(xF);
+				timetable4.setFrequency(intervalMax);
 				timeTables.add(timetable4);
 			} else {
 				Timetable timetable1 = new Timetable();
-				timetable1.setTimeA(TimeHelper.fromSeconds(xS));
-				timetable1.setTimeB(TimeHelper.fromSeconds((xS + xF) / 2));
-				timetable1.setFrequency(PGIntervalHelper.fromSeconds(intervalMin));
+				timetable1.setTimeA(xS);
+				timetable1.setTimeB((xS + xF) / 2);
+				timetable1.setFrequency(intervalMin);
 				timeTables.add(timetable1);
 
 				Timetable timetable2 = new Timetable();
-				timetable2.setTimeA(TimeHelper.fromSeconds((xS + xF) / 2));
-				timetable2.setTimeB(TimeHelper.fromSeconds(xF));
-				timetable2.setFrequency(PGIntervalHelper.fromSeconds(intervalMax));
+				timetable2.setTimeA((xS + xF) / 2);
+				timetable2.setTimeB(xF);
+				timetable2.setFrequency(intervalMax);
 				timeTables.add(timetable2);
 			}
 
 		} else {
 			Timetable timetable1 = new Timetable();
-			timetable1.setTimeA(TimeHelper.fromSeconds(this.timeStart));
-			timetable1.setTimeB(TimeHelper.fromSeconds(this.timeFinish));
-			timetable1.setFrequency(PGIntervalHelper.fromSeconds(intervalMin));
+			timetable1.setTimeA(this.timeStart);
+			timetable1.setTimeB(this.timeFinish);
+			timetable1.setFrequency(intervalMin);
 			timeTables.add(timetable1);
 
 		}
@@ -264,39 +259,78 @@ public class JsonRouteObjectModel {
 		scheduleGroup.setDays(Arrays.asList(new ScheduleGroupDay[] { new ScheduleGroupDay(DayEnum.c_all) }));
 		scheduleGroup.setTimetables(timeTables);
 		schedule.setScheduleGroups(Arrays.asList(new ScheduleGroup[] { scheduleGroup }));
+		return schedule;
+	}
 
+	@Override
+	public Route toORMObject() {
+		Schedule schedule = makeSchedule();
 		// direct
 		RouteWay directRouteWay = new RouteWay();
 		directRouteWay.setDirect(true);
 		directRouteWay.setRouteID(-1);
 		directRouteWay.setSchedule(schedule);
 		Collection<RouteRelation> directRouteRelations = new ArrayList<RouteRelation>();
-		/*
-		 * for (int i = 0; i < this.directStations.length; i++) { RouteRelation relation = new RouteRelation(); Station
-		 * stA = null, stB = null; GsonLineString geom = null; if (i > 0) { stA = this.directStations[i - 1]; geom =
-		 * this.directRelations[i - 1]; if (stA.getId() != null) relation.setStation_a_id(stA.getId());
-		 * relation.setGeom(geom); } stB = this.directStations[i]; relation.setPosition_index(i); if (stB.getId() !=
-		 * null) relation.setStation_b_id(stB.getId()); relation.setStationB(stB); directRouteRelations.add(relation); }
-		 * directRouteWay.setRoute_relations(directRouteRelations); // reverse RouteWay reverseRouteWay = new
-		 * RouteWay(); reverseRouteWay.setDirect(false); reverseRouteWay.setRoute_id(-1);
-		 * reverseRouteWay.setSchedule(schedule); Collection<RouteRelation> reverseRouteRelations = new
-		 * ArrayList<RouteRelation>(); for (int i = 0; i < this.reverseStations.length; i++) { RouteRelation relation =
-		 * new RouteRelation(); Station stA = null, stB = null; GsonLineString geom = null; if (i > 0) { stA =
-		 * this.reverseStations[i - 1]; geom = this.reverseRelations[i - 1]; if (stA.getId() != null)
-		 * relation.setStation_a_id(stA.getId()); relation.setGeom(geom); } stB = this.reverseStations[i];
-		 * relation.setPosition_index(i); if (stB.getId() != null) relation.setStation_b_id(stB.getId());
-		 * relation.setStationB(stB);
-		 * 
-		 * reverseRouteRelations.add(relation); } reverseRouteWay.setRoute_relations(reverseRouteRelations);
-		 */
+		for (int i = 0; i < this.directStations.length; i++) {
+			RouteRelation relation = new RouteRelation();
+			Station stA = null, stB = null;
+			GsonLineString geom = null;
+			if (i > 0) {
+				stA = this.directStations[i - 1];
+				geom = this.directRelations[i - 1];
+				if (stA.getId() != null)
+					relation.setStationAId(stA.getId());
+				relation.setGeom(geom.toLineString());
+			}
+			stB = this.directStations[i];
+			relation.setPositionIndex(i);
+			if (stB.getId() != null)
+				relation.setStationBId(stB.getId());
+			relation.setStationB(stB);
+			directRouteRelations.add(relation);
+		}
+		directRouteWay.setRouteRelations(directRouteRelations);
+
+		// reverse
+		RouteWay reverseRouteWay = new RouteWay();
+		reverseRouteWay.setDirect(false);
+		reverseRouteWay.setRouteID(-1);
+		reverseRouteWay.setSchedule(schedule);
+		Collection<RouteRelation> reverseRouteRelations = new ArrayList<RouteRelation>();
+		for (int i = 0; i < this.reverseStations.length; i++) {
+			RouteRelation relation = new RouteRelation();
+			Station stA = null, stB = null;
+			GsonLineString geom = null;
+			if (i > 0) {
+				stA = this.reverseStations[i - 1];
+				geom = this.reverseRelations[i - 1];
+				if (stA.getId() != null)
+					relation.setStationAId(stA.getId());
+				relation.setGeom(geom.toLineString());
+			}
+			stB = this.reverseStations[i];
+			relation.setPositionIndex(i);
+			if (stB.getId() != null)
+				relation.setStationBId(stB.getId());
+			relation.setStationB(stB);
+
+			reverseRouteRelations.add(relation);
+		}
+		reverseRouteWay.setRouteRelations(reverseRouteRelations);
 		// create route
 		Route r = new Route();
 		r.setCityID(this.cityID);
 		r.setCost(this.cost);
-		// r.setNumber(this.number);
+
+		Collection<StringValue> numb = new ArrayList<StringValue>();
+		numb.add(new StringValue(LangEnum.c_ru, this.number));
+		numb.add(new StringValue(LangEnum.c_en, this.number));
+		numb.add(new StringValue(LangEnum.c_uk, this.number));
+
+		r.setNumber(numb);
 		r.setRouteTypeID(this.routeType);
-		// r.setDirectRouteWay(directRouteWay);
-		// r.setReverseRouteWay(reverseRouteWay);
+		r.setDirectRouteWay(directRouteWay);
+		r.setReverseRouteWay(reverseRouteWay);
 		return r;
 	}
 
@@ -304,11 +338,13 @@ public class JsonRouteObjectModel {
 		if (this.directStations != null) {
 			for (int i = 0; i < this.directStations.length; i++) {
 				Station s = this.directStations[i];
+				s.getLocation().setSrid(GeoObjectsHelper.GEOMETRY_SRID);
 			}
 		}
 		if (this.reverseStations != null) {
 			for (int i = 0; i < this.reverseStations.length; i++) {
 				Station s = this.reverseStations[i];
+				s.getLocation().setSrid(GeoObjectsHelper.GEOMETRY_SRID);
 			}
 		}
 
@@ -348,5 +384,9 @@ public class JsonRouteObjectModel {
 		}
 
 		return true;
+	}
+
+	public long getSerialVersionUID() {
+		return serialVersionUID;
 	}
 }

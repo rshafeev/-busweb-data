@@ -1,7 +1,7 @@
 package com.pgis.bus.data.service;
 
 import com.pgis.bus.data.repositories.orm.ICitiesRepository;
-import com.pgis.bus.data.repositories.orm.IJsonRouteObjectsRepository;
+import com.pgis.bus.data.repositories.orm.ISerializedRoutesRepository;
 import com.pgis.bus.data.repositories.orm.ILanguagesRepository;
 import com.pgis.bus.data.repositories.orm.IPathsRepository;
 import com.pgis.bus.data.repositories.orm.IRoutesRepository;
@@ -23,7 +23,7 @@ public interface IDataBaseService extends IDataService {
 
 	IRoutesRepository Routes();
 
-	IJsonRouteObjectsRepository JsonRouteObjects();
+	ISerializedRoutesRepository JsonRouteObjects();
 
 	IScheduleRepository Schedule();
 }

@@ -9,22 +9,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
-import com.pgis.bus.data.orm.JsonRouteObject;
+import com.pgis.bus.data.orm.SerializedRouteObject;
 import com.pgis.bus.data.repositories.Repository;
 import com.pgis.bus.data.repositories.RepositoryException;
-import com.pgis.bus.data.repositories.orm.IJsonRouteObjectsRepository;
+import com.pgis.bus.data.repositories.orm.ISerializedRoutesRepository;
 
-public class JsonRouteObjectsRepository extends Repository implements IJsonRouteObjectsRepository {
-	private static final Logger log = LoggerFactory.getLogger(JsonRouteObjectsRepository.class);
+public class SerializedRoutesRepository extends Repository implements ISerializedRoutesRepository {
+	private static final Logger log = LoggerFactory.getLogger(SerializedRoutesRepository.class);
 
-	public JsonRouteObjectsRepository(IConnectionManager connManager) {
+	public SerializedRoutesRepository(IConnectionManager connManager) {
 		super(connManager);
 	}
 
 	@Override
-	public JsonRouteObject get(String cityKey, String routeType, String number) throws SQLException {
+	public SerializedRouteObject get(String cityKey, String routeType, String number) throws SQLException {
 		Connection c = super.getConnection();
-		JsonRouteObject obj = null;
+		SerializedRouteObject obj = null;
 		try {
 			String query = "SELECT * FROM bus.import_objects WHERE "
 					+ "city_key = ? AND route_type = bus.route_type_enum(?) AND " + "route_number = ?;";
@@ -35,7 +35,7 @@ public class JsonRouteObjectsRepository extends Repository implements IJsonRoute
 			ResultSet key = ps.executeQuery();
 
 			if (key.next()) {
-				obj = new JsonRouteObject();
+				obj = new SerializedRouteObject();
 				obj.id = key.getInt("id");
 				obj.obj = key.getString("obj");
 				obj.city_key = cityKey;
@@ -50,9 +50,9 @@ public class JsonRouteObjectsRepository extends Repository implements IJsonRoute
 	}
 
 	@Override
-	public JsonRouteObject get(int objID) throws SQLException {
+	public SerializedRouteObject get(int objID) throws SQLException {
 		Connection c = super.getConnection();
-		JsonRouteObject obj = null;
+		SerializedRouteObject obj = null;
 		try {
 			String query = "SELECT * FROM bus.import_objects WHERE id = ?";
 			PreparedStatement ps = c.prepareStatement(query);
@@ -60,7 +60,7 @@ public class JsonRouteObjectsRepository extends Repository implements IJsonRoute
 			ResultSet key = ps.executeQuery();
 
 			if (key.next()) {
-				obj = new JsonRouteObject();
+				obj = new SerializedRouteObject();
 				obj.id = objID;
 				obj.obj = key.getString("obj");
 				obj.city_key = key.getString("city_key");
@@ -75,7 +75,7 @@ public class JsonRouteObjectsRepository extends Repository implements IJsonRoute
 	}
 
 	@Override
-	public void updateByID(JsonRouteObject importObject) throws SQLException {
+	public void updateByID(SerializedRouteObject importObject) throws SQLException {
 		Connection c = super.getConnection();
 		try {
 
@@ -92,14 +92,14 @@ public class JsonRouteObjectsRepository extends Repository implements IJsonRoute
 	}
 
 	@Override
-	public void insert(JsonRouteObject importObject) throws SQLException {
+	public void insert(SerializedRouteObject importObject) throws SQLException {
 		// validation
 		if (importObject == null || importObject.obj == null)
 			throw new RepositoryException(RepositoryException.err_enum.c_input_data);
 		Connection c = super.getConnection();
 		try {
 
-			JsonRouteObject newObj = this.get(importObject.city_key, importObject.route_type, importObject.route_number);
+			SerializedRouteObject newObj = this.get(importObject.city_key, importObject.route_type, importObject.route_number);
 			if (newObj != null) {
 				newObj.obj = importObject.obj;
 				this.updateByID(newObj);

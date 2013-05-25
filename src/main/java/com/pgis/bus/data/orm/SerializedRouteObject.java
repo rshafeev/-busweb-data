@@ -1,13 +1,14 @@
 package com.pgis.bus.data.orm;
 
-public class JsonRouteObject {
+public class SerializedRouteObject {
 	public int id;
 	public String city_key;
 	public String route_type;
 	public String route_number;
 	public String obj;
+	public String ver;
 
-	public JsonRouteObject() {
+	public SerializedRouteObject() {
 
 	}
 

@@ -9,7 +9,6 @@ public class StringValue {
 	private String value;
 
 	public StringValue() {
-
 	}
 
 	public StringValue(LangEnum lang_id, String value) {

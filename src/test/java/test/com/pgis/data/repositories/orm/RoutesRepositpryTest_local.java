@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
+import java.util.Collection;
 
 import org.junit.Test;
 import org.postgresql.ds.PGPoolingDataSource;
@@ -26,6 +27,30 @@ import com.pgis.bus.net.models.route.RoutesListModel;
 
 public class RoutesRepositpryTest_local {
 	private static final Logger log = LoggerFactory.getLogger(RoutesRepositpryTest_local.class);
+
+	@Test
+	public void getAllTest() throws SQLException {
+		log.debug("getAllTest()");
+
+		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
+		IDataBaseService db = null;
+		try {
+			db = new DataBaseService(dbConnMngr);
+
+			// Получим город.
+			City city = db.Cities().getByKey("kharkiv");
+			assertNotNull(city);
+
+			// Выберем первый маршрут из списка
+			Collection<Route> routes = db.Routes().getAll(LangEnum.c_en, city.getId(), "c_route_bus");
+			assertNotNull(routes);
+			assertTrue(routes.size() > 1);
+		} finally {
+			db.rollback();
+			db.dispose();
+			dbConnMngr.dispose();
+		}
+	}
 
 	@Test
 	public void getTest() throws SQLException {
@@ -152,9 +177,9 @@ public class RoutesRepositpryTest_local {
 			route.setCost(expCost);
 			route.setRouteTypeID(expRouteType);
 
-			db.Routes().update(route);
+			db.Routes().insert(route);
 
-			Route actualRoute = db.Routes().get(routeID);
+			Route actualRoute = db.Routes().get(route.getId());
 			assertEquals(expCost, actualRoute.getCost(), 0.00001);
 			assertEquals(expRouteType, actualRoute.getRouteTypeID());
 

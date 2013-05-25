@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.repositories.orm.ICitiesRepository;
-import com.pgis.bus.data.repositories.orm.IJsonRouteObjectsRepository;
+import com.pgis.bus.data.repositories.orm.ISerializedRoutesRepository;
 import com.pgis.bus.data.repositories.orm.ILanguagesRepository;
 import com.pgis.bus.data.repositories.orm.IPathsRepository;
 import com.pgis.bus.data.repositories.orm.IRoutesRepository;
@@ -12,7 +12,7 @@ import com.pgis.bus.data.repositories.orm.IScheduleRepository;
 import com.pgis.bus.data.repositories.orm.IStationsRepository;
 import com.pgis.bus.data.repositories.orm.IUsersRepository;
 import com.pgis.bus.data.repositories.orm.impl.CitiesRepository;
-import com.pgis.bus.data.repositories.orm.impl.JsonRouteObjectsRepository;
+import com.pgis.bus.data.repositories.orm.impl.SerializedRoutesRepository;
 import com.pgis.bus.data.repositories.orm.impl.LanguagesRepository;
 import com.pgis.bus.data.repositories.orm.impl.PathsRepository;
 import com.pgis.bus.data.repositories.orm.impl.RoutesRepository;
@@ -29,7 +29,7 @@ public class DataBaseService extends DataService implements IDataBaseService {
 	protected StationsRepository stationsRepository = null;
 	protected PathsRepository pathsRepository = null;
 	protected RoutesRepository routesRepository = null;
-	protected JsonRouteObjectsRepository objectsRepository = null;
+	protected SerializedRoutesRepository objectsRepository = null;
 	protected ScheduleRepository scheduleRepository = null;
 
 	public DataBaseService(IConnectionManager rootConnectionManager) throws SQLException {
@@ -96,9 +96,9 @@ public class DataBaseService extends DataService implements IDataBaseService {
 	}
 
 	@Override
-	public IJsonRouteObjectsRepository JsonRouteObjects() {
+	public ISerializedRoutesRepository JsonRouteObjects() {
 		if (objectsRepository == null) {
-			objectsRepository = new JsonRouteObjectsRepository(connectionManager);
+			objectsRepository = new SerializedRoutesRepository(connectionManager);
 			objectsRepository.useOnlyExternConnection(true);
 
 		}

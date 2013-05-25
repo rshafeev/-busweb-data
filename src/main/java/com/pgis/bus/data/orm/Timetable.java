@@ -67,6 +67,10 @@ public class Timetable extends ORMObject {
 		return timeA;
 	}
 
+	public void setTimeA(int secsA) {
+		this.timeA = TimeHelper.fromSeconds(secsA);
+	}
+
 	public void setTimeA(Time timeA) {
 		this.timeA = timeA;
 	}
@@ -79,12 +83,20 @@ public class Timetable extends ORMObject {
 		this.timeB = timeB;
 	}
 
+	public void setTimeB(int secsB) {
+		this.timeA = TimeHelper.fromSeconds(secsB);
+	}
+
 	public PGInterval getFrequency() {
 		return frequency;
 	}
 
 	public void setFrequency(PGInterval frequency) {
 		this.frequency = frequency;
+	}
+
+	public void setFrequency(int frequencySecs) {
+		this.frequency = PGIntervalHelper.fromSeconds(frequencySecs);
 	}
 
 	public static TimetableModel createModel(Timetable timetable) {

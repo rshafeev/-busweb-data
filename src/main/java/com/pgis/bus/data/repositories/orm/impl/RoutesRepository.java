@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.postgis.LineString;
@@ -19,9 +20,13 @@ import com.pgis.bus.data.orm.RouteRelation;
 import com.pgis.bus.data.orm.RouteWay;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.StringValue;
+import com.pgis.bus.data.orm.type.LangEnum;
+import com.pgis.bus.data.orm.type.LineStringEx;
 import com.pgis.bus.data.repositories.Repository;
 import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.IRoutesRepository;
+import com.pgis.bus.net.models.city.CityModel;
+import com.pgis.bus.net.models.geom.PointModel;
 
 public class RoutesRepository extends Repository implements IRoutesRepository {
 
@@ -29,6 +34,46 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 	public RoutesRepository(IConnectionManager connManager) {
 		super(connManager);
+	}
+
+	@Override
+	public Collection<Route> getAll(LangEnum langID, int cityID, String routeTypeID) throws SQLException {
+		Connection c = super.getConnection();
+		Collection<Route> routes = null;
+		try {
+			String query = "select routes.id, number_key,cost, visible, value as number from bus.routes  "
+					+ " left join bus.string_values on string_values.key_id = number_key "
+					+ "where city_id = ? and route_type_id = bus.route_type_enum(?) and "
+					+ "(lang_id = bus.lang_enum(?) or lang_id is null);";
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setInt(1, cityID);
+			ps.setString(2, routeTypeID);
+			ps.setString(3, langID.name());
+			ResultSet rs = ps.executeQuery();
+
+			routes = new ArrayList<Route>();
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				int number_key = rs.getInt("number_key");
+				double cost = rs.getDouble("cost");
+				boolean visible = rs.getBoolean("visible");
+				String numb = rs.getString("number");
+				Route route = new Route(this.connManager);
+				route.setId(id);
+				route.setCost(cost);
+				route.setNumberKey(number_key);
+				route.setCityID(cityID);
+				route.setRouteTypeID(routeTypeID);
+				route.setVisible(visible);
+				route.setNumber(new ArrayList<StringValue>(Arrays.asList(new StringValue(langID, numb))));
+				routes.add(route);
+			}
+		} catch (SQLException e) {
+			routes = null;
+			log.error("can not read database", e);
+			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		}
+		return routes;
 	}
 
 	@Override
@@ -47,12 +92,14 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 				String routeTypeID = key.getString("route_type_id");
 				int number_key = key.getInt("number_key");
 				double cost = key.getDouble("cost");
+				boolean visible = key.getBoolean("visible");
 				route = new Route(this.connManager);
 				route.setId(id);
 				route.setCost(cost);
 				route.setNumberKey(number_key);
 				route.setCityID(city_id);
 				route.setRouteTypeID(routeTypeID);
+				route.setVisible(visible);
 			}
 
 		} catch (Exception e) {
@@ -104,8 +151,8 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 				route.makeReverseFromDirect();
 			}
 			this.insertStationsForRoute(route);
-			String query = "INSERT INTO bus.routes (city_id,cost,route_type_id) "
-					+ "VALUES(?,?,bus.route_type_enum(?)) RETURNING id,number_key; ";
+			String query = "INSERT INTO bus.routes (city_id,cost,route_type_id,visible) "
+					+ "VALUES(?,?,bus.route_type_enum(?),false) RETURNING id,number_key; ";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, route.getCityID());
 			ps.setDouble(2, route.getCost());
@@ -116,6 +163,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 				int id = key.getInt("id");
 				int number_key = key.getInt("number_key");
 				route.setId(id);
+				route.setVisible(false);
 				route.setNumberKey(number_key);
 			} else {
 				throw new Exception("not found new id and name_key");
@@ -140,7 +188,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 
 	private void insertRouteWay(RouteWay routeWay) throws SQLException {
 		Connection c = super.getConnection();
-		String query = "INSERT INTO bus.routes_ways (route_id,direct) " + "VALUES(?,pg_catalog.bit(?)) RETURNING id; ";
+		String query = "INSERT INTO bus.route_ways (route_id,direct) " + "VALUES(?,pg_catalog.bit(?)) RETURNING id; ";
 		PreparedStatement ps = c.prepareStatement(query);
 
 		ps.setInt(1, routeWay.getRouteID());
@@ -276,13 +324,14 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 		try {
 			route.setConnManager(null);
 			if (route.getId() != null) {
-				String query = "UPDATE bus.routes SET city_id = ?, cost = ?, "
+				String query = "UPDATE bus.routes SET city_id = ?, cost = ?, visible = ?, "
 						+ "route_type_id = bus.route_type_enum(?) WHERE id = ? ;";
 				PreparedStatement ps = c.prepareStatement(query);
 				ps.setInt(1, route.getCityID());
 				ps.setDouble(2, route.getCost());
-				ps.setString(3, route.getRouteTypeID());
-				ps.setInt(4, route.getId());
+				ps.setBoolean(3, route.isVisible());
+				ps.setString(4, route.getRouteTypeID());
+				ps.setInt(5, route.getId());
 				ps.execute();
 			}
 			this.insertStationsForRoute(route);
@@ -392,7 +441,7 @@ public class RoutesRepository extends Repository implements IRoutesRepository {
 				relation.setDistance(distance);
 				relation.setMoveTime(ev_time);
 				if (geom != null)
-					relation.setGeom((LineString) geom.getGeometry());
+					relation.setGeom(new LineStringEx((LineString) geom.getGeometry()));
 				relations.add(relation);
 			}
 			return relations;

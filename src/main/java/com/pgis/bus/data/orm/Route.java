@@ -20,7 +20,7 @@ public class Route extends ORMObject {
 	private double cost;
 	private String route_type_id;
 	private Integer number_key;
-
+	private boolean visible;
 	private Collection<StringValue> number; // key - language id, value -
 	private RouteWay directRouteWay;
 	private RouteWay reverseRouteWay;
@@ -79,6 +79,14 @@ public class Route extends ORMObject {
 			}
 		}
 		return null;
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 
 	public int getCityID() {
@@ -180,8 +188,9 @@ public class Route extends ORMObject {
 	 */
 	public void makeReverseFromDirect() {
 		try {
-			RouteWay reverseWay = new RouteWay();
-			Schedule reverseSchedule = this.directRouteWay.getSchedule();
+			RouteWay reverseWay = this.directRouteWay.clone();
+
+			reverseWay.getRouteRelations();
 		} catch (Exception e) {
 
 		}
