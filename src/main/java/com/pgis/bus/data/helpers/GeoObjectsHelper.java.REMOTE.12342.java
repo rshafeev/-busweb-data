@@ -34,6 +34,17 @@ public class GeoObjectsHelper {
 		return p;
 	}
 
+	public static LineString createLine(PolyLineModel m) {
+		if (m == null)
+			return null;
+		Point[] points = new Point[m.getPointsCount()];
+		for (int i = 0; i < m.getPointsCount(); i++) {
+			points[i] = createPoint(m.getPoint(i));
+		}
+		LineString line = new LineString(points);
+		line.setSrid(GEOMETRY_SRID);
+		return line;
+	}
 	
 	public static LineString clone(LineString line){
 		if (line == null)

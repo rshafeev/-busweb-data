@@ -167,13 +167,20 @@ public class RouteWay extends ORMObject implements Cloneable {
 	@Override
 	public RouteWay clone() throws CloneNotSupportedException {
 		Collection<RouteRelation> wayRelations = new ArrayList<RouteRelation>();
+		if (this.route_relations != null)
+		{
 		for (RouteRelation r : this.route_relations) {
 			wayRelations.add(r.clone());
+		}
 		}
 		RouteWay way = (RouteWay) super.clone();
 		way.direct = this.direct;
 		way.id = this.id;
 		way.routeID = this.routeID;
+		if (this.schedule != null)
+		{
+		way.schedule = this.schedule.clone();
+		}
 		way.setRouteRelations(wayRelations);
 		return way;
 	}

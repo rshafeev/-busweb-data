@@ -44,5 +44,27 @@ public class TimetableTest {
 		assertEquals(400, model.getFreq());
 
 	}
+	
+	@Test
+	public void cloneTest() throws CloneNotSupportedException
+	{
+		Timetable t = new Timetable();
+		t.setId(2);
+		t.setTimeA(TimeHelper.fromSeconds(1000));
+		t.setTimeB(TimeHelper.fromSeconds(2000));
+		t.setFrequency(PGIntervalHelper.fromSeconds(400));
+		t.setScheduleGroupID(100);
+		Timetable t_clone = t.clone();
+		t.setId(3);
+		t.setTimeA(TimeHelper.fromSeconds(1500));
+		t.setTimeB(TimeHelper.fromSeconds(2500));
+		t.setFrequency(PGIntervalHelper.fromSeconds(450));
+		t.setScheduleGroupID(150);
+		assertEquals(2,t_clone.getId());
+		assertEquals(1000,TimeHelper.toSeconds(t_clone.getTimeA()));
+		assertEquals(2000,TimeHelper.toSeconds(t_clone.getTimeB()));
+		assertEquals(400,PGIntervalHelper.toSeconds(t_clone.getFrequency()));
+		assertEquals(100,t_clone.getScheduleGroupID());
+	}
 
 }

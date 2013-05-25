@@ -3,7 +3,7 @@ package com.pgis.bus.data.orm;
 import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.orm.type.DayEnum;
 
-public class ScheduleGroupDay extends ORMObject {
+public class ScheduleGroupDay extends ORMObject implements Cloneable {
 
 	private int id;
 	private int scheduleGroupID;
@@ -49,6 +49,15 @@ public class ScheduleGroupDay extends ORMObject {
 	@Override
 	public String toString() {
 		return "ScheduleGroupDay [id=" + id + ", schedule_group_id=" + scheduleGroupID + ", day_id=" + day_id + "]";
+	}
+	
+	@Override
+	public ScheduleGroupDay clone() throws CloneNotSupportedException {
+		ScheduleGroupDay scheduleGroupDay = (ScheduleGroupDay) super.clone();
+		scheduleGroupDay.id = this.id;
+		scheduleGroupDay.scheduleGroupID = this.scheduleGroupID;
+		scheduleGroupDay.day_id = this.day_id;
+		return scheduleGroupDay;
 	}
 
 }

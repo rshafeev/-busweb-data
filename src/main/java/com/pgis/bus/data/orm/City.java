@@ -1,6 +1,8 @@
 package com.pgis.bus.data.orm;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.slf4j.Logger;
@@ -122,23 +124,7 @@ public class City extends ORMObject implements Cloneable {
 		this.name = name;
 	}
 
-	public City clone() {
-		City city = null;
-		try {
-			city = (City) super.clone();
-			city.name = new HashMap<LangEnum, StringValue>(this.name);
-			city.id = this.id;
-			city.lat = this.lat;
-			city.lon = this.lon;
-			city.scale = this.scale;
-			city.name_key = this.name_key;
-			city.isShow = this.isShow;
-			city.key = this.key;
-		} catch (CloneNotSupportedException e) {
-			log.error("Clone city error.", e);
-		}
-		return city;
-	}
+
 
 	@Override
 	public String toString() {
@@ -159,4 +145,29 @@ public class City extends ORMObject implements Cloneable {
 	public CityModel toModel(LangEnum langID) throws SQLException {
 		return createModel(this, langID);
 	}
+	
+	@Override
+	public City clone() throws CloneNotSupportedException {
+		HashMap<LangEnum, StringValue> name = new HashMap<LangEnum, StringValue>();
+		if (this.name != null)
+		{
+		for(StringValue v : this.name.values()){			
+			name.put(v.getLangID(), v.clone());
+		}
+		}
+		City city = (City) super.clone();
+		city.id = this.id;
+		if (this.key != null)
+		{
+		city.key = new String(this.key);
+		}
+		city.lat = this.lat;
+		city.lon = this.lon;
+		city.scale = this.scale;
+		city.isShow = this.isShow;
+		city.name_key = this.name_key;
+		city.name = name;		
+		return city;
+	}
+	
 }

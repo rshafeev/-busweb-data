@@ -1,6 +1,10 @@
 package com.pgis.bus.data.orm;
 
+<<<<<<< HEAD:src/main/java/com/pgis/bus/data/orm/SerializedRouteObject.java
 public class SerializedRouteObject {
+=======
+public class JsonRouteObject implements Cloneable{
+>>>>>>> 6c15a5dd61ccac2eebaa63fd9df4c3f840716dd7:src/main/java/com/pgis/bus/data/orm/JsonRouteObject.java
 	public int id;
 	public String city_key;
 	public String route_type;

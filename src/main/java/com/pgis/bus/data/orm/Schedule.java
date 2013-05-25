@@ -7,7 +7,7 @@ import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.net.models.route.ScheduleModel;
 import com.pgis.bus.net.models.route.schedule.ScheduleGroupModel;
 
-public class Schedule extends ORMObject {
+public class Schedule extends ORMObject implements Cloneable {
 
 	private Integer id;
 	private int rway_id;
@@ -98,5 +98,21 @@ public class Schedule extends ORMObject {
 	public ScheduleModel toModel() {
 		return createModel(this);
 	}
+	
+	@Override
+	public Schedule clone() throws CloneNotSupportedException {
+		Schedule schedule = (Schedule) super.clone();
+		Collection<ScheduleGroup> schGroups = new ArrayList<ScheduleGroup>();
+		if (scheduleGroups != null) {
+		for (ScheduleGroup sg : this.scheduleGroups) {
+			schGroups.add(sg.clone());
+		}
+		}
+		schedule.id = this.id;
+		schedule.rway_id = this.rway_id;
+		schedule.scheduleGroups = schGroups;
+		return schedule;
+	}
+	
 
 }

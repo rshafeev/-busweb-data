@@ -3,6 +3,8 @@ package com.pgis.bus.data.helpers;
 import java.sql.Time;
 import java.util.Calendar;
 
+import org.postgresql.util.PGInterval;
+
 public class TimeHelper {
 
 	public static int toSeconds(Time time) {
@@ -26,5 +28,15 @@ public class TimeHelper {
 	public static int toSeconds(int hours, int mins, int secs) {
 		return hours * 60 * 60 + mins * 60 + secs;
 	}
+	
+	public static Time clone (Time time)
+	{
+		if (time == null)
+			return null;
+		return fromSeconds(toSeconds(time));
+	}
+	
+	
+
 
 }

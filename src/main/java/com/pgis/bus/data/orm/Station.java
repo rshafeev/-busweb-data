@@ -1,6 +1,7 @@
 package com.pgis.bus.data.orm;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.postgis.Point;
@@ -125,18 +126,6 @@ public class Station extends ORMObject implements Cloneable {
 		}
 	}
 
-	public Station clone() {
-
-		try {
-			Station obj = (Station) super.clone();
-			obj.copy(this);
-			return obj;
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
-
-	}
-
 	@Override
 	public String toString() {
 		return "Station [id=" + id + ", city_id=" + city_id + ", location=" + location + ", name_key=" + name_key
@@ -155,5 +144,23 @@ public class Station extends ORMObject implements Cloneable {
 		return createModel(this, langID);
 
 	}
+	
+	@Override
+	public Station clone() throws CloneNotSupportedException {
+		Station station = (Station) super.clone();		
+		Collection<StringValue> stringValue = new ArrayList<StringValue>();
+		if(this.name != null){
+		for (StringValue sv : this.name) {
+			stringValue.add(sv.clone());
+		}
+		}
+		station.id = this.id;
+		station.city_id = this.city_id;
+		
+		station.name_key = this.name_key;
+		station.name = stringValue;
+		return station;
+	}
+	
 
 }

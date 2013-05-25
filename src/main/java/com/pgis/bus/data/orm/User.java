@@ -2,7 +2,7 @@ package com.pgis.bus.data.orm;
 
 import com.pgis.bus.data.IConnectionManager;
 
-public class User extends ORMObject {
+public class User extends ORMObject implements Cloneable {
 	private Integer id;
 	private String name;
 	private int role_id;
@@ -37,6 +37,18 @@ public class User extends ORMObject {
 
 	public void setRoleID(int role_id) {
 		this.role_id = role_id;
+	}
+	
+	@Override
+	public User clone() throws CloneNotSupportedException {
+		User user = (User) super.clone();
+		user.id = this.id;
+		if (this.name != null)
+		{
+		user.name = new String(this.name);
+		}
+		user.id = this.id;
+		return user;
 	}
 
 }

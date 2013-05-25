@@ -11,7 +11,7 @@ import com.pgis.bus.data.helpers.PGIntervalHelper;
 import com.pgis.bus.data.helpers.TimeHelper;
 import com.pgis.bus.net.models.route.schedule.TimetableModel;
 
-public class Timetable extends ORMObject {
+public class Timetable extends ORMObject implements Cloneable {
 	private int id;
 	private int schedule_group_id;
 
@@ -121,5 +121,16 @@ public class Timetable extends ORMObject {
 
 	public TimetableModel toModel() {
 		return createModel(this);
+	}
+	
+	@Override
+	public Timetable clone() throws CloneNotSupportedException {
+		Timetable timetable = (Timetable) super.clone();
+		timetable.id = this.id;
+		timetable.schedule_group_id = this.schedule_group_id;
+		timetable.timeA = TimeHelper.clone(timeA);
+		timetable.timeB = TimeHelper.clone(timeB);
+		timetable.frequency = PGIntervalHelper.clone(this.frequency);
+		return timetable;
 	}
 }

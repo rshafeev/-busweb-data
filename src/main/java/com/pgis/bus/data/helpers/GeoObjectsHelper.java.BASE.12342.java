@@ -34,19 +34,15 @@ public class GeoObjectsHelper {
 		return p;
 	}
 
-	
-	public static LineString clone(LineString line){
-		if (line == null)
+	public static LineString createLine(PolyLineModel m) {
+		if (m == null)
 			return null;
-		if(line.isEmpty())
-			return new LineString();
-		Point[] points = line.getPoints();
-		Point[] copiedPoints = new Point[points.length];
-		for(int i=0;i < points.length; i++ ){
-			copiedPoints[i] = new Point(points[i].x, points[i].y);
+		Point[] points = new Point[m.getPointsCount()];
+		for (int i = 0; i < m.getPointsCount(); i++) {
+			points[i] = createPoint(m.getPoint(i));
 		}
-		LineString copy = new LineString(copiedPoints);
-		copy.srid = line.srid;
-		return copy;
+		LineString line = new LineString(points);
+		line.setSrid(GEOMETRY_SRID);
+		return line;
 	}
 }
