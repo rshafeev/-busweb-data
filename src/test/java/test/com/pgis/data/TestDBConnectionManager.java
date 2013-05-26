@@ -45,8 +45,9 @@ public class TestDBConnectionManager implements IConnectionManager {
 	public Connection getConnection() {
 		useConnections++;
 		log.debug("create new connection");
-		if (connection != null)
-			return connection;
+		/*
+		 * if (connection != null) return connection;
+		 */
 		if (source == null) {
 			return null;
 		}

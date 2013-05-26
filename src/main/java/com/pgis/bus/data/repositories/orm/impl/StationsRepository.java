@@ -11,10 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.exp.RepositoryException;
 import com.pgis.bus.data.orm.Station;
 import com.pgis.bus.data.orm.StringValue;
-import com.pgis.bus.data.repositories.Repository;
-import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.IStationsRepository;
 
 public class StationsRepository extends Repository implements IStationsRepository {
@@ -26,10 +25,10 @@ public class StationsRepository extends Repository implements IStationsRepositor
 	}
 
 	@Override
-	public void insert(Station station) throws SQLException {
-		Connection c = super.getConnection();
+	public void insert(Station station) throws RepositoryException {
 
 		try {
+			Connection c = super.getConnection();
 			String query = "INSERT INTO bus.stations (city_id,location) VALUES(?,?) RETURNING  id,name_key;";
 
 			PreparedStatement ps = c.prepareStatement(query);
@@ -53,8 +52,7 @@ public class StationsRepository extends Repository implements IStationsRepositor
 
 			}
 		} catch (SQLException e) {
-			log.error("insertStation() exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		} finally {
 			station.setConnManager(super.connManager);
 		}
@@ -62,11 +60,11 @@ public class StationsRepository extends Repository implements IStationsRepositor
 	}
 
 	@Override
-	public void update(Station station) throws SQLException {
+	public void update(Station station) throws RepositoryException {
 		if (station == null)
 			return;
-		Connection c = super.getConnection();
 		try {
+			Connection c = super.getConnection();
 			station.setConnManager(null);
 			String query = "UPDATE  bus.stations SET city_id=?, location=? WHERE id=?; ";
 			PreparedStatement ps = c.prepareStatement(query);
@@ -81,33 +79,33 @@ public class StationsRepository extends Repository implements IStationsRepositor
 			svRep.update(station.getNameKey(), station.getName());
 
 		} catch (SQLException e) {
-			log.error("updateStation() exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		} finally {
 			station.setConnManager(connManager);
 		}
 	}
 
 	@Override
-	public void remove(int stationID) throws SQLException {
-		Connection c = super.getConnection();
+	public void remove(int stationID) throws RepositoryException {
+
 		try {
+			Connection c = super.getConnection();
 			String query = "DELETE FROM bus.stations WHERE id = ? ";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, stationID);
 			ps.execute();
-		} catch (SQLException e) {
-			log.error("deleteStation() exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} catch (Exception e) {
+			super.handeThrowble(e);
 		}
 
 	}
 
 	@Override
-	public Station get(int stationID) throws SQLException {
-		Connection c = super.getConnection();
+	public Station get(int stationID) throws RepositoryException {
+
 		Station station = null;
 		try {
+			Connection c = super.getConnection();
 			String query = "SELECT id,city_id,geometry(location) as location,name_key"
 					+ " FROM bus.stations WHERE id = ?;";
 			PreparedStatement ps = c.prepareStatement(query);
@@ -128,20 +126,20 @@ public class StationsRepository extends Repository implements IStationsRepositor
 				}
 				station.setLocation((Point) g_location.getGeometry());
 			}
-		} catch (SQLException e) {
-			log.error("can not read database", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} catch (Exception e) {
+			super.handeThrowble(e);
 		}
 		return station;
 
 	}
 
 	@Override
-	public Station get(StringValue name, Point location) throws SQLException {
+	public Station get(StringValue name, Point location) throws RepositoryException {
 		if (name == null || location == null)
 			return null;
-		Connection c = super.getConnection();
+
 		try {
+			Connection c = super.getConnection();
 			String query = "SELECT bus.stations.id as id FROM bus.stations "
 					+ "JOIN bus.string_values ON bus.string_values.key_id = bus.stations.name_key "
 					+ "WHERE st_distance(bus.stations.location,geography(?)) < 10 AND "
@@ -157,26 +155,25 @@ public class StationsRepository extends Repository implements IStationsRepositor
 				int station_id = key.getInt("id");
 				return this.get(station_id);
 			}
-		} catch (SQLException e) {
-			log.error("can not read database", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} catch (Exception e) {
+			super.handeThrowble(e);
 		}
 		return null;
 	}
 
 	@Override
-	public void cleanUnsedStations() throws SQLException {
-		Connection c = super.getConnection();
+	public void cleanUnsedStations() throws RepositoryException {
+
 		try {
+			Connection c = super.getConnection();
 			String query = "DELETE FROM bus.stations " + "WHERE bus.stations.id IN ( "
 					+ "SELECT bus.stations.id from bus.stations " + "LEFT JOIN   bus.route_relations "
 					+ "ON bus.stations.id = bus.route_relations.station_b_id "
 					+ "WHERE bus.route_relations.id IS NULL);";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.execute();
-		} catch (SQLException e) {
-			log.error("cleanUnsedStations() exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} catch (Exception e) {
+			super.handeThrowble(e);
 		}
 
 	}

@@ -13,13 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.exp.RepositoryException;
 import com.pgis.bus.data.orm.Schedule;
 import com.pgis.bus.data.orm.ScheduleGroup;
 import com.pgis.bus.data.orm.ScheduleGroupDay;
 import com.pgis.bus.data.orm.Timetable;
 import com.pgis.bus.data.orm.type.DayEnum;
-import com.pgis.bus.data.repositories.Repository;
-import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.IScheduleRepository;
 
 public class ScheduleRepository extends Repository implements IScheduleRepository {
@@ -30,11 +29,11 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 	}
 
 	@Override
-	public Schedule get(int id) throws SQLException {
-		Connection c = super.getConnection();
+	public Schedule get(int id) throws RepositoryException {
+
 		Schedule schedule = null;
 		try {
-
+			Connection c = super.getConnection();
 			String query = "SELECT * from bus.schedule WHERE id = ? ;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, id);
@@ -47,19 +46,16 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 				schedule.setScheduleGroups(this.getScheduleGroups(schedule.getId()));
 			}
 		} catch (Exception e) {
-			log.error("db exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 		return schedule;
 	}
 
 	@Override
-	public Schedule getByRouteWay(int routeWayID) throws SQLException {
-		Connection c = super.getConnection();
+	public Schedule getByRouteWay(int routeWayID) throws RepositoryException {
 		Schedule schedule = null;
-
 		try {
-
+			Connection c = super.getConnection();
 			String query = "SELECT * from bus.schedule WHERE rway_id = ? ;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, routeWayID);
@@ -72,19 +68,19 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 				schedule.setScheduleGroups(this.getScheduleGroups(schedule.getId()));
 			}
 		} catch (Exception e) {
-			log.error("db exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 		return schedule;
 	}
 
 	@Override
-	public Collection<Timetable> getTimeTables(int scheduleGroupId) throws SQLException {
-		Connection c = super.getConnection();
+	public Collection<Timetable> getTimeTables(int scheduleGroupId) throws RepositoryException {
+
 		Collection<Timetable> timeTables = null;
 
 		try {
-			String query = "SELECT * from bus.timetable WHERE schedule_group_id = ? ;";
+			Connection c = super.getConnection();
+			String query = "SELECT * from bus.timetable WHERE schedule_group_id = ? order by time_a;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, scheduleGroupId);
 			ResultSet key = ps.executeQuery();
@@ -104,19 +100,18 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 				timeTables.add(timetable);
 			}
 		} catch (Exception e) {
-			log.error("db exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 		return timeTables;
 	}
 
 	@Override
-	public Collection<ScheduleGroupDay> getScheduleGroupDays(int schedule_group_id) throws SQLException {
-		Connection c = super.getConnection();
+	public Collection<ScheduleGroupDay> getScheduleGroupDays(int schedule_group_id) throws RepositoryException {
+
 		Collection<ScheduleGroupDay> days = null;
 
 		try {
-
+			Connection c = super.getConnection();
 			String query = "SELECT * FROM bus.schedule_group_days WHERE schedule_group_id = ?;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, schedule_group_id);
@@ -132,19 +127,18 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 				days.add(day);
 			}
 		} catch (Exception e) {
-			log.error("db exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 		return days;
 	}
 
 	@Override
-	public Collection<ScheduleGroup> getScheduleGroups(int scheduleID) throws SQLException {
-		Connection c = super.getConnection();
+	public Collection<ScheduleGroup> getScheduleGroups(int scheduleID) throws RepositoryException {
+
 		Collection<ScheduleGroup> groups = null;
 
 		try {
-
+			Connection c = super.getConnection();
 			String query = "SELECT * from bus.schedule_groups WHERE schedule_id = ? ;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, scheduleID);
@@ -160,31 +154,43 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 				groups.add(group);
 			}
 		} catch (Exception e) {
-			log.error("db exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 		return groups;
 	}
 
-	public void insert(Schedule schedule) throws SQLException {
-		Connection c = super.getConnection();
-		String query = "INSERT INTO bus.schedule (rway_id) " + "VALUES(?) RETURNING id;";
-		PreparedStatement ps = c.prepareStatement(query);
-		ps.setInt(1, schedule.getRouteWayId());
-		ResultSet key = ps.executeQuery();
-		if (key.next()) {
-			int id = key.getInt("id");
-			schedule.setId(id);
-		} else {
-			throw new RepositoryException(RepositoryException.err_enum.c_id_notFind);
-		}
-		for (ScheduleGroup g : schedule.getScheduleGroups()) {
-			this.insertScheduleGroup(g);
+	public void insert(Schedule schedule) throws RepositoryException {
+		try {
+			Connection c = super.getConnection();
+			String query = "INSERT INTO bus.schedule (rway_id) " + "VALUES(?) RETURNING id;";
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setInt(1, schedule.getRouteWayId());
+			ResultSet key = ps.executeQuery();
+			if (key.next()) {
+				int id = key.getInt("id");
+				schedule.setId(id);
+			} else {
+				throw new RepositoryException(RepositoryException.err_enum.id_not_find);
+			}
+			if (schedule.getScheduleGroups() == null || schedule.getScheduleGroups().size() == 0) {
+				throw new RepositoryException(RepositoryException.err_enum.orm_obj_invalid);
+			}
+			for (ScheduleGroup g : schedule.getScheduleGroups()) {
+				this.insertScheduleGroup(g);
 
+			}
+		} catch (Exception e) {
+			super.handeThrowble(e);
 		}
 	}
 
 	private void insertScheduleGroup(ScheduleGroup scheduleGroup) throws SQLException {
+		if (scheduleGroup.getTimetables() == null || scheduleGroup.getTimetables().size() == 0) {
+			throw new RepositoryException(RepositoryException.err_enum.orm_obj_invalid);
+		}
+		if (scheduleGroup.getDays() == null || scheduleGroup.getDays().size() == 0) {
+			throw new RepositoryException(RepositoryException.err_enum.orm_obj_invalid);
+		}
 		Connection c = super.getConnection();
 		String query = "INSERT INTO bus.schedule_groups (schedule_id) " + "VALUES(?) RETURNING id;";
 		PreparedStatement ps = c.prepareStatement(query);
@@ -197,6 +203,7 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 		} else {
 			throw new SQLException("not found new id and name_key");
 		}
+
 		for (Timetable t : scheduleGroup.getTimetables()) {
 			insertTimetable(t);
 		}
@@ -237,12 +244,12 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 			int id = key.getInt("id");
 			t.setId(id);
 		} else {
-			throw new RepositoryException(RepositoryException.err_enum.c_id_notFind);
+			throw new RepositoryException(RepositoryException.err_enum.id_not_find);
 		}
 	}
 
 	@Override
-	public void update(Schedule s) throws SQLException {
+	public void update(Schedule s) throws RepositoryException {
 
 		if (s == null)
 			return;
@@ -250,27 +257,38 @@ public class ScheduleRepository extends Repository implements IScheduleRepositor
 			s.setConnManager(null);
 			this.removeByRouteWay(s.getRouteWayId());
 			this.insert(s);
+
+		} catch (Exception e) {
+			super.handeThrowble(e);
 		} finally {
 			s.setConnManager(this.connManager);
 		}
 	}
 
 	@Override
-	public void remove(int id) throws SQLException {
-		Connection c = super.getConnection();
-		String query = "DELETE FROM bus.schedule WHERE id = ?";
-		PreparedStatement ps = c.prepareStatement(query);
-		ps.setInt(1, id);
-		ps.execute();
+	public void remove(int id) throws RepositoryException {
+		try {
+			Connection c = super.getConnection();
+			String query = "DELETE FROM bus.schedule WHERE id = ?";
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setInt(1, id);
+			ps.execute();
+		} catch (Exception e) {
+			super.handeThrowble(e);
+		}
 	}
 
 	@Override
-	public void removeByRouteWay(int routeWayID) throws SQLException {
-		Connection c = super.getConnection();
-		String query = "DELETE FROM bus.schedule WHERE rway_id = ?";
-		PreparedStatement ps = c.prepareStatement(query);
-		ps.setInt(1, routeWayID);
-		ps.execute();
+	public void removeByRouteWay(int routeWayID) throws RepositoryException {
+		try {
+			Connection c = super.getConnection();
+			String query = "DELETE FROM bus.schedule WHERE rway_id = ?";
+			PreparedStatement ps = c.prepareStatement(query);
+			ps.setInt(1, routeWayID);
+			ps.execute();
+		} catch (Exception e) {
+			super.handeThrowble(e);
+		}
 	}
 
 }

@@ -13,11 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.exp.RepositoryException;
 import com.pgis.bus.data.helpers.GeoObjectsHelper;
 import com.pgis.bus.data.orm.type.Path_t;
 import com.pgis.bus.data.params.FindPathsParams;
-import com.pgis.bus.data.repositories.Repository;
-import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.IPathsRepository;
 
 public class PathsRepository extends Repository implements IPathsRepository {
@@ -28,10 +27,10 @@ public class PathsRepository extends Repository implements IPathsRepository {
 	}
 
 	@Override
-	public Collection<Path_t> findShortestPaths(FindPathsParams params) throws SQLException {
-		Connection c = super.getConnection();
+	public Collection<Path_t> findShortestPaths(FindPathsParams params) throws RepositoryException {
 		Collection<Path_t> paths = null;
 		try {
+			Connection c = super.getConnection();
 			String query = "select  * from  bus.find_shortest_paths(" + "?," /* city_id */
 					+ " geography(?)," /* p1 */
 					+ " geography(?)," /* p2 */
@@ -82,8 +81,7 @@ public class PathsRepository extends Repository implements IPathsRepository {
 				paths.add(pathElem);
 			}
 		} catch (Exception e) {
-			log.error("can not read database", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 		return paths;
 	}

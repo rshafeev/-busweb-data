@@ -5,11 +5,11 @@ import java.util.Locale;
 import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.helpers.LocaleHelper;
 import com.pgis.bus.data.orm.type.LangEnum;
-import com.pgis.bus.data.repositories.Repository;
+import com.pgis.bus.data.repositories.orm.impl.Repository;
 
 public class ModelRepository extends Repository {
 
-	protected String langID = "c_en";
+	protected String langID = LangEnum.c_en.name();
 
 	// LocaleHelper
 	public ModelRepository(Locale locale, IConnectionManager connManager) {

@@ -9,9 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.exp.RepositoryException;
 import com.pgis.bus.data.orm.SerializedRouteObject;
-import com.pgis.bus.data.repositories.Repository;
-import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.ISerializedRoutesRepository;
 
 public class SerializedRoutesRepository extends Repository implements ISerializedRoutesRepository {
@@ -22,10 +21,11 @@ public class SerializedRoutesRepository extends Repository implements ISerialize
 	}
 
 	@Override
-	public SerializedRouteObject get(String cityKey, String routeType, String number) throws SQLException {
-		Connection c = super.getConnection();
+	public SerializedRouteObject get(String cityKey, String routeType, String number) throws RepositoryException {
+
 		SerializedRouteObject obj = null;
 		try {
+			Connection c = super.getConnection();
 			String query = "SELECT * FROM bus.import_objects WHERE "
 					+ "city_key = ? AND route_type = bus.route_type_enum(?) AND " + "route_number = ?;";
 			PreparedStatement ps = c.prepareStatement(query);
@@ -43,17 +43,17 @@ public class SerializedRoutesRepository extends Repository implements ISerialize
 				obj.route_type = routeType;
 			}
 		} catch (Exception e) {
-			log.error("getObject() exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 		return obj;
 	}
 
 	@Override
-	public SerializedRouteObject get(int objID) throws SQLException {
-		Connection c = super.getConnection();
+	public SerializedRouteObject get(int objID) throws RepositoryException {
+
 		SerializedRouteObject obj = null;
 		try {
+			Connection c = super.getConnection();
 			String query = "SELECT * FROM bus.import_objects WHERE id = ?";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, objID);
@@ -68,17 +68,16 @@ public class SerializedRoutesRepository extends Repository implements ISerialize
 				obj.route_type = key.getString("route_type");
 			}
 		} catch (Exception e) {
-			log.error("getObject() exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 		return obj;
 	}
 
 	@Override
-	public void updateByID(SerializedRouteObject importObject) throws SQLException {
-		Connection c = super.getConnection();
-		try {
+	public void updateByID(SerializedRouteObject importObject) throws RepositoryException {
 
+		try {
+			Connection c = super.getConnection();
 			String query = "UPDATE bus.import_objects SET obj = ? WHERE id = ? ;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setString(1, importObject.obj);
@@ -86,20 +85,20 @@ public class SerializedRoutesRepository extends Repository implements ISerialize
 			ps.execute();
 
 		} catch (Exception e) {
-			log.error("updateObject() exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 	}
 
 	@Override
-	public void insert(SerializedRouteObject importObject) throws SQLException {
+	public void insert(SerializedRouteObject importObject) throws RepositoryException {
 		// validation
 		if (importObject == null || importObject.obj == null)
-			throw new RepositoryException(RepositoryException.err_enum.c_input_data);
-		Connection c = super.getConnection();
-		try {
+			throw new RepositoryException(RepositoryException.err_enum.orm_obj_invalid);
 
-			SerializedRouteObject newObj = this.get(importObject.city_key, importObject.route_type, importObject.route_number);
+		try {
+			Connection c = super.getConnection();
+			SerializedRouteObject newObj = this.get(importObject.city_key, importObject.route_type,
+					importObject.route_number);
 			if (newObj != null) {
 				newObj.obj = importObject.obj;
 				this.updateByID(newObj);
@@ -121,22 +120,21 @@ public class SerializedRoutesRepository extends Repository implements ISerialize
 				}
 			}
 		} catch (Exception e) {
-			log.error("insertObject() exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 	}
 
 	@Override
-	public void remove(int ID) throws SQLException {
-		Connection c = super.getConnection();
+	public void remove(int ID) throws RepositoryException {
+
 		try {
+			Connection c = super.getConnection();
 			String query = "DELETE FROM bus.import_objects  WHERE id = ? ;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, ID);
 			ps.execute();
 		} catch (Exception e) {
-			log.error("updateObject() exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 	}
 

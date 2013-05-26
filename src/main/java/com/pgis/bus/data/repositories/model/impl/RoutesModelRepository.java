@@ -3,7 +3,6 @@ package com.pgis.bus.data.repositories.model.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
@@ -12,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.exp.RepositoryException;
 import com.pgis.bus.data.orm.type.LangEnum;
-import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.model.IRoutesModelRepository;
 import com.pgis.bus.net.models.TimeIntervalModel;
 import com.pgis.bus.net.models.route.RouteInfoModel;
@@ -41,10 +40,11 @@ public class RoutesModelRepository extends ModelRepository implements IRoutesMod
 	}
 
 	@Override
-	public RouteModel get(int routeID) throws SQLException {
-		Connection c = super.getConnection();
+	public RouteModel get(int routeID) throws RepositoryException {
+
 		RouteModel route = null;
 		try {
+			Connection c = super.getConnection();
 			String query = "SELECT * from bus.routes WHERE id = ?; ";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, routeID);
@@ -65,40 +65,39 @@ public class RoutesModelRepository extends ModelRepository implements IRoutesMod
 
 		} catch (Exception e) {
 			route = null;
-			log.error("can not read database", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 		return route;
 	}
 
 	@Override
 	public Collection<RouteRelationModel> getRouteRelations(int routeID, boolean directType, String langID)
-			throws SQLException {
+			throws RepositoryException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Collection<RouteRelationModel> getRouteRelations(int routeID, boolean directType, String langID,
-			int startInd, int finishInd) throws SQLException {
+			int startInd, int finishInd) throws RepositoryException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ScheduleModel getSchedule(int routeWayID) throws SQLException {
+	public ScheduleModel getSchedule(int routeWayID) throws RepositoryException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public RouteWayModel getRouteWay(int routeID, boolean directType) throws SQLException {
+	public RouteWayModel getRouteWay(int routeID, boolean directType) throws RepositoryException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public RoutesListModel getRoutesList(int cityID, String routeTypeID) throws SQLException {
+	public RoutesListModel getRoutesList(int cityID, String routeTypeID) throws RepositoryException {
 		try {
 			Connection c = super.getConnection();
 			String query = "select EXTRACT(EPOCH FROM time_a) as time_a, " + " EXTRACT(EPOCH FROM time_b) as time_b,"
@@ -141,8 +140,7 @@ public class RoutesModelRepository extends ModelRepository implements IRoutesMod
 			model.setRouteType(new RouteTypeModel(routeTypeID));
 			return model;
 		} catch (Exception e) {
-			log.error("can not read routes list", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 		return null;
 	}

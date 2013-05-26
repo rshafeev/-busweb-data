@@ -13,7 +13,7 @@ import com.pgis.bus.data.repositories.orm.impl.RoutesRepository;
 import com.pgis.bus.data.repositories.orm.impl.StringValuesRepository;
 import com.pgis.bus.net.models.route.RouteModel;
 
-public class Route extends ORMObject implements Cloneable   {
+public class Route extends ORMObject implements Cloneable {
 	private static final Logger log = LoggerFactory.getLogger(Route.class);
 
 	private Integer id;
@@ -186,46 +186,40 @@ public class Route extends ORMObject implements Cloneable   {
 
 	/**
 	 * Создает обратный путь из прямого пути
+	 * 
+	 * @throws CloneNotSupportedException
+	 * @throws SQLException
 	 */
-	public void makeReverseFromDirect() {
-		try {
-			RouteWay reverseWay = this.directRouteWay.clone();
-
-			reverseWay.getRouteRelations();
-		} catch (Exception e) {
-
-		}
-
+	public static RouteWay makeReverseWay(RouteWay dWay) throws CloneNotSupportedException, SQLException {
+		RouteWay reverseWay = RouteWay.createReverseByDirect(dWay);
+		reverseWay.setRouteID(dWay.getRouteID());
+		return reverseWay;
 	}
-	
+
 	@Override
 	public Route clone() throws CloneNotSupportedException {
 		Route route = (Route) super.clone();
 		Collection<StringValue> numb = new ArrayList<StringValue>();
-		if (this.number != null)
-		{
-		for (StringValue n : this.number) {
-			numb.add(n.clone());
-		}
+		if (this.number != null) {
+			for (StringValue n : this.number) {
+				numb.add(n.clone());
+			}
 		}
 		route.id = this.id;
 		route.city_id = this.city_id;
 		route.cost = this.cost;
-		if (this.route_type_id != null)
-		{
-		route.route_type_id = new String(this.route_type_id);
+		if (this.route_type_id != null) {
+			route.route_type_id = new String(this.route_type_id);
 		}
 		route.number_key = this.number_key;
 		route.number = numb;
-		if(this.directRouteWay != null)
-		{
-		route.directRouteWay = this.directRouteWay.clone();
+		if (this.directRouteWay != null) {
+			route.directRouteWay = this.directRouteWay.clone();
 		}
-		if(this.reverseRouteWay != null)
-		{
-		route.reverseRouteWay = this.reverseRouteWay.clone();
+		if (this.reverseRouteWay != null) {
+			route.reverseRouteWay = this.reverseRouteWay.clone();
 		}
 		return route;
 	}
-	
+
 }

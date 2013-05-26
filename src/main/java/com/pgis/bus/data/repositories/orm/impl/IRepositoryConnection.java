@@ -1,4 +1,4 @@
-package com.pgis.bus.data.repositories;
+package com.pgis.bus.data.repositories.orm.impl;
 
 import java.sql.Connection;
 import java.sql.SQLException;

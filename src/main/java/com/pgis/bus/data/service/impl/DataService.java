@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.exp.RepositoryException;
 import com.pgis.bus.data.service.IDataService;
 
 public class DataService implements IDataService {
@@ -17,7 +18,7 @@ public class DataService implements IDataService {
 	}
 
 	@Override
-	public void commit() throws SQLException {
+	public void commit() throws RepositoryException {
 		Connection c = this.connectionManager.getExternConnection();
 		try {
 			if (c != null) {
@@ -30,7 +31,6 @@ public class DataService implements IDataService {
 
 	@Override
 	public void rollback() {
-
 		try {
 			Connection c = this.connectionManager.getExternConnection();
 			if (c != null) {

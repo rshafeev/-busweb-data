@@ -9,7 +9,7 @@ import org.junit.Test;
 import test.com.pgis.data.TestDBConnectionManager;
 
 import com.pgis.bus.data.IConnectionManager;
-import com.pgis.bus.data.impl.TransactConnectionException;
+import com.pgis.bus.data.exp.RepositoryException;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.orm.type.LangEnum;
@@ -19,7 +19,7 @@ import com.pgis.bus.data.service.impl.DataBaseService;
 
 public class DataBaseServiceTest_local {
 
-	@Test(expected = TransactConnectionException.class)
+	@Test(expected = RepositoryException.class)
 	public void disposeTest() throws Exception {
 		System.out.println("disposeTest()");
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();

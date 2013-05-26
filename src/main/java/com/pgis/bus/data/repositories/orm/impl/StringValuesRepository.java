@@ -12,10 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.exp.RepositoryException;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.orm.type.LangEnum;
-import com.pgis.bus.data.repositories.Repository;
-import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.IStringValuesRepository;
 
 public class StringValuesRepository extends Repository implements IStringValuesRepository {
@@ -26,12 +25,11 @@ public class StringValuesRepository extends Repository implements IStringValuesR
 	}
 
 	@Override
-	public Collection<StringValue> get(int string_key) throws SQLException {
+	public Collection<StringValue> get(int string_key) throws RepositoryException {
 		ArrayList<StringValue> values = null;
-		Connection c = super.getConnection();
 
 		try {
-			// Statement sql = (Statement) conn.createStatement();
+			Connection c = super.getConnection();
 			String query = "select * from bus.string_values where key_id = ? ";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, string_key);
@@ -46,16 +44,14 @@ public class StringValuesRepository extends Repository implements IStringValuesR
 				values.add(stringValue);
 			}
 		} catch (SQLException e) {
-
-			log.error("can not read database", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 
 		return values;
 	}
 
 	@Override
-	public HashMap<LangEnum, StringValue> getToHashMap(int string_key) throws SQLException {
+	public HashMap<LangEnum, StringValue> getToHashMap(int string_key) throws RepositoryException {
 		HashMap<LangEnum, StringValue> map = new HashMap<LangEnum, StringValue>();
 		Collection<StringValue> arr = this.get(string_key);
 		for (StringValue s : arr) {
@@ -65,26 +61,25 @@ public class StringValuesRepository extends Repository implements IStringValuesR
 	}
 
 	@Override
-	public void remove(int string_key) throws SQLException {
+	public void remove(int string_key) throws RepositoryException {
 
-		Connection c = super.getConnection();
 		try {
-			// Statement sql = (Statement) conn.createStatement();
+			Connection c = super.getConnection();
 			String query = "DELETE FROM bus.string_values WHERE key_id = ? ";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, string_key);
 			ps.execute();
 		} catch (SQLException e) {
-			log.error("deleteStringValues() exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 
 	}
 
 	@Override
-	public void insert(StringValue value) throws SQLException {
-		Connection c = super.getConnection();
+	public void insert(StringValue value) throws RepositoryException {
+
 		try {
+			Connection c = super.getConnection();
 			String query = "INSERT INTO bus.string_values (key_id,lang_id,value) VALUES(?,bus.lang_enum(?),?) RETURNING id;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, value.getKeyID());
@@ -96,13 +91,12 @@ public class StringValuesRepository extends Repository implements IStringValuesR
 				value.setId(key.getInt(1));
 			}
 		} catch (SQLException e) {
-			log.error("insertStringValue() exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 	}
 
 	@Override
-	public void update(int string_key, Collection<StringValue> values) throws SQLException {
+	public void update(int string_key, Collection<StringValue> values) throws RepositoryException {
 		try {
 			this.remove(string_key);
 			for (StringValue v : values) {
@@ -111,9 +105,8 @@ public class StringValuesRepository extends Repository implements IStringValuesR
 				this.insert(v);
 			}
 
-		} catch (SQLException e) {
-			log.error("updateStringValues() exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} catch (Exception e) {
+			super.handeThrowble(e);
 		}
 
 	}

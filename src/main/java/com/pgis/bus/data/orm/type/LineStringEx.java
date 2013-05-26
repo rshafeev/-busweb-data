@@ -5,7 +5,7 @@ import org.postgis.Point;
 
 import com.pgis.bus.net.models.geom.PolyLineModel;
 
-public class LineStringEx extends LineString {
+public class LineStringEx extends LineString implements Cloneable {
 
 	/**
 	 * 
@@ -48,10 +48,28 @@ public class LineStringEx extends LineString {
 		return new PolyLineModel(points);
 	}
 
+	@Override
+	public LineStringEx clone() {
+		if (this.isEmpty())
+			return new LineStringEx();
+		Point[] points = this.getPoints();
+		Point[] copiedPoints = new Point[points.length];
+		for (int i = 0; i < points.length; i++) {
+			copiedPoints[i] = new Point(points[i].x, points[i].y);
+		}
+		LineStringEx copy = new LineStringEx(copiedPoints);
+		copy.srid = this.srid;
+		return copy;
+	}
+
 	public LineStringEx reverse() {
-
-		LineStringEx reverse = new LineStringEx();
-
+		Point[] points = this.getPoints();
+		Point[] copiedPoints = new Point[points.length];
+		for (int i = 0; i < points.length; i++) {
+			copiedPoints[points.length - 1 - i] = new Point(points[i].x, points[i].y);
+		}
+		LineStringEx reverse = new LineStringEx(copiedPoints);
+		reverse.srid = this.srid;
 		return reverse;
 	}
 }

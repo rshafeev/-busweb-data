@@ -1,6 +1,6 @@
 package test.com.pgis.data.repositories.orm;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -168,6 +168,61 @@ public class RoutesRepositpryTest_local {
 			// Догрузим данные
 			route.getDirectRouteWay().getSchedule();
 			route.getReverseRouteWay().getSchedule();
+			route.getNumber();
+
+			// Запомним значения проверяемых полей
+			double expCost = 3.0;
+			String expRouteType = "c_route_metro";
+
+			// Произведем модификацию стоимости и типа маршрута
+			route.setCost(expCost);
+			route.setRouteTypeID(expRouteType);
+			db.Routes().insert(route);
+			routeID = route.getId();
+			log.debug("new route: {}", routeID);
+			Route actualRoute = db.Routes().get(routeID);
+			db.rollback();
+			Route actualRoute1 = db.Routes().get(routeID);
+			assertNull(actualRoute1);
+			assertEquals(expCost, actualRoute.getCost(), 0.00001);
+			assertEquals(expRouteType, actualRoute.getRouteTypeID());
+
+		} finally {
+			db.rollback();
+			db.dispose();
+			assertTrue(((TestDBConnectionManager) dbConnMngr).getInitialConnections() <= 0);
+			dbConnMngr.dispose();
+		}
+	}
+
+	@Test
+	public void insertTest2() throws SQLException {
+		log.debug("insertTest2()");
+
+		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
+		IDataBaseService db = null;
+		IDataModelsService dbModels = null;
+		try {
+			// Route route = new Route();
+
+			db = new DataBaseService(dbConnMngr);
+			dbModels = new DataModelsService(LangEnum.c_en, dbConnMngr);
+			// Получим город.
+			City city = db.Cities().getByKey("kharkiv");
+			assertNotNull(city);
+
+			// Выберем первый маршрут из списка
+			RoutesListModel routesList = dbModels.Routes().getRoutesList(city.getId(), "c_route_bus");
+			assertTrue(routesList.getRoutesList().size() > 0);
+			int routeID = routesList.getRoutesList().iterator().next().getId();
+
+			// Тестирование
+			Route route = db.Routes().get(routeID);
+
+			// Догрузим данные
+			route.getDirectRouteWay().getSchedule();
+			route.getDirectRouteWay().getRouteRelations();
+			route.getNumber();
 
 			// Запомним значения проверяемых полей
 			double expCost = 3.0;

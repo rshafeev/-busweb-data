@@ -2,18 +2,19 @@ package com.pgis.bus.data.service;
 
 import java.sql.SQLException;
 
+import com.pgis.bus.data.exp.RepositoryException;
+
 public interface IDataService {
 	/**
 	 * Выполняет commit соединения
 	 * 
-	 * @throws SQLException
+	 * @throws RepositoryException
 	 */
-	void commit() throws SQLException;
+	void commit() throws RepositoryException;
 
 	/**
 	 * Выполняет rallback соединения
 	 * 
-	 * @throws SQLException
 	 */
 	void rollback();
 

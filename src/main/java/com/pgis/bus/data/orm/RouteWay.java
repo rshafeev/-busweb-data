@@ -6,6 +6,7 @@ import java.util.Collection;
 
 import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.orm.type.LangEnum;
+import com.pgis.bus.data.orm.type.LineStringEx;
 import com.pgis.bus.data.repositories.orm.impl.RoutesRepository;
 import com.pgis.bus.data.repositories.orm.impl.ScheduleRepository;
 import com.pgis.bus.net.models.route.RouteWayModel;
@@ -98,7 +99,9 @@ public class RouteWay extends ORMObject implements Cloneable {
 		this.route_relations = route_relations;
 	}
 
-	public static RouteWay createReverseByDirect(RouteWay directRouteWay) throws SQLException {
+	public static RouteWay createReverseByDirect(RouteWay directRouteWay) throws SQLException,
+			CloneNotSupportedException {
+		directRouteWay = directRouteWay.clone();
 		RouteWay r = new RouteWay();
 		r.setDirect(false);
 		r.setId(-1);
@@ -164,22 +167,49 @@ public class RouteWay extends ORMObject implements Cloneable {
 		return createModel(this, langID);
 	}
 
+	public Collection<RouteRelation> makeReverseRelations() throws SQLException {
+		if (this.route_relations == null)
+			return null;
+		Collection<RouteRelation> reverse = new ArrayList<RouteRelation>();
+		RouteRelation[] relations = this.route_relations.toArray(new RouteRelation[this.route_relations.size()]);
+		for (int i = 0; i < relations.length; i++) {
+			RouteRelation r = relations[relations.length - 1 - i];
+			RouteRelation newRelation = new RouteRelation();
+			newRelation.setStationBId(r.getStationBId());
+			if (i == 0) {
+				newRelation.setGeom(null);
+				newRelation.setStationA(null);
+				newRelation.setStationAId(-1);
+			} else {
+				RouteRelation prevRelation = relations[relations.length - i];
+				newRelation.setGeom(prevRelation.getGeom().reverse());
+				newRelation.setMoveTime(prevRelation.getMoveTime());
+				newRelation.setDistance(prevRelation.getDistance());
+
+			}
+			newRelation.setStationB(r.getStationB());
+			newRelation.setPositionIndex(i);
+			newRelation.setRouteWayID(this.id);
+			reverse.add(newRelation);
+
+		}
+		return reverse;
+	}
+
 	@Override
 	public RouteWay clone() throws CloneNotSupportedException {
 		Collection<RouteRelation> wayRelations = new ArrayList<RouteRelation>();
-		if (this.route_relations != null)
-		{
-		for (RouteRelation r : this.route_relations) {
-			wayRelations.add(r.clone());
-		}
+		if (this.route_relations != null) {
+			for (RouteRelation r : this.route_relations) {
+				wayRelations.add(r.clone());
+			}
 		}
 		RouteWay way = (RouteWay) super.clone();
 		way.direct = this.direct;
 		way.id = this.id;
 		way.routeID = this.routeID;
-		if (this.schedule != null)
-		{
-		way.schedule = this.schedule.clone();
+		if (this.schedule != null) {
+			way.schedule = this.schedule.clone();
 		}
 		way.setRouteRelations(wayRelations);
 		return way;

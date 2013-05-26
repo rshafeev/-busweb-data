@@ -1,6 +1,6 @@
 package com.pgis.bus.data.orm;
 
-public class SerializedRouteObject {
+public class SerializedRouteObject implements Cloneable {
 	public int id;
 	public String city_key;
 	public String route_type;
@@ -51,27 +51,23 @@ public class SerializedRouteObject {
 	public void setObj(String obj) {
 		this.obj = obj;
 	}
-	
+
 	@Override
-	public JsonRouteObject clone() throws CloneNotSupportedException {
-		JsonRouteObject jro = (JsonRouteObject) super.clone();
+	public SerializedRouteObject clone() throws CloneNotSupportedException {
+		SerializedRouteObject jro = (SerializedRouteObject) super.clone();
 		jro.id = this.id;
-		
-		if (this.city_key != null)
-		{
-		jro.city_key = new String(this.city_key);
+
+		if (this.city_key != null) {
+			jro.city_key = new String(this.city_key);
 		}
-		if (this.route_type != null)
-		{
-		jro.route_type = new String(this.route_type);
+		if (this.route_type != null) {
+			jro.route_type = new String(this.route_type);
 		}
-		if (this.route_number != null)
-		{
-		jro.route_number = new String(this.route_number);
+		if (this.route_number != null) {
+			jro.route_number = new String(this.route_number);
 		}
-		if (this.obj != null)
-		{
-		jro.obj = new String(this.obj);
+		if (this.obj != null) {
+			jro.obj = new String(this.obj);
 		}
 		return jro;
 	}

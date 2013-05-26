@@ -3,22 +3,23 @@ package com.pgis.bus.data.repositories.orm;
 import java.sql.SQLException;
 import java.util.Collection;
 
+import com.pgis.bus.data.exp.RepositoryException;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.type.LangEnum;
 
 public interface ICitiesRepository {
-	City get(int id) throws SQLException;
+	City get(int id) throws RepositoryException;
 
-	void insert(City city) throws SQLException;
+	void insert(City city) throws RepositoryException;
 
-	void remove(int city_id) throws SQLException;
+	void remove(int city_id) throws RepositoryException;
 
-	void update(City city) throws SQLException;
+	void update(City city) throws RepositoryException;
 
-	Collection<City> getAll() throws SQLException;
+	Collection<City> getAll() throws RepositoryException;
 
-	City getByKey(String key) throws SQLException;
+	City getByKey(String key) throws RepositoryException;
 
-	City getByName(LangEnum langID, String name) throws SQLException;
+	City getByName(LangEnum langID, String name) throws RepositoryException;
 
 }

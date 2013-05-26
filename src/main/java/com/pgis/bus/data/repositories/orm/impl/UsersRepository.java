@@ -9,10 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.exp.RepositoryException;
 import com.pgis.bus.data.orm.User;
 import com.pgis.bus.data.orm.type.AuthenticateResult;
-import com.pgis.bus.data.repositories.Repository;
-import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.IUsersRepository;
 
 public class UsersRepository extends Repository implements IUsersRepository {
@@ -23,11 +22,11 @@ public class UsersRepository extends Repository implements IUsersRepository {
 	}
 
 	@Override
-	public User get(int id) throws SQLException {
-		Connection c = super.getConnection();
+	public User get(int id) throws RepositoryException {
+
 		User user = null;
 		try {
-			// Statement sql = (Statement) conn.createStatement();
+			Connection c = super.getConnection();
 			String query = "select * from bus.users where id = ? ";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, id);
@@ -37,18 +36,19 @@ public class UsersRepository extends Repository implements IUsersRepository {
 				user.setName(key.getString("login"));
 				user.setRoleID(key.getInt("role_id"));
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			user = null;
-			log.error("can not read database", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 		return user;
 	}
 
 	@Override
-	public AuthenticateResult authenticate(String userRole, String userName, String userPassword) throws SQLException {
-		Connection conn = super.getConnection();
+	public AuthenticateResult authenticate(String userRole, String userName, String userPassword)
+			throws RepositoryException {
+
 		try {
+			Connection conn = super.getConnection();
 			String query = "SELECT bus.authenticate(?,?,?)";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, userRole);
@@ -59,8 +59,7 @@ public class UsersRepository extends Repository implements IUsersRepository {
 				return AuthenticateResult.getType(key.getInt(1));
 			}
 		} catch (SQLException e) {
-			log.error("can not read database", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 		return AuthenticateResult.c_unknown;
 	}

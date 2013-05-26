@@ -19,8 +19,7 @@ import com.pgis.bus.data.repositories.orm.impl.StationsRepository;
 import com.pgis.bus.net.models.route.RouteRelationModel;
 
 public class RouteRelation extends ORMObject implements Cloneable {
-	private static final Logger log = LoggerFactory
-			.getLogger(RouteRelation.class);
+	private static final Logger log = LoggerFactory.getLogger(RouteRelation.class);
 
 	private int id;
 	private int rway_id;
@@ -147,15 +146,12 @@ public class RouteRelation extends ORMObject implements Cloneable {
 
 	@Override
 	public String toString() {
-		return "RouteRelation [id=" + id + ", rway_id=" + rway_id
-				+ ", station_a_id=" + station_a_id + ", station_b_id="
-				+ station_b_id + ", position_index=" + position_index
-				+ ", distance=" + distance + ", ev_time=" + ev_time + ", geom="
-				+ geom + ", stationB=" + stationB + "]";
+		return "RouteRelation [id=" + id + ", rway_id=" + rway_id + ", station_a_id=" + station_a_id
+				+ ", station_b_id=" + station_b_id + ", position_index=" + position_index + ", distance=" + distance
+				+ ", ev_time=" + ev_time + ", geom=" + geom + ", stationB=" + stationB + "]";
 	}
 
-	static public RouteRelationModel createModel(RouteRelation r,
-			LangEnum langID) throws SQLException {
+	static public RouteRelationModel createModel(RouteRelation r, LangEnum langID) throws SQLException {
 		RouteRelationModel model = new RouteRelationModel();
 		model.setDistance(r.getDistance());
 		model.setId(r.getId());
@@ -164,8 +160,8 @@ public class RouteRelation extends ORMObject implements Cloneable {
 		return model;
 	}
 
-	static public Collection<RouteRelationModel> createModels(
-			Collection<RouteRelation> arr, LangEnum langID) throws SQLException {
+	static public Collection<RouteRelationModel> createModels(Collection<RouteRelation> arr, LangEnum langID)
+			throws SQLException {
 		Collection<RouteRelationModel> models = new ArrayList<RouteRelationModel>();
 		for (RouteRelation r : arr) {
 			models.add(createModel(r, langID));
@@ -190,7 +186,7 @@ public class RouteRelation extends ORMObject implements Cloneable {
 			relation.ev_time = PGIntervalHelper.clone(this.ev_time);
 		}
 		if (this.geom != null) {
-			relation.geom = GeoObjectsHelper.clone(this.geom);
+			relation.geom = this.geom.clone();
 		}
 		if (this.stationA != null || this.stationB != null) {
 			relation.stationA = this.stationA.clone();
@@ -198,4 +194,5 @@ public class RouteRelation extends ORMObject implements Cloneable {
 		}
 		return relation;
 	}
+
 }

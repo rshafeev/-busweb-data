@@ -3,7 +3,6 @@ package com.pgis.bus.data.repositories.orm.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -11,11 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
+import com.pgis.bus.data.exp.RepositoryException;
 import com.pgis.bus.data.orm.City;
 import com.pgis.bus.data.orm.StringValue;
 import com.pgis.bus.data.orm.type.LangEnum;
-import com.pgis.bus.data.repositories.Repository;
-import com.pgis.bus.data.repositories.RepositoryException;
 import com.pgis.bus.data.repositories.orm.ICitiesRepository;
 
 public class CitiesRepository extends Repository implements ICitiesRepository {
@@ -26,10 +24,11 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 	}
 
 	@Override
-	public Collection<City> getAll() throws SQLException {
-		Connection c = super.getConnection();
+	public Collection<City> getAll() throws RepositoryException {
+
 		Collection<City> cities = null;
 		try {
+			Connection c = super.getConnection();
 			String query = "select * from bus.cities";
 			PreparedStatement ps = c.prepareStatement(query);
 			ResultSet key = ps.executeQuery();
@@ -52,18 +51,18 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 				city.setShow(isShow);
 				cities.add(city);
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			cities = null;
-			log.error("can not read database", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+			super.handeThrowble(e);
 		}
 		return cities;
 	}
 
 	@Override
-	public City get(int id) throws SQLException {
-		Connection c = super.getConnection();
+	public City get(int id) throws RepositoryException {
+
 		try {
+			Connection c = super.getConnection();
 			String query = "SELECT * FROM bus.cities WHERE id = ?";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, id);
@@ -85,17 +84,17 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 				city.setShow(isShow);
 				return city;
 			}
-		} catch (SQLException e) {
-			log.error("can not read database", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} catch (Exception e) {
+			super.handeThrowble(e);
 		}
 		return null;
 	}
 
 	@Override
-	public City getByKey(String key) throws SQLException {
-		Connection c = super.getConnection();
+	public City getByKey(String key) throws RepositoryException {
+
 		try {
+			Connection c = super.getConnection();
 			String query = "select * from bus.cities where key = ?";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setString(1, key);
@@ -117,18 +116,17 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 				city.setShow(isShow);
 				return city;
 			}
-		} catch (SQLException e) {
-			log.error("can not read database", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} catch (Exception e) {
+			super.handeThrowble(e);
 		}
 		return null;
 	}
 
 	@Override
-	public City getByName(LangEnum langID, String name) throws SQLException {
-		Connection c = super.getConnection();
+	public City getByName(LangEnum langID, String name) throws RepositoryException {
 
 		try {
+			Connection c = super.getConnection();
 			String query = "SELECT  bus.cities.key as key, bus.cities.id as id,bus.cities.name_key as name_key, "
 					+ "bus.cities.lat as lat, bus.cities.is_show as is_show, "
 					+ "bus.cities.lon as lon,bus.cities.scale as scale,bus.string_values.lang_id as lang_id, "
@@ -158,17 +156,17 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 				city.setShow(isShow);
 				return city;
 			}
-		} catch (SQLException e) {
-			log.error("can not read database", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} catch (Exception e) {
+			super.handeThrowble(e);
 		}
 		return null;
 	}
 
 	@Override
-	public void insert(City city) throws SQLException {
-		Connection c = super.getConnection();
+	public void insert(City city) throws RepositoryException {
+
 		try {
+			Connection c = super.getConnection();
 			city.setConnManager(connManager);
 			String query = "INSERT INTO bus.cities (key,lat,lon,scale,is_show) VALUES(?,?,?,?,?) RETURNING  id,name_key";
 			PreparedStatement ps = c.prepareStatement(query);
@@ -190,30 +188,30 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 
 			}
 
-		} catch (SQLException e) {
-			log.error("updateCity() exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} catch (Exception e) {
+			super.handeThrowble(e);
 		}
 	}
 
 	@Override
-	public void remove(int city_id) throws SQLException {
-		Connection c = super.getConnection();
+	public void remove(int city_id) throws RepositoryException {
+
 		try {
+			Connection c = super.getConnection();
 			String query = "DELETE FROM bus.cities WHERE id=?;";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setInt(1, city_id);
 			ps.execute();
-		} catch (SQLException e) {
-			log.error("deleteCity() exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} catch (Exception e) {
+			super.handeThrowble(e);
 		}
 	}
 
 	@Override
-	public void update(City city) throws SQLException {
-		Connection c = super.getConnection();
+	public void update(City city) throws RepositoryException {
+
 		try {
+			Connection c = super.getConnection();
 			String query = "UPDATE bus.cities SET lat=?, lon=? , scale=?, name_key=?,is_show=? where id=?";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setDouble(1, city.getLat());
@@ -229,9 +227,8 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 			stringValuesRepository.setRepositoryExternConnection(c);
 			stringValuesRepository.update(city.getNameKey(), city.getName().values());
 
-		} catch (SQLException e) {
-			log.error("updateCity() exception: ", e);
-			super.throwable(e, RepositoryException.err_enum.c_sql_err);
+		} catch (Exception e) {
+			super.handeThrowble(e);
 		} finally {
 		}
 	}
