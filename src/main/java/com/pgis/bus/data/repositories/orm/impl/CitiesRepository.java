@@ -212,14 +212,15 @@ public class CitiesRepository extends Repository implements ICitiesRepository {
 
 		try {
 			Connection c = super.getConnection();
-			String query = "UPDATE bus.cities SET lat=?, lon=? , scale=?, name_key=?,is_show=? where id=?";
+			String query = "UPDATE bus.cities SET lat=?, lon=? , scale=?, name_key=?, key=?, is_show=? where id=?";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setDouble(1, city.getLat());
 			ps.setDouble(2, city.getLon());
 			ps.setInt(3, city.getScale());
 			ps.setInt(4, city.getNameKey());
-			ps.setBoolean(5, city.isShow());
-			ps.setInt(6, city.getId());
+			ps.setString(5, city.getKey());
+			ps.setBoolean(6, city.isShow());
+			ps.setInt(7, city.getId());
 			ps.execute();
 			city.setConnManager(connManager);
 

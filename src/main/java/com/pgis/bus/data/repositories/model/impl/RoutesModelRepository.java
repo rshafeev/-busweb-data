@@ -55,13 +55,17 @@ public class RoutesModelRepository extends ModelRepository implements IRoutesMod
 				int city_id = key.getInt("city_id");
 				String routeTypeID = key.getString("route_type_id");
 				int number_key = key.getInt("number_key");
+				String number = key.getString("number");
 				double cost = key.getDouble("cost");
 				route = new RouteModel();
 				route.setId(id);
 				route.setCost(cost);
 				route.setCityID(city_id);
 				route.setRouteTypeID(routeTypeID);
-			}
+			} else
+				return null;
+			route.setDirectWay(this.getRouteWay(route.getId(), true));
+			route.setReverseWay(this.getRouteWay(route.getId(), false));
 
 		} catch (Exception e) {
 			route = null;
