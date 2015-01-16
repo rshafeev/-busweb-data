@@ -22,7 +22,7 @@ public class TestDBConnectionManager implements IConnectionManager {
 
 	public static IConnectionManager create() {
 		PGPoolingDataSource source = PoolConnectionManager.createPGPoolingDataSource("jdbc:postgresql", "localhost",
-				"bus.test", "postgres", "postgres");
+				"bus-dev", "postgres", "14RpostgregeoPremium");
 		IConnectionManager dbConnectionManager = new TestDBConnectionManager(source);
 		return dbConnectionManager;
 	}

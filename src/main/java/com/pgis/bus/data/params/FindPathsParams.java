@@ -134,7 +134,7 @@ public class FindPathsParams {
 	private static String[] getDbRouteTypes(FindPathsRequest request) {
 		ArrayList<String> arr = new ArrayList<String>();
 		for (RouteTypeDiscount r : request.getRouteTypes()) {
-			arr.add("c_route_" + r.getRouteType());
+			arr.add("c_route_" + r.getId());
 		}
 		return arr.toArray(new String[arr.size()]);
 	}

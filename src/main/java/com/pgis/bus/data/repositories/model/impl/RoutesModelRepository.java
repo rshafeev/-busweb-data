@@ -55,12 +55,14 @@ public class RoutesModelRepository extends ModelRepository implements IRoutesMod
 				int city_id = key.getInt("city_id");
 				String routeTypeID = key.getString("route_type_id");
 				int number_key = key.getInt("number_key");
-				String number = key.getString("number");
+				//String number = key.getString("number");
 				double cost = key.getDouble("cost");
 				route = new RouteModel();
 				route.setId(id);
 				route.setCost(cost);
 				route.setCityID(city_id);
+				route.setNumber("test");
+				log.debug(routeTypeID);
 				route.setRouteTypeID(routeTypeID);
 			} else
 				return null;
@@ -96,6 +98,8 @@ public class RoutesModelRepository extends ModelRepository implements IRoutesMod
 
 	@Override
 	public RouteWayModel getRouteWay(int routeID, boolean directType) throws RepositoryException {
+		RouteWayModel wayModel = new RouteWayModel();
+		
 		// TODO Auto-generated method stub
 		return null;
 	}

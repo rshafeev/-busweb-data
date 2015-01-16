@@ -4,7 +4,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 
+import com.pgis.bus.data.models.RouteGeoData;
+import com.pgis.bus.data.models.RoutePart;
+import com.pgis.bus.data.repositories.orm.IPathsRepository;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +30,28 @@ import com.pgis.bus.net.request.data.RouteTypeDiscount;
 public class PathsRepositoryTest_local {
 	private static final Logger log = LoggerFactory.getLogger(PathsRepositoryTest_local.class);
 
+	@Test
+	public void getGeoDataByRoutePart_Test() throws Exception {
+		System.out.println("getGeoDataByRoutePart_Test()...");
+
+		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
+		PathsRepository rep = new PathsRepository(dbConnMngr);
+		RoutePart routePart = new RoutePart();
+		routePart.setID(5);
+		routePart.setStartInd(0);
+		routePart.setFinishInd(3);
+		String lang_id = "c_ru";
+
+		Collection<RouteGeoData> relations = rep.getGeoDataByRoutePart(
+				routePart, lang_id);
+		Iterator<RouteGeoData> i = relations.iterator();
+		System.out.println("getGeoDataByRoutePart_Test()");
+		while (i.hasNext()) {
+			RouteGeoData d = i.next();
+			System.out.println(d.toString());
+		}
+	}
+	
 	@Test
 	public void getShortestPaths1_Test() throws Exception {
 		log.debug("getShortestPaths1_Test()");

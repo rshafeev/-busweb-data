@@ -157,6 +157,8 @@ public class RouteRelation extends ORMObject implements Cloneable {
 		model.setId(r.getId());
 		model.setMoveTime(TimeIntervalModelFactory.createModel(r.getMoveTime()));
 		model.setCurrStation(r.getStationB().toModel(langID));
+		if(r.getGeom() != null)
+			model.setGeom(r.getGeom().toModel());
 		return model;
 	}
 
