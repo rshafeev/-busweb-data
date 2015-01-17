@@ -7,6 +7,7 @@
 *.jar
 *.class
 *.directory
+*.properties
 bin*/
 target*/
 build/
@@ -70,8 +71,7 @@ crashlytics-build.properties
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Properties
-*.properties
+
 
 # Package Files #
 *.jar
