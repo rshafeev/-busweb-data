@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 
@@ -27,9 +28,9 @@ import com.pgis.bus.net.models.route.RoutesListModel;
 
 public class RoutesRepositpryTest_local {
 	private static final Logger log = LoggerFactory.getLogger(RoutesRepositpryTest_local.class);
-
+	
 	@Test
-	public void getAllTest() throws SQLException {
+	public void getAllTest() throws SQLException, IOException {
 		log.debug("getAllTest()");
 
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
@@ -53,7 +54,7 @@ public class RoutesRepositpryTest_local {
 	}
 
 	@Test
-	public void getTest() throws SQLException {
+	public void getTest() throws SQLException, IOException {
 		log.debug("getTest()");
 
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
@@ -93,7 +94,7 @@ public class RoutesRepositpryTest_local {
 	}
 
 	@Test
-	public void updateTest() throws SQLException {
+	public void updateTest() throws SQLException, IOException {
 		log.debug("updateTest()");
 
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
@@ -142,7 +143,7 @@ public class RoutesRepositpryTest_local {
 	}
 
 	@Test
-	public void insertTest() throws SQLException {
+	public void insertTest() throws SQLException, IOException {
 		log.debug("insertTest()");
 
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();
@@ -196,7 +197,7 @@ public class RoutesRepositpryTest_local {
 	}
 
 	@Test
-	public void insertTest2() throws SQLException {
+	public void insertTest2() throws SQLException, IOException {
 		log.debug("insertTest2()");
 
 		IConnectionManager dbConnMngr = TestDBConnectionManager.create();

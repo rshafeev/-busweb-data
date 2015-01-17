@@ -1,7 +1,12 @@
 package test.com.pgis.data;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import org.postgresql.ds.PGPoolingDataSource;
 import org.slf4j.Logger;
@@ -9,20 +14,35 @@ import org.slf4j.LoggerFactory;
 
 import com.pgis.bus.data.IConnectionManager;
 import com.pgis.bus.data.PoolConnectionManager;
+import org.springframework.core.io.ClassPathResource;
 
 public class TestDBConnectionManager implements IConnectionManager {
 	private javax.sql.DataSource source = null;
 	private final Logger log = LoggerFactory.getLogger(TestDBConnectionManager.class);
 	private Connection connection = null;
 	private int useConnections = 0;
+	private static String db;
+	private static String localhost;
+	private static String dbname;
+	private static String login;
+	private static String password;
 
 	public int getInitialConnections() {
 		return useConnections;
 	}
 
-	public static IConnectionManager create() {
-		PGPoolingDataSource source = PoolConnectionManager.createPGPoolingDataSource("jdbc:postgresql", "localhost",
-				"bus-dev", "postgres", "14RpostgregeoPremium");
+	public static IConnectionManager create() throws IOException {
+
+		Properties props = new Properties();
+		File settingsFile = new ClassPathResource("/dbsettings.properties").getFile();
+		props.load(new FileInputStream(settingsFile));
+		db = props.getProperty("db");
+		localhost = props.getProperty("localhost");
+		dbname = props.getProperty("dbname");
+		login = props.getProperty("login");
+		password = props.getProperty("password");
+		PGPoolingDataSource source = PoolConnectionManager.createPGPoolingDataSource(db, localhost,
+				dbname, login, password);
 		IConnectionManager dbConnectionManager = new TestDBConnectionManager(source);
 		return dbConnectionManager;
 	}
