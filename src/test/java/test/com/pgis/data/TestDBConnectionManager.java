@@ -21,11 +21,6 @@ public class TestDBConnectionManager implements IConnectionManager {
 	private final Logger log = LoggerFactory.getLogger(TestDBConnectionManager.class);
 	private Connection connection = null;
 	private int useConnections = 0;
-	private static String db;
-	private static String localhost;
-	private static String dbname;
-	private static String login;
-	private static String password;
 
 	public int getInitialConnections() {
 		return useConnections;
@@ -36,11 +31,11 @@ public class TestDBConnectionManager implements IConnectionManager {
 		Properties props = new Properties();
 		File settingsFile = new ClassPathResource("/dbsettings.properties").getFile();
 		props.load(new FileInputStream(settingsFile));
-		db = props.getProperty("db");
-		localhost = props.getProperty("localhost");
-		dbname = props.getProperty("dbname");
-		login = props.getProperty("login");
-		password = props.getProperty("password");
+		String db = props.getProperty("db");
+		String localhost = props.getProperty("localhost");
+		String dbname = props.getProperty("dbname");
+		String login = props.getProperty("login");
+		String password = props.getProperty("password");
 		PGPoolingDataSource source = PoolConnectionManager.createPGPoolingDataSource(db, localhost,
 				dbname, login, password);
 		IConnectionManager dbConnectionManager = new TestDBConnectionManager(source);
