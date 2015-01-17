@@ -7,7 +7,7 @@
 *.jar
 *.class
 *.directory
-*.properties
+src/test/resources/dbsettings.properties
 bin*/
 target*/
 build/
